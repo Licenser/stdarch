@@ -1821,9 +1821,9 @@ mod tests {
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s32() {
-        let a = i32x4::new(20, 20, 20, 20;
+        let a = i32x4::new(20, 20, 20, 20);
         let b = i32x4::new(21, 21, 21, 21);
-        let e = i32x4::new(20, 20, 20, 20));
+        let e = i32x4::new(20, 20, 20, 20);
         let r: i32x4 = transmute(vandq_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
