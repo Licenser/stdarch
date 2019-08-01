@@ -37,7 +37,7 @@ echo "STDARCH_DISABLE_ASSERT_INSTR=${STDARCH_DISABLE_ASSERT_INSTR}"
 echo "STDARCH_TEST_EVERYTHING=${STDARCH_TEST_EVERYTHING}"
 
 cargo_test() {
-    cmd="cargo +nightly"
+    cmd="cargo"
     subcmd="test"
     if [ "$NORUN" = "1" ]; then
         export subcmd="build"
