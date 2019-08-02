@@ -2,3 +2,4 @@ Cargo.lock
 .*.swp
 target
 tags
+crates/core_arch/.vscode/settings.json
