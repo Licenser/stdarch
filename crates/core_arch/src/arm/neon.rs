@@ -1776,288 +1776,288 @@ mod tests {
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s8() {
-        let a = i8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
+        let a = i8x8::new(0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7);
+        let b = i8x8::new(0x0F, 0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F, 0x7F);
+        let e = i8x8::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77);
         let r: i8x8 = transmute(vand_s8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s8() {
-        let a = i8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
+        let a = i8x16::new(0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF);
+        let b = i8x16::new(0x0F, 0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F, 0x7F, 0x8F, 0x9F, 0xAF, 0xBF, 0xCF, 0xDF, 0xEF, 0xFF);
+        let e = i8x16::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF);
         let r: i8x16 = transmute(vandq_s8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s16() {
-        let a = i16x4::new(20, 20, 20, 20);
-        let b = i16x4::new(21, 21, 21, 21);
-        let e = i16x4::new(20, 20, 20, 20);
+        let a = i16x4::new(0xF0F1, 0xF2F3, 0xF4F5, 0xF6F7);
+        let b = i16x4::new(0x0F1F, 0x2F3F, 0x4F5F, 0x6F7F);
+        let e = i16x4::new(0x0011, 0x2233, 0x4455, 0x6677);
         let r: i16x4 = transmute(vand_s16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s16() {
-        let a = i16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
+        let a = i16x8::new(0xF0F1, 0xF2F3, 0xF4F5, 0xF6F7, 0xF8F9, 0xFAFB, 0xFCFD, 0xFEFF);
+        let b = i16x8::new(0x0F1F, 0x2F3F, 0x4F5F, 0x6F7F, 0x8F9F, 0xAFBF, 0xCFDF, 0xEFFF);
+        let e = i16x8::new(0x0011, 0x2233, 0x4455, 0x6677, 0x8899, 0xAABB, 0xCCDD, 0xEEFF);
         let r: i16x8 = transmute(vandq_s16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s32() {
-        let a = i32x2::new(20, 20);
-        let b = i32x2::new(21, 21);
-        let e = i32x2::new(20, 20);
+        let a = i32x2::new(0xF0F1F2F3, 0xF4F5F6F7);
+        let b = i32x2::new(0x0F1F2F3F, 0x4F5F6F7F);
+        let e = i32x2::new(0x00112233, 0x44556677);
         let r: i32x2 = transmute(vand_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s32() {
-        let a = i32x4::new(20, 20, 20, 20);
-        let b = i32x4::new(21, 21, 21, 21);
-        let e = i32x4::new(20, 20, 20, 20);
+        let a = i32x4::new(0xF0F1F2F3, 0xF4F5F6F7, 0xF8F9FAFB, 0xFCFDFEFF);
+        let b = i32x4::new(0x0F1F2F3F, 0x4F5F6F7F, 0x8F9FAFBF, 0xCFDFEFFF);
+        let e = i32x4::new(0x00112233, 0x44556677, 0x8899AABB, 0xCCDDEEFF);
         let r: i32x4 = transmute(vandq_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s64() {
-        let a = i64x1::new(20);
-        let b = i64x1::new(21);
-        let e = i64x1::new(20);
+        let a = i64x1::new(0xF0F1F2F3F4F5F6F7);
+        let b = i64x1::new(0x0F1F2F3F4F5F6F7F);
+        let e = i64x1::new(0x0011223344556677);
         let r: i64x1 = transmute(vand_s64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s64() {
-        let a = i64x2::new(20, 20);
-        let b = i64x2::new(21, 21);
-        let e = i64x2::new(20, 20);
+        let a = i64x2::new(0xF0F1F2F3F4F5F6F7, 0xF8F9FAFBFCFDFEFF);
+        let b = i64x2::new(0x0F1F2F3F4F5F6F7F, 0x8F9FAFBFCFDFEFFF);
+        let e = i64x2::new(0x0011223344556677, 0x8899AABBCCDDEEFF);
         let r: i64x2 = transmute(vandq_s64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u8() {
-        let a = u8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
+        let a = u8x8::new(0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7);
+        let b = u8x8::new(0x0F, 0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F, 0x7F);
+        let e = u8x8::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77);
         let r: u8x8 = transmute(vand_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u8() {
-        let a = u8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
+        let a = u8x16::new(0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF);
+        let b = u8x16::new(0x0F, 0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F, 0x7F, 0x8F, 0x9F, 0xAF, 0xBF, 0xCF, 0xDF, 0xEF, 0xFF);
+        let e = u8x16::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF);
         let r: u8x16 = transmute(vandq_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u16() {
-        let a = u16x4::new(20, 20, 20, 20);
-        let b = u16x4::new(21, 21, 21, 21);
-        let e = u16x4::new(20, 20, 20, 20);
+        let a = u16x4::new(0xF0F1, 0xF2F3, 0xF4F5, 0xF6F7);
+        let b = u16x4::new(0x0F1F, 0x2FF, 0x4F5F, 0x6F7F);
+        let e = u16x4::new(0x0011, 0x2233, 0x4455, 0x667);
         let r: u16x4 = transmute(vand_u16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u16() {
-        let a = u16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
+        let a = u16x8::new(0xF0F1, 0xF2F3, 0xF4F5, 0xF6F7, 0xF8F9, 0xFAFB, 0xFCFD, 0xFEFF);
+        let b = u16x8::new(0x0F1F, 0x2F3F, 0x4F5F, 0x6F7F, 0x8F9F, 0xAFBF, 0xCFDF, 0xEFFF);
+        let e = u16x8::new(0x0011, 0x2233, 0x4455, 0x6677, 0x8899, 0xAABB, 0xCCDD, 0xEEFF);
         let r: u16x8 = transmute(vandq_u16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u32() {
-        let a = u32x2::new(20, 20);
-        let b = u32x2::new(21, 21);
-        let e = u32x2::new(20, 20);
+        let a = u32x2::new(0xF0F1F2F3, 0xF4F5F6F7);
+        let b = u32x2::new(0x0F1F2F3F, 0x4F5F6F7F);
+        let e = u32x2::new(0x00112233, 0x44556677);
         let r: u32x2 = transmute(vand_u32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u32() {
-        let a = u32x4::new(20, 20, 20, 20);
-        let b = u32x4::new(21, 21, 21, 21);
-        let e = u32x4::new(20, 20, 20, 20);
+        let a = u32x4::new(0xF0F1F2F3, 0xF4F5F6F7, 0xF8F9FAFB, 0xFCFDFEFF);
+        let b = u32x4::new(0x0F1F2F3F, 0x4F5F6F7F, 0x8F9FAFBF, 0xCFDFEFFF);
+        let e = u32x4::new(0x00112233, 0x44556677, 0x8899AABB, 0xCCDDEEFF);
         let r: u32x4 = transmute(vandq_u32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u64() {
-        let a = u64x1::new(20);
-        let b = u64x1::new(21);
-        let e = u64x1::new(20);
+        let a = i64x1::new(0xF0F1F2F3F4F5F6F7);
+        let b = i64x1::new(0x0F1F2F3F4F5F6F7F);
+        let e = i64x1::new(0x0011223344556677);
         let r: u64x1 = transmute(vand_u64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s64() {
-        let a = u64x2::new(20, 20);
-        let b = u64x2::new(21, 21);
-        let e = u64x2::new(20, 20);
+        let a = i64x2::new(0xF0F1F2F3F4F5F6F7, 0xF8F9FAFBFCFDFEFF);
+        let b = i64x2::new(0x0F1F2F3F4F5F6F7F, 0x8F9FAFBFCFDFEFFF);
+        let e = i64x2::new(0x0011223344556677, 0x8899AABBCCDDEEFF);
         let r: u64x2 = transmute(vandq_u64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s8() {
-        let a = i8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
+        let a = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
+        let b = i8x8::new(0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70);
+        let e = i8x8::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77);
         let r: i8x8 = transmute(vorr_s8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s8() {
-        let a = i8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
+        let a = i8x16::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F);
+        let b = i8x16::new(0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0);
+        let e = i8x16::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF);
         let r: i8x16 = transmute(vorrq_s8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s16() {
-        let a = i16x4::new(20, 20, 20, 20);
-        let b = i16x4::new(21, 21, 21, 21);
-        let e = i16x4::new(21, 21, 21, 21);
+        let a = i16x4::new(0x0001, 0x0203, 0x0405, 0x0607);
+        let b = i16x4::new(0x0010, 0x2030, 0x4050, 0x6070);
+        let e = i16x4::new(0x0011, 0x2233, 0x4455, 0x6677);
         let r: i16x4 = transmute(vorr_s16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s16() {
-        let a = i16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = i16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = i16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
+        let a = i16x8::new(0x0001, 0x0203, 0x0405, 0x0607, 0x0809, 0x0A0B, 0x0C0D, 0x0E0F);
+        let b = i16x8::new(0x0010, 0x2030, 0x4050, 0x6070, 0x8090, 0xA0B0, 0xC0D0, 0xE0F0);
+        let e = i16x8::new(0x0011, 0x2233, 0x4455, 0x6677, 0x8899, 0xAABB, 0xCCDD, 0xEEFF);
         let r: i16x8 = transmute(vorrq_s16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s32() {
-        let a = i32x2::new(20, 20);
-        let b = i32x2::new(21, 21);
-        let e = i32x2::new(21, 21);
+        let a = i32x2::new(0x00010203, 0x04050607);
+        let b = i32x2::new(0x00102030, 0x40506070);
+        let e = i32x2::new(0x00112233, 0x44556677);
         let r: i32x2 = transmute(vorr_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s32() {
-        let a = i32x4::new(20, 20, 20, 20);
-        let b = i32x4::new(21, 21, 21, 21);
-        let e = i32x4::new(21, 21, 21, 21);
+        let a = i32x4::new(0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F);
+        let b = i32x4::new(0x00102030, 0x40506070, 0x8090A0B0, 0xC0D0E0F0);
+        let e = i32x4::new(0x00112233, 0x44556677, 0x8899AABB, 0xCCDDEEFF);
         let r: i32x4 = transmute(vorrq_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s64() {
-        let a = i64x1::new(20);
-        let b = i64x1::new(21);
-        let e = i64x1::new(21);
+        let a = i64x1::new(0x0001020304050607);
+        let b = i64x1::new(0x0010203040506070);
+        let e = i64x1::new(0x0011223344556677);
         let r: i64x1 = transmute(vorr_s64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s64() {
-        let a = i64x2::new(20, 20);
-        let b = i64x2::new(21, 21);
-        let e = i64x2::new(21, 21);
+        let a = i64x2::new(0x0001020304050607, 0x08090A0B0C0D0E0F);
+        let b = i64x2::new(0x0010203040506070, 0x8090A0B0C0D0E0F0);
+        let e = i64x2::new(0x0011223344556677, 0x8899AABBCCDDEEFF);
         let r: i64x2 = transmute(vorrq_s64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u8() {
-        let a = u8x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u8x8::new(21, 21, 21, 21, 21, 21, 21, 21);
+        let a = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
+        let b = u8x8::new(0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70);
+        let e = u8x8::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77);
         let r: u8x8 = transmute(vorr_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u8() {
-        let a = u8x16::new(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u8x16::new(21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21);
+        let a = u8x16::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F);
+        let b = u8x16::new(0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0);
+        let e = u8x16::new(0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF);
         let r: u8x16 = transmute(vorrq_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u16() {
-        let a = u16x4::new(20, 20, 20, 20);
-        let b = u16x4::new(21, 21, 21, 21);
-        let e = u16x4::new(21, 21, 21, 21);
+        let a = u16x4::new(0x0001, 0x0203, 0x0405, 0x0607);
+        let b = u16x4::new(0x0010, 0x2030, 0x4050, 0x6070);
+        let e = u16x4::new(0x0011, 0x2233, 0x4455, 0x6677);
         let r: u16x4 = transmute(vorr_u16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u16() {
-        let a = u16x8::new(20, 20, 20, 20, 20, 20, 20, 20);
-        let b = u16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
-        let e = u16x8::new(21, 21, 21, 21, 21, 21, 21, 21);
+        let a = u16x8::new(0x0001, 0x0203, 0x0405, 0x0607, 0x0809, 0x0A0B, 0x0C0D, 0x0E0F);
+        let b = u16x8::new(0x0010, 0x2030, 0x4050, 0x6070, 0x8090, 0xA0B0, 0xC0D0, 0xE0F0);
+        let e = u16x8::new(0x0011, 0x2233, 0x4455, 0x6677, 0x8899, 0xAABB, 0xCCDD, 0xEEFF);
         let r: u16x8 = transmute(vorrq_u16(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u32() {
-        let a = u32x2::new(20, 20);
-        let b = u32x2::new(21, 21);
-        let e = u32x2::new(21, 21);
+        let a = u32x2::new(0x00010203, 0x04050607);
+        let b = u32x2::new(0x00102030, 0x40506070);
+        let e = u32x2::new(0x00112233, 0x44556677);
         let r: u32x2 = transmute(vorr_u32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u32() {
-        let a = u32x4::new(20, 20, 20, 20);
-        let b = u32x4::new(21, 21, 21, 21);
-        let e = u32x4::new(21, 21, 21, 21);
+        let a = u32x4::new(0x00010203, 0x04050607, 0x08090A0B, 0x0C0D0E0F);
+        let b = u32x4::new(0x00102030, 0x40506070, 0x8090A0B0, 0xC0D0E0F0);
+        let e = u32x4::new(0x00112233, 0x44556677, 0x8899AABB, 0xCCDDEEFF);
         let r: u32x4 = transmute(vorrq_u32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u64() {
-        let a = u64x1::new(20);
-        let b = u64x1::new(21);
-        let e = u64x1::new(21);
+        let a = u64x1::new(0x0001020304050607);
+        let b = u64x1::new(0x0010203040506070);
+        let e = u64x1::new(0x0011223344556677);
         let r: u64x1 = transmute(vorr_u64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vorrq_s64() {
-        let a = u64x2::new(20, 20);
-        let b = u64x2::new(21, 21);
-        let e = u64x2::new(21, 21);
+    unsafe fn test_vorrq_u64() {
+        let a = u64x2::new(0x0001020304050607, 0x08090A0B0C0D0E0F);
+        let b = u64x2::new(0x0010203040506070, 0x8090A0B0C0D0E0F0);
+        let e = u64x2::new(0x0011223344556677, 0x8899AABBCCDDEEFF);
         let r: u64x2 = transmute(vorrq_u64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
