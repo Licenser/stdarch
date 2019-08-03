@@ -913,6 +913,95 @@ pub unsafe fn vcltq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
     simd_lt(a, b)
 }
 
+
+macro_rules! arm_simd_cge {
+    ($name:ident, $type:ty) => {
+        /// Compare signed Greater than equals (vector)
+        arm_simd_2!($name, $type, simd_ge, cmge, cmge);
+    };
+}
+
+macro_rules! arm_simd_cgeu {
+    ($name:ident, $type:ty) => {
+        /// Compare Greater than equals (vector)
+        arm_simd_2!($name, $type, simd_ge, cmhs, cmhs);
+    };
+}
+arm_simd_cge!(vcge_s8, int8x8_t);
+arm_simd_cge!(vcgeq_s8, int8x16_t);
+arm_simd_cge!(vcge_s16, int16x4_t);
+arm_simd_cge!(vcgeq_s16, int16x8_t);
+arm_simd_cge!(vcge_s32, int32x2_t);
+arm_simd_cge!(vcgeq_s32, int32x4_t);
+arm_simd_cgeu!(vcge_u8, uint8x8_t);
+arm_simd_cgeu!(vcgeq_u8, uint8x16_t);
+arm_simd_cgeu!(vcge_u16, uint16x4_t);
+arm_simd_cgeu!(vcgeq_u16, uint16x8_t);
+arm_simd_cgeu!(vcge_u32, uint32x2_t);
+arm_simd_cgeu!(vcgeq_u32, uint32x4_t);
+
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
+pub unsafe fn vcge_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t  {
+        simd_ge(a, b)
+}
+
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
+pub unsafe fn vcgeq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
+    simd_ge(a, b)
+}
+
+macro_rules! arm_simd_cle {
+    ($name:ident, $type:ty) => {
+        /// Compare signed Lesser than equals (vector)
+        arm_simd_2!($name, $type, simd_le, cmge, cmge);
+    };
+}
+
+macro_rules! arm_simd_cleu {
+    ($name:ident, $type:ty) => {
+        /// Compare Lesser than equals (vector)
+        arm_simd_2!($name, $type, simd_le, cmhs, cmhs);
+    };
+}
+arm_simd_cle!(vcle_s8, int8x8_t);
+arm_simd_cle!(vcleq_s8, int8x16_t);
+arm_simd_cle!(vcle_s16, int16x4_t);
+arm_simd_cle!(vcleq_s16, int16x8_t);
+arm_simd_cle!(vcle_s32, int32x2_t);
+arm_simd_cle!(vcleq_s32, int32x4_t);
+arm_simd_cleu!(vcle_u8, uint8x8_t);
+arm_simd_cleu!(vcleq_u8, uint8x16_t);
+arm_simd_cleu!(vcle_u16, uint16x4_t);
+arm_simd_cleu!(vcleq_u16, uint16x8_t);
+arm_simd_cleu!(vcle_u32, uint32x2_t);
+arm_simd_cleu!(vcleq_u32, uint32x4_t);
+
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
+pub unsafe fn vcle_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t  {
+        simd_le(a, b)
+}
+
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
+pub unsafe fn vcleq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
+    simd_le(a, b)
+}
+
 /// Folding minimum of adjacent pairs
 #[inline]
 #[target_feature(enable = "neon")]
@@ -2397,7 +2486,6 @@ mod tests {
         assert_eq!(r, c);
     }
 
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_f32() {
         let a = f32x2::new(0.1, 2.3);
@@ -2415,6 +2503,261 @@ mod tests {
         let r: u32x4 = transmute(vcltq_f32(transmute(a), transmute(b)));
         assert_eq!(r, c);
     }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_s8() {
+        let a = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let b = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let c = i8x8::new(-1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i8x8 = transmute(vcge_s8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_s8() {
+        let a = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let b = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        let c = i8x16::new(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i8x16 = transmute(vcgeq_s8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_s16() {
+        let a = i16x4::new(1, 2, 3, 4);
+        let b = i16x4::new(0, 1, 2, 3);
+        let c = i16x4::new(-1, -1, -1, -1);
+        let r: i16x4 = transmute(vcge_s16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_s16() {
+        let a = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let b = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let c = i16x8::new(-1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i16x8 = transmute(vcgeq_s16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_s32() {
+        let a = i32x2::new(1, 2);
+        let b = i32x2::new(0, 1);
+        let c = i32x2::new(-1, -1);
+        let r: i32x2 = transmute(vcge_s32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_s32() {
+        let a = i32x4::new(1, 2, 3, 4);
+        let b = i32x4::new(0, 1, 2, 3);
+        let c = i32x4::new(-1, -1, -1, -1);
+        let r: i32x4 = transmute(vcgeq_s32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_u8() {
+        let a = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let b = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let c = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        let r: u8x8 = transmute(vcge_u8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_u8() {
+        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let b = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        let c = u8x16::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        let r: u8x16 = transmute(vcgeq_u8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_u16() {
+        let a = u16x4::new(1, 2, 3, 4);
+        let b = u16x4::new(0, 1, 2, 3);
+        let c = u16x4::new(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF);
+        let r: u16x4 = transmute(vcge_u16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_u16() {
+        let a = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let b = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let c = u16x8::new(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF);
+        let r: u16x8 = transmute(vcgeq_u16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_u32() {
+        let a = u32x2::new(1, 2);
+        let b = u32x2::new(0, 1);
+        let c = u32x2::new(0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x2 = transmute(vcge_u32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_u32() {
+        let a = u32x4::new(1, 2, 3, 4);
+        let b = u32x4::new(0, 1, 2, 3);
+        let c = u32x4::new(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x4 = transmute(vcgeq_u32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_f32() {
+        let a = f32x2::new(1.2, 3.4);
+        let b = f32x2::new(0.1, 2.3);
+        let c = u32x2::new(0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x2 = transmute(vcge_f32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_f32() {
+        let a = f32x4::new(1.2, 3.4, 5.6, 7.8);
+        let b = f32x4::new(0.1, 2.3, 4.5, 6.7);
+        let c = u32x4::new(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x4 = transmute(vcgeq_f32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_s8() {
+        let a = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let b = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let c = i8x8::new(-1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i8x8 = transmute(vcle_s8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_s8() {
+        let a = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        let b = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let c = i8x16::new(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i8x16 = transmute(vcleq_s8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_s16() {
+        let a = i16x4::new(0, 1, 2, 3);
+        let b = i16x4::new(1, 2, 3, 4);
+        let c = i16x4::new(-1, -1, -1, -1);
+        let r: i16x4 = transmute(vcle_s16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_s16() {
+        let a = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let b = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let c = i16x8::new(-1, -1, -1, -1, -1, -1, -1, -1);
+        let r: i16x8 = transmute(vcleq_s16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_s32() {
+        let a = i32x2::new(0, 1);
+        let b = i32x2::new(1, 2);
+        let c = i32x2::new(-1, -1);
+        let r: i32x2 = transmute(vcle_s32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_s32() {
+        let a = i32x4::new(0, 1, 2, 3);
+        let b = i32x4::new(1, 2, 3, 4);
+        let c = i32x4::new(-1, -1, -1, -1);
+        let r: i32x4 = transmute(vcleq_s32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_u8() {
+        let a = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let b = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let c = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        let r: u8x8 = transmute(vcle_u8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_u8() {
+        let a = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        let b = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let c = u8x16::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+        let r: u8x16 = transmute(vcleq_u8(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_u16() {
+        let a = u16x4::new(0, 1, 2, 3);
+        let b = u16x4::new(1, 2, 3, 4);
+        let c = u16x4::new(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF);
+        let r: u16x4 = transmute(vcle_u16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_u16() {
+        let a = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
+        let b = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let c = u16x8::new(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF);
+        let r: u16x8 = transmute(vcleq_u16(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_u32() {
+        let a = u32x2::new(0, 1);
+        let b = u32x2::new(1, 2);
+        let c = u32x2::new(0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x2 = transmute(vcle_u32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_u32() {
+        let a = u32x4::new(0, 1, 2, 3);
+        let b = u32x4::new(1, 2, 3, 4);
+        let c = u32x4::new(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x4 = transmute(vcleq_u32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_f32() {
+        let a = f32x2::new(0.1, 2.3);
+        let b = f32x2::new(1.2, 3.4);
+        let c = u32x2::new(0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x2 = transmute(vcle_f32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_f32() {
+        let a = f32x4::new(0.1, 2.3, 4.5, 6.7);
+        let b = f32x4::new(1.2, 3.4, 5.6, 7.8);
+        let c = u32x4::new(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        let r: u32x4 = transmute(vcleq_f32(transmute(a), transmute(b)));
+        assert_eq!(r, c);
+    }
+
     #[simd_test(enable = "neon")]
     unsafe fn test_vmovn_s16() {
         let a = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
