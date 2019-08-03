@@ -782,6 +782,60 @@ arm_simd_eor!(veorq_u32, uint32x4_t);
 arm_simd_eor!(veor_u64, uint64x1_t);
 arm_simd_eor!(veorq_u64, uint64x2_t);
 
+macro_rules! arm_simd_ceq {
+    ($name:ident, $type:ty) => {
+        /// Vector bitwise exclusive or (vector).
+        arm_simd_2!($name, $type, simd_eq, cmeq, cmeq);
+    };
+}
+
+arm_simd_ceq!(vceq_s8, int8x8_t);
+arm_simd_ceq!(vceqq_s8, int8x16_t);
+arm_simd_ceq!(vceq_s16, int16x4_t);
+arm_simd_ceq!(vceqq_s16, int16x8_t);
+arm_simd_ceq!(vceq_s32, int32x2_t);
+arm_simd_ceq!(vceqq_s32, int32x4_t);
+arm_simd_ceq!(vceq_u8, uint8x8_t);
+arm_simd_ceq!(vceqq_u8, uint8x16_t);
+arm_simd_ceq!(vceq_u16, uint16x4_t);
+arm_simd_ceq!(vceqq_u16, uint16x8_t);
+arm_simd_ceq!(vceq_u32, uint32x2_t);
+arm_simd_ceq!(vceqq_u32, uint32x4_t);
+
+
+// arm_simd_ceq!(vceq_f32, float32x2_t); // we have a different return type
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmeq))]
+pub unsafe fn vceq_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t  {
+        simd_eq(a, b)
+}
+
+// arm_simd_ceq!(vceqq_f32, float32x4_t); we have a different return type
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmeq))]
+pub unsafe fn vceqq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
+    simd_eq(a, b)
+}
+
+arm_simd_ceq!(vceq_p8, poly8x8_t);
+arm_simd_ceq!(vceqq_p8, poly8x16_t);
+
+// TODO: 
+// uint64x1_t vceq_s64 (int64x1_t a, int64x1_t b)Compare bitwise equal
+// uint64x2_t vceqq_s64 (int64x2_t a, int64x2_t b)Compare bitwise equal
+// uint64x1_t vceq_u64 (uint64x1_t a, uint64x1_t b)Compare bitwise equal
+// uint64x2_t vceqq_u64 (uint64x2_t a, uint64x2_t b)Compare bitwise equal
+// uint64x1_t vceq_p64 (poly64x1_t a, poly64x1_t b)Compare bitwise equal
+// uint64x2_t vceqq_p64 (poly64x2_t a, poly64x2_t b)Compare bitwise equal
+// ui nt64x1_t vceq_f64 (float64x1_t a, float64x1_t b)Floating-point compare equal
+// uint64x2_t vceqq_f64 (float64x2_t a, float64x2_t b)Floating-point compare equal
+
 /// Folding minimum of adjacent pairs
 #[inline]
 #[target_feature(enable = "neon")]
