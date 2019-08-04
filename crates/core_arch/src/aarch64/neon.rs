@@ -20,6 +20,8 @@ types! {
     pub struct poly64x1_t(i64); // FIXME: check this!
     /// ARM-specific 64-bit wide vector of two packed `p64`.
     pub struct poly64x2_t(i64, i64); // FIXME: check this!
+    /// ARM-specific 128-bit wide vector of one packed `p64`.
+    pub struct poly128_t(i128); // FIXME: check this!
 }
 
 /// ARM-specific type containing two `int8x16_t` vectors.
@@ -62,8 +64,14 @@ pub struct poly8x16x4_t(
     pub poly8x16_t,
 );
 
+pub type poly64_t = i64;
+
 #[allow(improper_ctypes)]
 extern "C" {
+    #[link_name = "llvm.aarch64.neon.pmull64"]
+    fn vmull_p64_(a: i64, b: i64) -> int8x16_t;
+
+
     #[link_name = "llvm.aarch64.neon.smaxv.i8.v8i8"]
     fn vmaxv_s8_(a: int8x8_t) -> i8;
     #[link_name = "llvm.aarch64.neon.smaxv.i8.6i8"]
@@ -230,6 +238,15 @@ extern "C" {
         b3: int8x16_t,
         c: uint8x16_t,
     ) -> int8x16_t;
+}
+
+
+//poly128_t vmull_p64 (poly64_t a, poly64_t b)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(pmull))]
+pub unsafe fn vmull_p64(a: poly64_t, b: poly64_t) -> poly128_t {
+    transmute(vmull_p64_(transmute(a), transmute(b)))
 }
 
 macro_rules! aarch64_simd_2 {
@@ -1725,6 +1742,34 @@ mod tests {
     use std::mem::transmute;
     use stdarch_test::simd_test;
 
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vmull_p64() {
+        // FIXME: I've a hard time writing a test for this as the documentation
+        // from arm is a bit thin as to waht exactly it does
+        let a: i64 = 8;
+        let b: i64 = 7;
+        let e: i128 = 56;
+        let r: i128 = transmute(vmull_p64(a, b));
+        assert_eq!(r, e);
+
+        let a: i64 = 5;
+        let b: i64 = 5;
+        let e: i128 = 25;
+        let r: i128 = transmute(vmull_p64(a, b));
+        assert_eq!(r, e);
+
+        let a: i64 = 6;
+        let b: i64 = 6;
+        let e: i128 = 36;
+        let r: i128 = transmute(vmull_p64(a, b));
+        assert_eq!(r, e);
+
+        let a: i64 = 7;
+        let b: i64 = 6;
+        let e: i128 = 42;
+        let r: i128 = transmute(vmull_p64(a, b));
+        assert_eq!(r, e);
+    }
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_f64() {
         let a = 1.;
