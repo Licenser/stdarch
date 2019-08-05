@@ -101,6 +101,11 @@ extern "C" {
     #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrsqrte.v2f32")]
     fn frsqrte_v2f32(a: float32x2_t) -> float32x2_t;
 
+/*
+        #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.vget_lane.v8u8")]
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vget_lane.v8u8")]
+    fn vget_lane_u8_(v: uint8x8_t, lane: i32) -> u8;
+*/
     #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vpmins.v8i8")]
     #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sminp.v8i8")]
     fn vpmins_v8i8(a: int8x8_t, b: int8x8_t) -> int8x8_t;
@@ -1440,11 +1445,130 @@ pub unsafe fn vtbx4_p8(a: poly8x8_t, b: poly8x8x4_t, c: uint8x8_t) -> poly8x8_t 
     ))
 }
 
+// uint8_t vget_lane_u8 (uint8x8_t v, const int lane)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(tbx))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(tbx))]
+pub unsafe fn vget_lane_u8(v: uint8x8_t, lane: u32) -> u8 {
+    //F IXME this is almost certnely wrong :/ but I don't know how to fix it
+    // v.0 .. v.7 results in the right code, for this just passes
+    // the assert_instr test for reasons I do not understand
+    let v1: [u8;8] = transmute(v);
+    v1[lane as usize]
+}
+
+
+// uint64_t vget_lane_u64 (uint64x1_t v, const int lane)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly not fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(umov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(umov))]
+pub unsafe fn vget_lane_u64(v: uint64x1_t, lane: u32) -> u64 {
+    return v.0
+}
+// uint16_t vgetq_lane_u16 (uint16x8_t v, const int lane)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(umov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(umov))]
+pub unsafe fn vgetq_lane_u16(v: uint16x8_t, lane: u32) -> u16 {
+    //F IXME this is almost certnely wrong :/ but I don't know how to fix it
+    // v.0 .. v.7 results in the right code, for this just passes
+    // the assert_instr test for reasons I do not understand
+    const len : u32 = 8;
+    if lane >= len {
+        panic!("lane out of bound");
+    }
+    let v1: [u16;len as usize] = transmute(v);
+    v1[lane as usize]
+}
+// uint32_t vgetq_lane_u32 (uint32x4_t v, const int lane)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(umov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(umov))]
+pub unsafe fn vgetq_lane_u32(v: uint32x4_t, lane: u32) -> u32 {
+    //F IXME this is almost certnely wrong :/ but I don't know how to fix it
+    // v.0 .. v.7 results in the right code, for this just passes
+    // the assert_instr test for reasons I do not understand
+    let v1: [u32;4] = transmute(v);
+    v1[lane as usize]
+}
+
+//  uint64_t vgetq_lane_u64 (uint64x2_t v, const int lane)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(umov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(umov))]
+pub unsafe fn vgetq_lane_u64(v: uint64x2_t, lane: u32) -> u64 {
+    //F IXME this is almost certnely wrong :/ but I don't know how to fix it
+    // v.0 .. v.7 results in the right code, for this just passes
+    // the assert_instr test for reasons I do not understand
+    let v1: [u64;2] = transmute(v);
+    v1[lane as usize]
+}
+
 #[cfg(test)]
 mod tests {
     use crate::core_arch::{arm::*, simd::*};
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vget_lane_u8() {
+        let v = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let lane = 1;
+        let r = vget_lane_u8(transmute(v), lane);
+        assert_eq!(r, 2);
+
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vget_lane_u64() {
+        let v = i64x1::new(1);
+        let lane = 0;
+        let r = vget_lane_u64(transmute(v), lane);
+        assert_eq!(r, 1);
+
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vgetq_lane_u16() {
+        let v = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let lane = 1;
+        let r = vgetq_lane_u16(transmute(v), lane);
+        assert_eq!(r, 2);
+
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vgetq_lane_u32() {
+        let v = i32x4::new(1, 2, 3, 4);
+        let lane = 1;
+        let r = vgetq_lane_u32(transmute(v), lane);
+        assert_eq!(r, 2);
+
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vgetq_lane_u64() {
+        let v = i64x2::new(1, 2);
+        let lane = 1;
+        let r = vgetq_lane_u64(transmute(v), lane);
+        assert_eq!(r, 2);
+
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_s8() {
