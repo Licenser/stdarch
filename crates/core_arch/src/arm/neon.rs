@@ -97,8 +97,8 @@ pub struct poly8x8x4_t(pub poly8x8_t, pub poly8x8_t, pub poly8x8_t, pub poly8x8_
 
 #[allow(improper_ctypes)]
 extern "C" {
-    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.frsqrte.v2f32")]
     #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrsqrte.v2f32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.frsqrte.v2f32")]
     fn frsqrte_v2f32(a: float32x2_t) -> float32x2_t;
 
 /*
@@ -1642,7 +1642,7 @@ mod tests {
     } 
 
     #[simd_test(enable = "neon")]
-    unsafe fn vmovq_n_u8() {
+    unsafe fn test_vmovq_n_u8() {
         let v: u8 = 42;
         let e = u8x16::new(
             42, 42, 42, 42,

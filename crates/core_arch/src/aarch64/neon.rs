@@ -71,6 +71,8 @@ extern "C" {
     #[link_name = "llvm.aarch64.neon.pmull64"]
     fn vmull_p64_(a: i64, b: i64) -> int8x16_t;
 
+    #[link_name = "llvm.aarch64.neon.addp.v16i8"]
+    fn vpaddq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
 
     #[link_name = "llvm.aarch64.neon.smaxv.i8.v8i8"]
     fn vmaxv_s8_(a: int8x8_t) -> i8;
@@ -240,6 +242,14 @@ extern "C" {
     ) -> int8x16_t;
 }
 
+
+
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(addp))]
+pub unsafe fn vpaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
+    vpaddq_u8_(a, b)
+}
 
 //poly128_t vmull_p64 (poly64_t a, poly64_t b)
 #[inline]
@@ -1742,6 +1752,23 @@ mod tests {
     use std::mem::transmute;
     use stdarch_test::simd_test;
 
+
+    unsafe fn test_vpaddq_u8() {
+
+        let a = i8x16::new(
+             0,  1,  2, 3,
+             4,  5,  6, 7,
+             8,  9, 10, 11,
+            12, 13, 14, 15);
+        let b = i8x16::new(
+            17, 18, 19, 20,
+            20, 21, 22, 23,
+            24, 25, 26, 27,
+            29, 29, 30, 31);
+        let e: i8x16= transmute(vpaddq_u8(transmute(a), transmute(b)));
+        assert_eq!(a, e);
+        assert!(false);
+    }
     #[simd_test(enable = "neon")]
     unsafe fn test_vmull_p64() {
         // FIXME: I've a hard time writing a test for this as the documentation
