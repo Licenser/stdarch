@@ -1507,6 +1507,17 @@ pub unsafe fn vdupq_n_u8(value: u8) -> uint8x16_t {
 }
 
 
+// uint8x16_t vmovq_n_u8 (uint8_t value)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// Those should devinetly fail!
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(dup))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(dup))]
+pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
+    vdupq_n_u8(value)
+}
+
 
 // int8x16_t vld1q_s8 (int8_t const * ptr)
 #[inline]
@@ -1617,7 +1628,7 @@ mod tests {
         assert_eq!(r, e);
     }
 
-     #[simd_test(enable = "neon")]
+    #[simd_test(enable = "neon")]
     unsafe fn test_vdupq_n_u8() {
         let v: u8 = 42;
         let e = u8x16::new(
@@ -1628,7 +1639,21 @@ mod tests {
             );
         let r: u8x16 = transmute(vdupq_n_u8(v));
         assert_eq!(r, e);
+    } 
+
+    #[simd_test(enable = "neon")]
+    unsafe fn vmovq_n_u8() {
+        let v: u8 = 42;
+        let e = u8x16::new(
+            42, 42, 42, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42
+            );
+        let r: u8x16 = transmute(vmovq_n_u8(v));
+        assert_eq!(r, e);
     }   
+    
     #[simd_test(enable = "neon")]
     unsafe fn test_vget_lane_u8() {
         let v = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
