@@ -1,6 +1,6 @@
 //! ARMv7 NEON intrinsics
 
-use crate::{core_arch::simd_llvm::*, core_arch::simd::*, mem::transmute, hint::unreachable_unchecked};
+use crate::{ptr, core_arch::simd_llvm::*, core_arch::simd::*, mem::transmute, hint::unreachable_unchecked};
 #[cfg(test)]
 use stdarch_test::assert_instr;
 
@@ -1507,15 +1507,23 @@ pub unsafe fn vdupq_n_u8(value: u8) -> uint8x16_t {
 }
 
 
+
 // int8x16_t vld1q_s8 (int8_t const * ptr)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ld1))]
-pub unsafe fn vld1q_s8(ptr: *const i8) -> int8x16_t {
-    // FIXME
-    let v = *(ptr as *const int8x16_t);
-    v
+pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
+    *(addr as *const int8x16_t)
+}
+
+// int8x16_t vld1q_s8 (int8_t const * ptr)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ld1))]
+pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
+    *(addr as *const uint8x16_t)
 }
 
 macro_rules! arm_reinterpret {
@@ -1555,6 +1563,33 @@ mod tests {
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
 
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vld1q_s8() {
+        let a = i8x16::new(
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+            );
+        let e = a;
+        let r: i8x16 = transmute(vld1q_s8(transmute(&a)));
+        assert_eq!(r, e);
+    }
+
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vld1q_u8() {
+        let a = u8x16::new(
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+            );
+        let e = a;
+        let r: u8x16 = transmute(vld1q_u8(transmute(&a)));
+        assert_eq!(r, e);
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vreinterpret_u64_u32() {
