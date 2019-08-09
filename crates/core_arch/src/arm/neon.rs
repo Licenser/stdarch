@@ -1548,13 +1548,22 @@ pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
     *(addr as *const int8x16_t)
 }
 
-// int8x16_t vld1q_s8 (int8_t const * ptr)
+/// int8x16_t vld1q_s8 (int8_t const * ptr)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ld1))]
 pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
     *(addr as *const uint8x16_t)
+}
+
+/// void vst1q_u8 (uint8_t * ptr, uint8x16_t val)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(st1))]
+pub unsafe fn vst1q_u8(addr: *mut u8, val: uint8x16_t) {
+    ptr::write(addr as *mut uint8x16_t, val);
 }
 
 macro_rules! arm_reinterpret {
@@ -1764,6 +1773,15 @@ mod tests {
         let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
         let e = a;
         let r: u8x16 = transmute(vld1q_u8(transmute(&a)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vst1q_u8() {
+        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let e = a;
+        let mut r = u8x16::new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        vst1q_u8(transmute(&mut r), transmute(a));
         assert_eq!(r, e);
     }
 
