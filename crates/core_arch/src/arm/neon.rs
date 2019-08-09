@@ -1623,7 +1623,34 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
     }
 }
 
+//uint8x16_t vshrq_n_u8 (uint8x16_t a, const int n)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ushr))]
+pub unsafe fn vshrq_n_u8(a: uint8x16_t,  n: i32) -> uint8x16_t {
+    uint8x16_t(
+        a.0  >> n, a.1  >> n, a.2  >> n, a.3  >> n,
+        a.4  >> n, a.5  >> n, a.6  >> n, a.7  >> n,
+        a.8  >> n, a.9  >> n, a.10 >> n, a.11 >> n,
+        a.12 >> n, a.13 >> n, a.14 >> n, a.15 >> n
+        )
+}
 
+
+//uint8x16_t vshlq_n_u8 (uint8x16_t a, const int n)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ushl))]
+pub unsafe fn vshlq_n_u8(a: uint8x16_t,  n: i32) -> uint8x16_t {
+    uint8x16_t(
+        a.0  << n, a.1  << n, a.2  << n, a.3  << n,
+        a.4  << n, a.5  << n, a.6  << n, a.7  << n,
+        a.8  << n, a.9  << n, a.10 << n, a.11 << n,
+        a.12 << n, a.13 << n, a.14 << n, a.15 << n
+        )
+}
 
 #[cfg(test)]
 mod tests {
@@ -1631,8 +1658,35 @@ mod tests {
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
 
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vshrq_n_u8() {
+        let a = u8x16::new(
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+            );
+        let e = u8x16::new(
+            0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4
+            );
+        let r: u8x16 = transmute(vshrq_n_u8(transmute(a), 2));
+        assert_eq!(r, e);
+    }
 
-//uint8x16_t vqsubq_u8 (uint8x16_t a, uint8x16_t b)
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vshlq_n_u8() {
+        let a = u8x16::new(
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+            );
+        let e = u8x16::new(
+            4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64
+            );
+        let r: u8x16 = transmute(vshlq_n_u8(transmute(a), 2));
+        assert_eq!(r, e);
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsubq_u8() {
@@ -1657,6 +1711,7 @@ mod tests {
         let r: u8x16 = transmute(vqsubq_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
+
     #[simd_test(enable = "neon")]
     unsafe fn test_vqmovn_u64() {
         let a = u64x2::new(1, 2);
@@ -3106,7 +3161,6 @@ mod tests {
         let r: u32x4 = transmute(vcleq_u32(transmute(a), transmute(b)));
         assert_eq!(r, c);
     }
-
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_f32() {
