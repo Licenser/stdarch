@@ -242,8 +242,6 @@ extern "C" {
     ) -> int8x16_t;
 }
 
-
-
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(test, assert_instr(addp))]
@@ -1752,20 +1750,12 @@ mod tests {
     use std::mem::transmute;
     use stdarch_test::simd_test;
 
-
     unsafe fn test_vpaddq_u8() {
-
-        let a = i8x16::new(
-             0,  1,  2, 3,
-             4,  5,  6, 7,
-             8,  9, 10, 11,
-            12, 13, 14, 15);
+        let a = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
         let b = i8x16::new(
-            17, 18, 19, 20,
-            20, 21, 22, 23,
-            24, 25, 26, 27,
-            29, 29, 30, 31);
-        let e: i8x16= transmute(vpaddq_u8(transmute(a), transmute(b)));
+            17, 18, 19, 20, 20, 21, 22, 23, 24, 25, 26, 27, 29, 29, 30, 31,
+        );
+        let e: i8x16 = transmute(vpaddq_u8(transmute(a), transmute(b)));
         assert_eq!(a, e);
         assert!(false);
     }
@@ -1779,13 +1769,12 @@ mod tests {
         let r: i128 = transmute(vmull_p64(a, b));
         assert_eq!(r, e);
 
-
         /*
         let a: i64 = 5;
         let b: i64 = 5;
         let e: i128 = 25;
         let r: i128 = transmute(vmull_p64(a, b));
-        
+
         assert_eq!(r, e);
         let a: i64 = 6;
         let b: i64 = 6;
@@ -1946,7 +1935,7 @@ mod tests {
         assert_eq!(r, c);
     }
 
-        #[simd_test(enable = "neon")]
+    #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s64() {
         let a = i64x1::new(1);
         let b = i64x1::new(0);
