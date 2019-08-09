@@ -101,6 +101,11 @@ extern "C" {
     #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.frsqrte.v2f32")]
     fn frsqrte_v2f32(a: float32x2_t) -> float32x2_t;
 
+    //uint32x2_t vqmovn_u64 (uint64x2_t a)
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqmovnu.v2i32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqxtn.v2i32")]
+    fn vqmovn_u64_(a: uint64x2_t) -> uint32x2_t;
+
 /*
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.vget_lane.v8u8")]
     #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vget_lane.v8u8")]
@@ -180,6 +185,17 @@ extern "C" {
     ) -> int8x8_t;
 }
 
+
+/// Unsigned saturating extract narrow.
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vqmovnu))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uqxtn))]
+pub unsafe fn vqmovn_u64(a: uint64x2_t) -> uint32x2_t {
+    vqmovn_u64_(a)
+}
+    
 /// Vector add.
 #[inline]
 #[target_feature(enable = "neon")]
@@ -1576,23 +1592,23 @@ arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
 #[cfg_attr(test, assert_instr(ext))]
 pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
     match n {
-        0 => a,
-        1 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, a.14, b.15),
-        2 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, b.14, b.15),
-        3 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, b.13, b.14, b.15),
-        4 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, b.12, b.13, b.14, b.15),
-        5 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, b.11, b.12, b.13, b.14, b.15),
-        6 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        7 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        0 => b,
+        1 => int8x16_t(a.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        2 => int8x16_t(a.0, a.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        3 => int8x16_t(a.0, a.1, a.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        4 => int8x16_t(a.0, a.1, a.2, a.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        5 => int8x16_t(a.0, a.1, a.2, a.3, a.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        6 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        7 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
         8 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        9 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        10 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        11 => int8x16_t(a.0, a.1, a.2, a.3, a.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        12 => int8x16_t(a.0, a.1, a.2, a.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        13 => int8x16_t(a.0, a.1, a.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        14 => int8x16_t(a.0, a.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        15 => int8x16_t(a.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
-        16 => b,
+        9 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        10 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, b.10, b.11, b.12, b.13, b.14, b.15),
+        11 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, b.11, b.12, b.13, b.14, b.15),
+        12 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, b.12, b.13, b.14, b.15),
+        13 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, b.13, b.14, b.15),
+        14 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, b.14, b.15),
+        15 => int8x16_t(a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, a.14, b.15),
+        16 => a,
         _ => unreachable_unchecked()
     }
 }
@@ -1605,6 +1621,38 @@ mod tests {
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
 
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqmovn_u64() {
+        let a = u64x2::new(1, 2);
+        let e = u32x2::new(1, 2);
+        let r: u32x2 = transmute(vqmovn_u64(transmute(a)));
+        assert_eq!(r, e);
+
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vextq_s8() {
+        let a = i8x16::new(
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16
+            );
+        let b = i8x16::new(
+            42, 42, 42, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42
+            );
+        let e = i8x16::new(
+            1, 2, 3, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42,
+            42, 42, 42, 42
+            );
+        let r: i8x16 = transmute(vextq_s8(transmute(a), transmute(b), 3));
+        assert_eq!(r, e);
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vld1q_s8() {
