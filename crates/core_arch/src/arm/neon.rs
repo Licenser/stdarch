@@ -1477,7 +1477,7 @@ macro_rules! arm_vget_lane {
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
         #[cfg_attr(test, assert_instr(umov))]
         pub unsafe fn $name(v: $from, lane: i32) -> $to {
-            if lane > $lanes {
+            if lane < 0 || lane > $lanes {
                 unreachable_unchecked()
             }
             simd_extract(v, lane as u32)
