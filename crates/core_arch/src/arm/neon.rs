@@ -1545,16 +1545,16 @@ pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ld1))]
 pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
-    *(addr as *const int8x16_t)
+    ptr::read(addr as *const int8x16_t)
 }
 
-/// int8x16_t vld1q_s8 (int8_t const * ptr)
+/// int8x16_t vld1q_u8 (uint8_t const * ptr)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ld1))]
 pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
-    *(addr as *const uint8x16_t)
+    ptr::read(addr as *const uint8x16_t)
 }
 
 /// void vst1q_u8 (uint8_t * ptr, uint8x16_t val)
@@ -1602,6 +1602,9 @@ arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ext))]
 pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
+    if n < 0 || n > 16 {
+        unreachable_unchecked();
+    };
     match n {
         0 => b,
         1 => int8x16_t(
@@ -1660,6 +1663,9 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ushr))]
 pub unsafe fn vshrq_n_u8(a: uint8x16_t, n: i32) -> uint8x16_t {
+    if n < 0 || n > 7 {
+        unreachable_unchecked();
+    };
     uint8x16_t(
         a.0 >> n,
         a.1 >> n,
@@ -1686,6 +1692,9 @@ pub unsafe fn vshrq_n_u8(a: uint8x16_t, n: i32) -> uint8x16_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ushl))]
 pub unsafe fn vshlq_n_u8(a: uint8x16_t, n: i32) -> uint8x16_t {
+    if n < 0 || n > 7 {
+        unreachable_unchecked();
+    };
     uint8x16_t(
         a.0 << n,
         a.1 << n,
