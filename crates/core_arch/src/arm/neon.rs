@@ -731,12 +731,15 @@ pub unsafe fn vmvnq_p8(a: poly8x16_t) -> poly8x16_t {
 
 macro_rules! arm_simd_2 {
     ($name:ident, $type:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident) => {
+        arm_simd_2!($name, $type, $type, $simd_fn, $intrarm, $intraarch);
+    };
+    ($name:ident, $type:ty, $res:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident) => {
         #[inline]
         #[target_feature(enable = "neon")]
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
         #[cfg_attr(all(test, target_arch = "arm"), assert_instr($intrarm))]
         #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr($intraarch))]
-        pub unsafe fn $name(a: $type, b: $type) -> $type {
+        pub unsafe fn $name(a: $type, b: $type) -> $res {
             $simd_fn(a, b)
         }
     };
@@ -814,52 +817,33 @@ arm_simd_eor!(veor_u64, uint64x1_t);
 arm_simd_eor!(veorq_u64, uint64x2_t);
 
 macro_rules! arm_simd_ceq {
-    ($name:ident, $type:ty) => {
+    ($name:ident, $type:ty, $res:ty) => {
         /// Compare bitwise Equal (vector)
-        arm_simd_2!($name, $type, simd_eq, cmeq, cmeq);
+        arm_simd_2!($name, $type, $res, simd_eq, cmeq, cmeq);
     };
 }
 
-arm_simd_ceq!(vceq_s8, int8x8_t);
-arm_simd_ceq!(vceqq_s8, int8x16_t);
-arm_simd_ceq!(vceq_s16, int16x4_t);
-arm_simd_ceq!(vceqq_s16, int16x8_t);
-arm_simd_ceq!(vceq_s32, int32x2_t);
-arm_simd_ceq!(vceqq_s32, int32x4_t);
-arm_simd_ceq!(vceq_u8, uint8x8_t);
-arm_simd_ceq!(vceqq_u8, uint8x16_t);
-arm_simd_ceq!(vceq_u16, uint16x4_t);
-arm_simd_ceq!(vceqq_u16, uint16x8_t);
-arm_simd_ceq!(vceq_u32, uint32x2_t);
-arm_simd_ceq!(vceqq_u32, uint32x4_t);
-
-// arm_simd_ceq!(vceq_f32, float32x2_t); // we have a different return type
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmeq))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmeq))]
-pub unsafe fn vceq_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t {
-    simd_eq(a, b)
-}
-
-// arm_simd_ceq!(vceqq_f32, float32x4_t); we have a different return type
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmeq))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmeq))]
-pub unsafe fn vceqq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
-    simd_eq(a, b)
-}
-
-arm_simd_ceq!(vceq_p8, poly8x8_t);
-arm_simd_ceq!(vceqq_p8, poly8x16_t);
+arm_simd_ceq!(vceq_s8, int8x8_t, uint8x8_t);
+arm_simd_ceq!(vceqq_s8, int8x16_t, uint8x16_t);
+arm_simd_ceq!(vceq_s16, int16x4_t, uint16x4_t);
+arm_simd_ceq!(vceqq_s16, int16x8_t, uint16x8_t);
+arm_simd_ceq!(vceq_s32, int32x2_t, uint32x2_t);
+arm_simd_ceq!(vceqq_s32, int32x4_t, uint32x4_t);
+arm_simd_ceq!(vceq_u8, uint8x8_t, uint8x8_t);
+arm_simd_ceq!(vceqq_u8, uint8x16_t, uint8x16_t);
+arm_simd_ceq!(vceq_u16, uint16x4_t, uint16x4_t);
+arm_simd_ceq!(vceqq_u16, uint16x8_t, uint16x8_t);
+arm_simd_ceq!(vceq_u32, uint32x2_t, uint32x2_t);
+arm_simd_ceq!(vceqq_u32, uint32x4_t, uint32x4_t);
+arm_simd_2!(vceq_f32, float32x2_t, uint32x2_t, simd_eq, fcmeq, fcmeq);
+arm_simd_2!(vceqq_f32, float32x4_t, uint32x4_t, simd_eq, fcmeq, fcmeq);
+arm_simd_ceq!(vceq_p8, poly8x8_t, poly8x8_t);
+arm_simd_ceq!(vceqq_p8, poly8x16_t, poly8x16_t);
 
 macro_rules! arm_simd_cgt {
-    ($name:ident, $type:ty) => {
+    ($name:ident, $type:ty, $res:ty) => {
         /// Compare signed Greater than (vector)
-        arm_simd_2!($name, $type, simd_gt, cmgt, cmgt);
+        arm_simd_2!($name, $type, $res, simd_gt, cmgt, cmgt);
     };
 }
 
@@ -869,41 +853,25 @@ macro_rules! arm_simd_cgtu {
         arm_simd_2!($name, $type, simd_gt, cmhi, cmhi);
     };
 }
-arm_simd_cgt!(vcgt_s8, int8x8_t);
-arm_simd_cgt!(vcgtq_s8, int8x16_t);
-arm_simd_cgt!(vcgt_s16, int16x4_t);
-arm_simd_cgt!(vcgtq_s16, int16x8_t);
-arm_simd_cgt!(vcgt_s32, int32x2_t);
-arm_simd_cgt!(vcgtq_s32, int32x4_t);
+arm_simd_cgt!(vcgt_s8, int8x8_t, uint8x8_t);
+arm_simd_cgt!(vcgtq_s8, int8x16_t, uint8x16_t);
+arm_simd_cgt!(vcgt_s16, int16x4_t, uint16x4_t);
+arm_simd_cgt!(vcgtq_s16, int16x8_t, uint16x8_t);
+arm_simd_cgt!(vcgt_s32, int32x2_t, uint32x2_t);
+arm_simd_cgt!(vcgtq_s32, int32x4_t, uint32x4_t);
 arm_simd_cgtu!(vcgt_u8, uint8x8_t);
 arm_simd_cgtu!(vcgtq_u8, uint8x16_t);
 arm_simd_cgtu!(vcgt_u16, uint16x4_t);
 arm_simd_cgtu!(vcgtq_u16, uint16x8_t);
 arm_simd_cgtu!(vcgt_u32, uint32x2_t);
 arm_simd_cgtu!(vcgtq_u32, uint32x4_t);
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmgt))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmgt))]
-pub unsafe fn vcgt_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t {
-    simd_gt(a, b)
-}
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmgt))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmgt))]
-pub unsafe fn vcgtq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
-    simd_gt(a, b)
-}
+arm_simd_2!(vcgt_f32, float32x2_t, uint32x2_t, simd_gt, fcmgt, fcmgt);
+arm_simd_2!(vcgtq_f32, float32x4_t, uint32x4_t, simd_gt, fcmgt, fcmgt);
 
 macro_rules! arm_simd_clt {
-    ($name:ident, $type:ty) => {
+    ($name:ident, $type:ty, $res:ty) => {
         /// Compare signed Lesser than (vector)
-        arm_simd_2!($name, $type, simd_lt, cmgt, cmgt);
+        arm_simd_2!($name, $type, $res, simd_lt, cmgt, cmgt);
     };
 }
 
@@ -913,41 +881,25 @@ macro_rules! arm_simd_cltu {
         arm_simd_2!($name, $type, simd_lt, cmhi, cmhi);
     };
 }
-arm_simd_clt!(vclt_s8, int8x8_t);
-arm_simd_clt!(vcltq_s8, int8x16_t);
-arm_simd_clt!(vclt_s16, int16x4_t);
-arm_simd_clt!(vcltq_s16, int16x8_t);
-arm_simd_clt!(vclt_s32, int32x2_t);
-arm_simd_clt!(vcltq_s32, int32x4_t);
+arm_simd_clt!(vclt_s8, int8x8_t, uint8x8_t);
+arm_simd_clt!(vcltq_s8, int8x16_t, uint8x16_t);
+arm_simd_clt!(vclt_s16, int16x4_t, uint16x4_t);
+arm_simd_clt!(vcltq_s16, int16x8_t, uint16x8_t);
+arm_simd_clt!(vclt_s32, int32x2_t, uint32x2_t);
+arm_simd_clt!(vcltq_s32, int32x4_t, uint32x4_t);
 arm_simd_cltu!(vclt_u8, uint8x8_t);
 arm_simd_cltu!(vcltq_u8, uint8x16_t);
 arm_simd_cltu!(vclt_u16, uint16x4_t);
 arm_simd_cltu!(vcltq_u16, uint16x8_t);
 arm_simd_cltu!(vclt_u32, uint32x2_t);
 arm_simd_cltu!(vcltq_u32, uint32x4_t);
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmgt))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmgt))]
-pub unsafe fn vclt_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t {
-    simd_lt(a, b)
-}
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmgt))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmgt))]
-pub unsafe fn vcltq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
-    simd_lt(a, b)
-}
+arm_simd_2!(vclt_f32, float32x2_t, uint32x2_t, simd_lt, fcmgt, fcmgt);
+arm_simd_2!(vcltq_f32, float32x4_t, uint32x4_t, simd_lt, fcmgt, fcmgt);
 
 macro_rules! arm_simd_cge {
-    ($name:ident, $type:ty) => {
+    ($name:ident, $type:ty, $res:ty) => {
         /// Compare signed Greater than equals (vector)
-        arm_simd_2!($name, $type, simd_ge, cmge, cmge);
+        arm_simd_2!($name, $type, $res, simd_ge, cmge, cmge);
     };
 }
 
@@ -957,41 +909,25 @@ macro_rules! arm_simd_cgeu {
         arm_simd_2!($name, $type, simd_ge, cmhs, cmhs);
     };
 }
-arm_simd_cge!(vcge_s8, int8x8_t);
-arm_simd_cge!(vcgeq_s8, int8x16_t);
-arm_simd_cge!(vcge_s16, int16x4_t);
-arm_simd_cge!(vcgeq_s16, int16x8_t);
-arm_simd_cge!(vcge_s32, int32x2_t);
-arm_simd_cge!(vcgeq_s32, int32x4_t);
+arm_simd_cge!(vcge_s8, int8x8_t, uint8x8_t);
+arm_simd_cge!(vcgeq_s8, int8x16_t, uint8x16_t);
+arm_simd_cge!(vcge_s16, int16x4_t, uint16x4_t);
+arm_simd_cge!(vcgeq_s16, int16x8_t, uint16x8_t);
+arm_simd_cge!(vcge_s32, int32x2_t, uint32x2_t);
+arm_simd_cge!(vcgeq_s32, int32x4_t, uint32x4_t);
 arm_simd_cgeu!(vcge_u8, uint8x8_t);
 arm_simd_cgeu!(vcgeq_u8, uint8x16_t);
 arm_simd_cgeu!(vcge_u16, uint16x4_t);
 arm_simd_cgeu!(vcgeq_u16, uint16x8_t);
 arm_simd_cgeu!(vcge_u32, uint32x2_t);
 arm_simd_cgeu!(vcgeq_u32, uint32x4_t);
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
-pub unsafe fn vcge_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t {
-    simd_ge(a, b)
-}
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
-pub unsafe fn vcgeq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
-    simd_ge(a, b)
-}
+arm_simd_2!(vcge_f32, float32x2_t, uint32x2_t, simd_ge, fcmge, fcmge);
+arm_simd_2!(vcgeq_f32, float32x4_t, uint32x4_t, simd_ge, fcmge, fcmge);
 
 macro_rules! arm_simd_cle {
-    ($name:ident, $type:ty) => {
+    ($name:ident, $type:ty, $res:ty) => {
         /// Compare signed Lesser than equals (vector)
-        arm_simd_2!($name, $type, simd_le, cmge, cmge);
+        arm_simd_2!($name, $type, $res, simd_le, cmge, cmge);
     };
 }
 
@@ -1001,36 +937,20 @@ macro_rules! arm_simd_cleu {
         arm_simd_2!($name, $type, simd_le, cmhs, cmhs);
     };
 }
-arm_simd_cle!(vcle_s8, int8x8_t);
-arm_simd_cle!(vcleq_s8, int8x16_t);
-arm_simd_cle!(vcle_s16, int16x4_t);
-arm_simd_cle!(vcleq_s16, int16x8_t);
-arm_simd_cle!(vcle_s32, int32x2_t);
-arm_simd_cle!(vcleq_s32, int32x4_t);
+arm_simd_cle!(vcle_s8, int8x8_t, uint8x8_t);
+arm_simd_cle!(vcleq_s8, int8x16_t, uint8x16_t);
+arm_simd_cle!(vcle_s16, int16x4_t, uint16x4_t);
+arm_simd_cle!(vcleq_s16, int16x8_t, uint16x8_t);
+arm_simd_cle!(vcle_s32, int32x2_t, uint32x2_t);
+arm_simd_cle!(vcleq_s32, int32x4_t, uint32x4_t);
 arm_simd_cleu!(vcle_u8, uint8x8_t);
 arm_simd_cleu!(vcleq_u8, uint8x16_t);
 arm_simd_cleu!(vcle_u16, uint16x4_t);
 arm_simd_cleu!(vcleq_u16, uint16x8_t);
 arm_simd_cleu!(vcle_u32, uint32x2_t);
 arm_simd_cleu!(vcleq_u32, uint32x4_t);
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
-pub unsafe fn vcle_f32(a: float32x2_t, b: float32x2_t) -> uint32x2_t {
-    simd_le(a, b)
-}
-
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(fcmge))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(fcmge))]
-pub unsafe fn vcleq_f32(a: float32x4_t, b: float32x4_t) -> uint32x4_t {
-    simd_le(a, b)
-}
+arm_simd_2!(vcle_f32, float32x2_t, uint32x2_t, simd_le,  fcmge, fcmge);
+arm_simd_2!(vcleq_f32, float32x4_t, uint32x4_t, simd_le, fcmge, fcmge);
 
 /// Folding minimum of adjacent pairs
 #[inline]
