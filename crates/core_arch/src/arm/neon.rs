@@ -1581,61 +1581,57 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
 #[cfg_attr(test, assert_instr(ushr, imm3 = 1))]
 #[rustc_args_required_const(1)]
 pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
-    macro_rules! call {
-        ($imm3:expr) => {
-            if $imm3 == 0 {
-                unreachable_unchecked();
-            } else {
-                uint8x16_t(
-                    a.0 >> $imm3,
-                    a.1 >> $imm3,
-                    a.2 >> $imm3,
-                    a.3 >> $imm3,
-                    a.4 >> $imm3,
-                    a.5 >> $imm3,
-                    a.6 >> $imm3,
-                    a.7 >> $imm3,
-                    a.8 >> $imm3,
-                    a.9 >> $imm3,
-                    a.10 >> $imm3,
-                    a.11 >> $imm3,
-                    a.12 >> $imm3,
-                    a.13 >> $imm3,
-                    a.14 >> $imm3,
-                    a.15 >> $imm3,
-                )
-            }
-        };
+    if imm3 < 0 || imm3 > 7 {
+        unreachable_unchecked();
+    } else {
+        uint8x16_t(
+            a.0 >> imm3,
+            a.1 >> imm3,
+            a.2 >> imm3,
+            a.3 >> imm3,
+            a.4 >> imm3,
+            a.5 >> imm3,
+            a.6 >> imm3,
+            a.7 >> imm3,
+            a.8 >> imm3,
+            a.9 >> imm3,
+            a.10 >> imm3,
+            a.11 >> imm3,
+            a.12 >> imm3,
+            a.13 >> imm3,
+            a.14 >> imm3,
+            a.15 >> imm3,
+        )
     }
-    constify_imm3!(imm3, call)
 }
 
 //uint8x16_t vshlq_n_u8 (uint8x16_t a, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(ushl))]
-pub unsafe fn vshlq_n_u8(a: uint8x16_t, n: i32) -> uint8x16_t {
-    if n < 0 || n > 7 {
+#[cfg_attr(test, assert_instr(shl, imm3 = 1))]
+#[rustc_args_required_const(1)]
+pub unsafe fn vshlq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
+    if imm3 < 0 || imm3 > 7 {
         unreachable_unchecked();
     } else {
         uint8x16_t(
-            a.0 << n,
-            a.1 << n,
-            a.2 << n,
-            a.3 << n,
-            a.4 << n,
-            a.5 << n,
-            a.6 << n,
-            a.7 << n,
-            a.8 << n,
-            a.9 << n,
-            a.10 << n,
-            a.11 << n,
-            a.12 << n,
-            a.13 << n,
-            a.14 << n,
-            a.15 << n,
+            a.0 << imm3,
+            a.1 << imm3,
+            a.2 << imm3,
+            a.3 << imm3,
+            a.4 << imm3,
+            a.5 << imm3,
+            a.6 << imm3,
+            a.7 << imm3,
+            a.8 << imm3,
+            a.9 << imm3,
+            a.10 << imm3,
+            a.11 << imm3,
+            a.12 << imm3,
+            a.13 << imm3,
+            a.14 << imm3,
+            a.15 << imm3,
         )
     }
 }
