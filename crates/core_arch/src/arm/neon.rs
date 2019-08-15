@@ -949,7 +949,7 @@ arm_simd_cleu!(vcle_u16, uint16x4_t);
 arm_simd_cleu!(vcleq_u16, uint16x8_t);
 arm_simd_cleu!(vcle_u32, uint32x2_t);
 arm_simd_cleu!(vcleq_u32, uint32x4_t);
-arm_simd_2!(vcle_f32, float32x2_t, uint32x2_t, simd_le,  fcmge, fcmge);
+arm_simd_2!(vcle_f32, float32x2_t, uint32x2_t, simd_le, fcmge, fcmge);
 arm_simd_2!(vcleq_f32, float32x4_t, uint32x4_t, simd_le, fcmge, fcmge);
 
 /// Folding minimum of adjacent pairs
@@ -1397,16 +1397,16 @@ macro_rules! arm_vget_lane {
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
         #[cfg_attr(test, assert_instr(umov))]
         pub unsafe fn $name(v: $from, lane: i32) -> $to {
-                macro_rules! call {
-                    ($imm5:expr) => {
-                        if ($imm5) < 0 || ($imm5) > $lanes {
-                            unreachable_unchecked()
-                        } else {
-                            simd_extract(v, $imm5)
-                        }
+            macro_rules! call {
+                ($imm5:expr) => {
+                    if ($imm5) < 0 || ($imm5) > $lanes {
+                        unreachable_unchecked()
+                    } else {
+                        simd_extract(v, $imm5)
                     }
-                }
-                constify_imm5!(lane, call)
+                };
+            }
+            constify_imm5!(lane, call)
         }
     };
 }
