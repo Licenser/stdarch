@@ -1518,58 +1518,57 @@ arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ext))]
-pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
-    if n < 0 || n > 16 {
+pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: u32) -> int8x16_t {
+    if n > 16 {
         unreachable_unchecked();
     };
-    match n {
-        0 => b,
-        1 => int8x16_t(
+    match n & 0b1111 {
+        0 => int8x16_t(
             a.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        2 => int8x16_t(
+        1 => int8x16_t(
             a.0, a.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        3 => int8x16_t(
+        2 => int8x16_t(
             a.0, a.1, a.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        4 => int8x16_t(
+        3 => int8x16_t(
             a.0, a.1, a.2, a.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        5 => int8x16_t(
+        4 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        6 => int8x16_t(
+        5 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        7 => int8x16_t(
+        6 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        8 => int8x16_t(
+        7 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        9 => int8x16_t(
+        8 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        10 => int8x16_t(
+        9 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, b.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        11 => int8x16_t(
+        10 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, b.11, b.12, b.13, b.14, b.15,
         ),
-        12 => int8x16_t(
+        11 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, b.12, b.13, b.14, b.15,
         ),
-        13 => int8x16_t(
+        12 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, b.13, b.14, b.15,
         ),
-        14 => int8x16_t(
+        13 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, b.14, b.15,
         ),
-        15 => int8x16_t(
+        14 => int8x16_t(
             a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, a.14, b.15,
         ),
-        16 => a,
+        15 => a,
         _ => unreachable_unchecked(),
     }
 }
