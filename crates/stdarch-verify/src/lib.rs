@@ -194,7 +194,7 @@ fn to_type(t: &syn::Type) -> proc_macro2::TokenStream {
             "v4f32" => quote! { &v4f32 },
             "v2f64" => quote! { &v2f64 },
 
-            s => panic!("unspported type: \"{}\"", s),
+            s => panic!("unsupported type: \"{}\"", s),
         },
         syn::Type::Ptr(syn::TypePtr {
             ref elem,
