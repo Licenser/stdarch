@@ -175,6 +175,7 @@ fn to_type(t: &syn::Type) -> proc_macro2::TokenStream {
             "poly8x16x2_t" => quote! { &POLY8X16X2 },
             "poly8x16x3_t" => quote! { &POLY8X16X3 },
             "poly8x16x4_t" => quote! { &POLY8X16X4 },
+            "poly64_t" => quote! { &P64 },
             "poly64x1_t" => quote! { &POLY64X1 },
             "poly64x2_t" => quote! { &POLY64X2 },
             "poly8x16_t" => quote! { &POLY8X16 },
