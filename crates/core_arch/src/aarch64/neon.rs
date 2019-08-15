@@ -18,6 +18,8 @@ types! {
     pub struct float64x2_t(f64, f64);
     /// ARM-specific 64-bit wide vector of one packed `p64`.
     pub struct poly64x1_t(i64); // FIXME: check this!
+    /// ARM-specific 64-bit wide vector of one packed `p64`.
+    pub struct poly64_t(i64); // FIXME: check this!
     /// ARM-specific 64-bit wide vector of two packed `p64`.
     pub struct poly64x2_t(i64, i64); // FIXME: check this!
     /// ARM-specific 128-bit wide vector of one packed `p64`.
@@ -63,8 +65,6 @@ pub struct poly8x16x4_t(
     pub poly8x16_t,
     pub poly8x16_t,
 );
-
-pub type poly64_t = i64;
 
 #[allow(improper_ctypes)]
 extern "C" {
@@ -1766,7 +1766,7 @@ mod tests {
         let a: i64 = 8;
         let b: i64 = 7;
         let e: i128 = 56;
-        let r: i128 = transmute(vmull_p64(a, b));
+        let r: i128 = transmute(vmull_p64(transmute(a), transmute(b)));
         assert_eq!(r, e);
 
         /*
