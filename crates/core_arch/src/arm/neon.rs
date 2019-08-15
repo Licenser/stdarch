@@ -1578,7 +1578,7 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: u32) -> int8x16_t {
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ushr))]
-pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm8: i32) -> uint8x16_t {
+pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm8: u32) -> uint8x16_t {
     macro_rules! call {
         ($imm8:expr) => {
             if $imm8 == 0 {
@@ -1613,8 +1613,8 @@ pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm8: i32) -> uint8x16_t {
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ushl))]
-pub unsafe fn vshlq_n_u8(a: uint8x16_t, n: i32) -> uint8x16_t {
-    if n < 0 || n > 7 {
+pub unsafe fn vshlq_n_u8(a: uint8x16_t, n: u32) -> uint8x16_t {
+    if n > 7 {
         unreachable_unchecked();
     };
     uint8x16_t(
@@ -1686,7 +1686,7 @@ mod tests {
         let b = i8x16::new(
             42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
         );
-        let e = i8x16::new(1, 2, 3, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42);
+        let e = i8x16::new(1, 2, 3, 4, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42);
         let r: i8x16 = transmute(vextq_s8(transmute(a), transmute(b), 3));
         assert_eq!(r, e);
     }
@@ -1704,15 +1704,6 @@ mod tests {
         let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
         let e = a;
         let r: u8x16 = transmute(vld1q_u8(transmute(&a)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vst1q_u8() {
-        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e = a;
-        let mut r = u8x16::new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        vst1q_u8(transmute(&mut r), transmute(a));
         assert_eq!(r, e);
     }
 
