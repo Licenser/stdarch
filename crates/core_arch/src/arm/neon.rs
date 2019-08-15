@@ -1483,15 +1483,6 @@ pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
     ptr::read(addr as *const uint8x16_t)
 }
 
-/// void vst1q_u8 (uint8_t * ptr, uint8x16_t val)
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(st1))]
-pub unsafe fn vst1q_u8(addr: *mut u8, val: uint8x16_t) {
-    ptr::write(addr as *mut uint8x16_t, val);
-}
-
 macro_rules! arm_reinterpret {
     ($name:ident, $from:ty, $to:ty) => {
         // Vector reinterpret cast operation
