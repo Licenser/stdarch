@@ -1409,7 +1409,6 @@ macro_rules! arm_vget_lane {
     };
 }
 
-
 //  uint64_t vgetq_lane_u64 (uint64x2_t v, const int lane)
 arm_vget_lane!(vgetq_lane_u64, uint64x2_t, u64, 2);
 
