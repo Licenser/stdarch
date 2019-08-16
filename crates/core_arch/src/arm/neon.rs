@@ -1425,6 +1425,19 @@ pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
     simd_extract(v, imm5)
 }
 
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[rustc_args_required_const(1)]
+#[cfg_attr(test, assert_instr(umov, imm5 = 0))]
+pub unsafe fn vget_lane_u8(v: uint8x8_t, imm5: i32) -> u8 {
+    if (imm5) < 0 || (imm5) > 7 {
+        unreachable_unchecked()
+    }
+    let imm5 = (imm5 & 7) as u32;
+    simd_extract(v, imm5)
+}
+
 // int8x16_t vdupq_n_s8 (int8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
@@ -1773,6 +1786,13 @@ mod tests {
     use crate::core_arch::{arm::*, simd::*};
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vget_lane_u8() {
+        let v = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let r = vget_lane_u8(transmute(v), 1);
+        assert_eq!(r, 2);
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vgetq_lane_u16() {
