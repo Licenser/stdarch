@@ -1409,17 +1409,6 @@ macro_rules! arm_vget_lane {
     };
 }
 
-// uint8_t vget_lane_u8 (uint8x8_t v, const int lane)
-arm_vget_lane!(vget_lane_u8, uint8x8_t, u8, 7);
-
-// uint64_t vget_lane_u64 (uint64x1_t v, const int lane)
-arm_vget_lane!(vget_lane_u64, uint64x1_t, u64, 0);
-
-// uint16_t vgetq_lane_u16 (uint16x8_t v, const int lane)
-arm_vget_lane!(vgetq_lane_u16, uint16x8_t, u16, 7);
-
-// uint32_t vgetq_lane_u32 (uint32x4_t v, const int lane)
-arm_vget_lane!(vgetq_lane_u32, uint32x4_t, u32, 3);
 
 //  uint64_t vgetq_lane_u64 (uint64x2_t v, const int lane)
 arm_vget_lane!(vgetq_lane_u64, uint64x2_t, u64, 2);
@@ -1463,24 +1452,6 @@ pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
     vdupq_n_u8(value)
 }
 
-// int8x16_t vld1q_s8 (int8_t const * ptr)
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(ld1))]
-pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
-    ptr::read(addr as *const int8x16_t)
-}
-
-/// int8x16_t vld1q_u8 (uint8_t const * ptr)
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(ld1))]
-pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
-    ptr::read(addr as *const uint8x16_t)
-}
-
 macro_rules! arm_reinterpret {
     ($name:ident, $from:ty, $to:ty) => {
         // Vector reinterpret cast operation
@@ -1510,67 +1481,6 @@ arm_reinterpret!(vreinterpretq_u64_u8, uint8x16_t, uint64x2_t);
 
 // uint8x16_t vreinterpretq_u8_s8 (int8x16_t a)
 arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
-
-//int8x16_t vextq_s8 (int8x16_t a, int8x16_t b, const int n)
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(ext, n = 0))]
-#[rustc_args_required_const(2)]
-pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
-    if n < 0 || n > 16 {
-        unreachable_unchecked();
-    };
-    match n & 0b1111 {
-        0 => int8x16_t(
-            a.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        1 => int8x16_t(
-            a.0, a.1, b.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        2 => int8x16_t(
-            a.0, a.1, a.2, b.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        3 => int8x16_t(
-            a.0, a.1, a.2, a.3, b.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        4 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, b.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        5 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, b.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        6 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, b.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        7 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        8 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        9 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, b.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        10 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, b.11, b.12, b.13, b.14, b.15,
-        ),
-        11 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, b.12, b.13, b.14, b.15,
-        ),
-        12 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, b.13, b.14, b.15,
-        ),
-        13 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, b.14, b.15,
-        ),
-        14 => int8x16_t(
-            a.0, a.1, a.2, a.3, a.4, a.5, a.6, a.7, a.8, a.9, a.10, a.11, a.12, a.13, a.14, b.15,
-        ),
-        15 => a,
-        _ => unreachable_unchecked(),
-    }
-}
 
 //uint8x16_t vshrq_n_u8 (uint8x16_t a, const int n)
 #[inline]
@@ -1678,33 +1588,6 @@ mod tests {
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vextq_s8() {
-        let a = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let e = i8x16::new(1, 2, 3, 4, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42);
-        let r: i8x16 = transmute(vextq_s8(transmute(a), transmute(b), 3));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vld1q_s8() {
-        let a = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e = a;
-        let r: i8x16 = transmute(vld1q_s8(transmute(&a)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vld1q_u8() {
-        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e = a;
-        let r: u8x16 = transmute(vld1q_u8(transmute(&a)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
     unsafe fn test_vreinterpret_u64_u32() {
         let v: i8 = 42;
         let e = i8x16::new(
@@ -1742,38 +1625,6 @@ mod tests {
         );
         let r: u8x16 = transmute(vmovq_n_u8(v));
         assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vget_lane_u8() {
-        let v = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let lane = 1;
-        let r = vget_lane_u8(transmute(v), lane);
-        assert_eq!(r, 2);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vget_lane_u64() {
-        let v = i64x1::new(1);
-        let lane = 0;
-        let r = vget_lane_u64(transmute(v), lane);
-        assert_eq!(r, 1);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vgetq_lane_u16() {
-        let v = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let lane = 1;
-        let r = vgetq_lane_u16(transmute(v), lane);
-        assert_eq!(r, 2);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vgetq_lane_u32() {
-        let v = i32x4::new(1, 2, 3, 4);
-        let lane = 1;
-        let r = vgetq_lane_u32(transmute(v), lane);
-        assert_eq!(r, 2);
     }
 
     #[simd_test(enable = "neon")]
