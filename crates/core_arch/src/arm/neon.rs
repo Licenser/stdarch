@@ -1649,6 +1649,112 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
     }
 }
 
+/// Extract vector from pair of vectors
+//uint8x16_t vextq_s8 (uint8x16_t a, uint8x16_t b, const int n)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ext, n = 3))]
+#[rustc_args_required_const(2)]
+pub unsafe fn vextq_u8(a: uint8x16_t, b: uint8x16_t, n: i32) -> uint8x16_t {
+    if n < 0 || n > 15 {
+        unreachable_unchecked();
+    };
+    match n & 0b1111 {
+        0 => simd_shuffle16(a, b, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+        1 => simd_shuffle16(
+            a,
+            b,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        ),
+        2 => simd_shuffle16(
+            a,
+            b,
+            [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+        ),
+        3 => simd_shuffle16(
+            a,
+            b,
+            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+        ),
+        4 => simd_shuffle16(
+            a,
+            b,
+            [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+        ),
+        5 => simd_shuffle16(
+            a,
+            b,
+            [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+        ),
+        6 => simd_shuffle16(
+            a,
+            b,
+            [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+        ),
+        7 => simd_shuffle16(
+            a,
+            b,
+            [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+        ),
+        8 => simd_shuffle16(
+            a,
+            b,
+            [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+        ),
+        9 => simd_shuffle16(
+            a,
+            b,
+            [
+                9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            ],
+        ),
+        10 => simd_shuffle16(
+            a,
+            b,
+            [
+                10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+            ],
+        ),
+        11 => simd_shuffle16(
+            a,
+            b,
+            [
+                11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+            ],
+        ),
+        12 => simd_shuffle16(
+            a,
+            b,
+            [
+                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+            ],
+        ),
+        13 => simd_shuffle16(
+            a,
+            b,
+            [
+                13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+            ],
+        ),
+        14 => simd_shuffle16(
+            a,
+            b,
+            [
+                14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+            ],
+        ),
+        15 => simd_shuffle16(
+            a,
+            b,
+            [
+                15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+            ],
+        ),
+        _ => unreachable_unchecked(),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::core_arch::{arm::*, simd::*};
@@ -1663,6 +1769,17 @@ mod tests {
         );
         let e = i8x16::new(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
         let r: i8x16 = transmute(vextq_s8(transmute(a), transmute(b), 3));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vextq_u8() {
+        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let b = u8x16::new(
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 31, 32,
+        );
+        let e = u8x16::new(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+        let r: u8x16 = transmute(vextq_u8(transmute(a), transmute(b), 3));
         assert_eq!(r, e);
     }
 
