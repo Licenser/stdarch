@@ -1762,9 +1762,9 @@ mod tests {
         let b = i8x16::new(
             17, 18, 19, 20, 20, 21, 22, 23, 24, 25, 26, 27, 29, 29, 30, 31,
         );
+        let r = i8x16(1, 5, 9, 13, 17, 21, 25, 29, 35, 39, 41, 45, 49, 53, 58, 61);
         let e: i8x16 = transmute(vpaddq_u8(transmute(a), transmute(b)));
-        assert_eq!(a, e);
-        assert!(false);
+        assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
