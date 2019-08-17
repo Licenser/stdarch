@@ -1421,7 +1421,7 @@ arm_vget_lane!(vgetq_lane_u64, uint64x2_t, u64, 2);
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[rustc_args_required_const(1)]
 #[cfg_attr(test, assert_instr(umov, imm5 = 0))]
-pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
+pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: u32) -> u16 {
     if (imm5) < 0 || (imm5) > 7 {
         unreachable_unchecked()
     }
@@ -1435,7 +1435,7 @@ pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[rustc_args_required_const(1)]
 #[cfg_attr(test, assert_instr(umov, imm5 = 0))]
-pub unsafe fn vget_lane_u8(v: uint8x8_t, imm5: i32) -> u8 {
+pub unsafe fn vget_lane_u8(v: uint8x8_t, imm5: u32) -> u8 {
     if (imm5) < 0 || (imm5) > 7 {
         unreachable_unchecked()
     }
@@ -1519,7 +1519,7 @@ arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ushr, imm3 = 1))]
 #[rustc_args_required_const(1)]
-pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
+pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm3: u32) -> uint8x16_t {
     if imm3 < 0 || imm3 > 7 {
         unreachable_unchecked();
     } else {
@@ -1544,13 +1544,14 @@ pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
     }
 }
 
+/// Shift right
 //uint8x16_t vshlq_n_u8 (uint8x16_t a, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(shl, imm3 = 1))]
 #[rustc_args_required_const(1)]
-pub unsafe fn vshlq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
+pub unsafe fn vshlq_n_u8(a: uint8x16_t, imm3: u32) -> uint8x16_t {
     if imm3 < 0 || imm3 > 7 {
         unreachable_unchecked();
     } else {
@@ -1582,7 +1583,7 @@ pub unsafe fn vshlq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ext, n = 3))]
 #[rustc_args_required_const(2)]
-pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
+pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: u32) -> int8x16_t {
     if n < 0 || n > 15 {
         unreachable_unchecked();
     };
@@ -1688,7 +1689,7 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(test, assert_instr(ext, n = 3))]
 #[rustc_args_required_const(2)]
-pub unsafe fn vextq_u8(a: uint8x16_t, b: uint8x16_t, n: i32) -> uint8x16_t {
+pub unsafe fn vextq_u8(a: uint8x16_t, b: uint8x16_t, n: u32) -> uint8x16_t {
     if n < 0 || n > 15 {
         unreachable_unchecked();
     };
