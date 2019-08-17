@@ -231,6 +231,7 @@ extern "C" {
         b3: int8x16_t,
         c: uint8x8_t,
     ) -> int8x8_t;
+
     #[link_name = "llvm.aarch64.neon.tbx4.v16i8"]
     fn vqtbx4q(
         a: int8x16_t,
@@ -242,13 +243,14 @@ extern "C" {
     ) -> int8x16_t;
 }
 
+/// Add pairwise
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(test, assert_instr(addp))]
 pub unsafe fn vpaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     vpaddq_u8_(a, b)
 }
-
+/// Polynomial multiply long
 //poly128_t vmull_p64 (poly64_t a, poly64_t b)
 #[inline]
 #[target_feature(enable = "neon")]
@@ -257,6 +259,8 @@ pub unsafe fn vmull_p64(a: poly64_t, b: poly64_t) -> poly128_t {
     transmute(vmull_p64_(transmute(a), transmute(b)))
 }
 
+/// Macro to template a simd_<something> function that has
+/// the same input and output type
 macro_rules! aarch64_simd_2 {
     ($name:ident, $type:ty, $simd_fn:ident, $intr:ident) => {
         #[inline]
@@ -267,6 +271,8 @@ macro_rules! aarch64_simd_2 {
         }
     };
 }
+
+/// Macro to template vecq* SIMD intrinsics
 macro_rules! aarch64_simd_ceq {
     ($name:ident, $type:ty) => {
         /// Compare bitwise Equal (vector)
@@ -1750,6 +1756,7 @@ mod tests {
     use std::mem::transmute;
     use stdarch_test::simd_test;
 
+    #[simd_test(enable = "neon")]
     unsafe fn test_vpaddq_u8() {
         let a = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
         let b = i8x16::new(
@@ -1759,6 +1766,7 @@ mod tests {
         assert_eq!(a, e);
         assert!(false);
     }
+
     #[simd_test(enable = "neon")]
     unsafe fn test_vmull_p64() {
         // FIXME: I've a hard time writing a test for this as the documentation

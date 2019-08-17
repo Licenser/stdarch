@@ -1,6 +1,6 @@
 //! ARMv7 NEON intrinsics
 
-use crate::{core_arch::simd_llvm::*, hint::unreachable_unchecked, mem::transmute};
+use crate::{core_arch::simd_llvm::*, hint::unreachable_unchecked, mem::transmute, ptr};
 #[cfg(test)]
 use stdarch_test::assert_instr;
 
@@ -727,6 +727,8 @@ pub unsafe fn vmvnq_p8(a: poly8x16_t) -> poly8x16_t {
     simd_xor(a, b)
 }
 
+/// Macro to template a simd_<something> function that has
+/// the same input and output type
 macro_rules! arm_simd_2 {
     ($name:ident, $type:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident) => {
         arm_simd_2!($name, $type, $type, $simd_fn, $intrarm, $intraarch);
@@ -1390,6 +1392,7 @@ pub unsafe fn vtbx4_p8(a: poly8x8_t, b: poly8x8x4_t, c: uint8x8_t) -> poly8x8_t 
 
 macro_rules! arm_vget_lane {
     ($name:ident, $from:ty, $to:ty, $lanes:literal) => {
+        /// Move vector element to general-purpose register
         #[inline]
         #[target_feature(enable = "neon")]
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1412,6 +1415,7 @@ macro_rules! arm_vget_lane {
 //  uint64_t vgetq_lane_u64 (uint64x2_t v, const int lane)
 arm_vget_lane!(vgetq_lane_u64, uint64x2_t, u64, 2);
 
+/// Move vector element to general-purpose register
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1425,6 +1429,7 @@ pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
     simd_extract(v, imm5)
 }
 
+/// Move vector element to general-purpose register
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1438,11 +1443,11 @@ pub unsafe fn vget_lane_u8(v: uint8x8_t, imm5: i32) -> u8 {
     simd_extract(v, imm5)
 }
 
+/// Duplicate vector element to vector or scalar
 // int8x16_t vdupq_n_s8 (int8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-// Those should devinetly fail!
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(dup))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(dup))]
 pub unsafe fn vdupq_n_s8(value: i8) -> int8x16_t {
@@ -1452,11 +1457,11 @@ pub unsafe fn vdupq_n_s8(value: i8) -> int8x16_t {
     )
 }
 
+/// Duplicate vector element to vector or scalar
 // uint8x16_t vdupq_n_u8 (uint8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-// Those should devinetly fail!
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(dup))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(dup))]
 pub unsafe fn vdupq_n_u8(value: u8) -> uint8x16_t {
@@ -1466,11 +1471,11 @@ pub unsafe fn vdupq_n_u8(value: u8) -> uint8x16_t {
     )
 }
 
+/// Duplicate vector element to vector or scalar
 // uint8x16_t vmovq_n_u8 (uint8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-// Those should devinetly fail!
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(dup))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(dup))]
 pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
@@ -1479,7 +1484,7 @@ pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
 
 macro_rules! arm_reinterpret {
     ($name:ident, $from:ty, $to:ty) => {
-        // Vector reinterpret cast operation
+        /// Vector reinterpret cast operation
         #[inline]
         #[target_feature(enable = "neon")]
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1507,6 +1512,7 @@ arm_reinterpret!(vreinterpretq_u64_u8, uint8x16_t, uint64x2_t);
 // uint8x16_t vreinterpretq_u8_s8 (int8x16_t a)
 arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
 
+/// Unsigned shift right
 //uint8x16_t vshrq_n_u8 (uint8x16_t a, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
@@ -1781,11 +1787,51 @@ pub unsafe fn vextq_u8(a: uint8x16_t, b: uint8x16_t, n: i32) -> uint8x16_t {
     }
 }
 
+/// Load multiple single-element structures to one, two, three, or four registers
+// int8x16_t vld1q_s8 (int8_t const * ptr)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ldr))]
+// even gcc compiles this to ldr: https://clang.godbolt.org/z/1bvH2x
+// #[cfg_attr(test, assert_instr(ld1))]
+pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
+    ptr::read(addr as *const int8x16_t)
+}
+
+/// Load multiple single-element structures to one, two, three, or four registers
+// int8x16_t vld1q_u8 (uint8_t const * ptr)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(test, assert_instr(ldr))]
+// even gcc compiles this to ldr: https://clang.godbolt.org/z/1bvH2x
+// #[cfg_attr(test, assert_instr(ld1))]
+pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
+    ptr::read(addr as *const uint8x16_t)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::core_arch::{arm::*, simd::*};
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
     use stdarch_test::simd_test;
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vld1q_s8() {
+        let a = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let e = a;
+        let r: i8x16 = transmute(vld1q_s8(transmute(&a)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vld1q_u8() {
+        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let e = a;
+        let r: u8x16 = transmute(vld1q_u8(transmute(&a)));
+        assert_eq!(r, e);
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vget_lane_u8() {
