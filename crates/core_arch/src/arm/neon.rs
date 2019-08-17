@@ -730,10 +730,11 @@ pub unsafe fn vmvnq_p8(a: poly8x16_t) -> poly8x16_t {
 /// Macro to template a simd_<something> function that has
 /// the same input and output type
 macro_rules! arm_simd_2 {
-    ($name:ident, $type:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident) => {
-        arm_simd_2!($name, $type, $type, $simd_fn, $intrarm, $intraarch);
+    ($name:ident, $type:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident, $doc:meta) => {
+        arm_simd_2!($name, $type, $type, $simd_fn, $intrarm, $intraarch, $doc);
     };
-    ($name:ident, $type:ty, $res:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident) => {
+    ($name:ident, $type:ty, $res:ty, $simd_fn:ident, $intrarm:ident, $intraarch:ident, $doc:meta) => {
+        #[$doc]
         #[inline]
         #[target_feature(enable = "neon")]
         #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -747,8 +748,7 @@ macro_rules! arm_simd_2 {
 
 macro_rules! arm_simd_and {
     ($name:ident, $type:ty) => {
-        /// Vector bitwise and.
-        arm_simd_2!($name, $type, simd_and, vand, and);
+        arm_simd_2!($name, $type, simd_and, vand, and, doc = "Vector bitwise and.");
     };
 }
 arm_simd_and!(vand_s8, int8x8_t);
@@ -770,8 +770,7 @@ arm_simd_and!(vandq_u64, uint64x2_t);
 
 macro_rules! arm_simd_orr {
     ($name:ident, $type:ty) => {
-        /// Vector bitwise or (immediate, inclusive).
-        arm_simd_2!($name, $type, simd_or, vorr, orr);
+        arm_simd_2!($name, $type, simd_or, vorr, orr, doc = "Vector bitwise or (immediate, inclusive).");
     };
 }
 
@@ -794,8 +793,7 @@ arm_simd_orr!(vorrq_u64, uint64x2_t);
 
 macro_rules! arm_simd_eor {
     ($name:ident, $type:ty) => {
-        /// Vector bitwise exclusive or (vector).
-        arm_simd_2!($name, $type, simd_xor, veor, eor);
+        arm_simd_2!($name, $type, simd_xor, veor, eor, doc = "Vector bitwise exclusive or (vector)");
     };
 }
 
@@ -818,8 +816,8 @@ arm_simd_eor!(veorq_u64, uint64x2_t);
 
 macro_rules! arm_simd_ceq {
     ($name:ident, $type:ty, $res:ty) => {
-        /// Compare bitwise Equal (vector)
-        arm_simd_2!($name, $type, $res, simd_eq, cmeq, cmeq);
+        /// 
+        arm_simd_2!($name, $type, $res, simd_eq, cmeq, cmeq, doc = "Compare bitwise Equal (vector)");
     };
 }
 
@@ -835,22 +833,20 @@ arm_simd_ceq!(vceq_u16, uint16x4_t, uint16x4_t);
 arm_simd_ceq!(vceqq_u16, uint16x8_t, uint16x8_t);
 arm_simd_ceq!(vceq_u32, uint32x2_t, uint32x2_t);
 arm_simd_ceq!(vceqq_u32, uint32x4_t, uint32x4_t);
-arm_simd_2!(vceq_f32, float32x2_t, uint32x2_t, simd_eq, fcmeq, fcmeq);
-arm_simd_2!(vceqq_f32, float32x4_t, uint32x4_t, simd_eq, fcmeq, fcmeq);
+arm_simd_2!(vceq_f32, float32x2_t, uint32x2_t, simd_eq, fcmeq, fcmeq, doc = "Compare bitwise Equal (vector).");
+arm_simd_2!(vceqq_f32, float32x4_t, uint32x4_t, simd_eq, fcmeq, fcmeq, doc = "Compare bitwise Equal (vector).");
 arm_simd_ceq!(vceq_p8, poly8x8_t, poly8x8_t);
 arm_simd_ceq!(vceqq_p8, poly8x16_t, poly8x16_t);
 
 macro_rules! arm_simd_cgt {
     ($name:ident, $type:ty, $res:ty) => {
-        /// Compare signed Greater than (vector)
-        arm_simd_2!($name, $type, $res, simd_gt, cmgt, cmgt);
+        arm_simd_2!($name, $type, $res, simd_gt, cmgt, cmgt, doc = "Compare signed Greater than (vector).");
     };
 }
 
 macro_rules! arm_simd_cgtu {
     ($name:ident, $type:ty) => {
-        /// Compare Greater than (vector)
-        arm_simd_2!($name, $type, simd_gt, cmhi, cmhi);
+        arm_simd_2!($name, $type, simd_gt, cmhi, cmhi, doc = "Compare Greater than (vector).");
     };
 }
 arm_simd_cgt!(vcgt_s8, int8x8_t, uint8x8_t);
@@ -865,20 +861,18 @@ arm_simd_cgtu!(vcgt_u16, uint16x4_t);
 arm_simd_cgtu!(vcgtq_u16, uint16x8_t);
 arm_simd_cgtu!(vcgt_u32, uint32x2_t);
 arm_simd_cgtu!(vcgtq_u32, uint32x4_t);
-arm_simd_2!(vcgt_f32, float32x2_t, uint32x2_t, simd_gt, fcmgt, fcmgt);
-arm_simd_2!(vcgtq_f32, float32x4_t, uint32x4_t, simd_gt, fcmgt, fcmgt);
+arm_simd_2!(vcgt_f32, float32x2_t, uint32x2_t, simd_gt, fcmgt, fcmgt, doc = "Compare Greater than (vector).");
+arm_simd_2!(vcgtq_f32, float32x4_t, uint32x4_t, simd_gt, fcmgt, fcmgt, doc = "Compare Greater than (vector).");
 
 macro_rules! arm_simd_clt {
     ($name:ident, $type:ty, $res:ty) => {
-        /// Compare signed Lesser than (vector)
-        arm_simd_2!($name, $type, $res, simd_lt, cmgt, cmgt);
+        arm_simd_2!($name, $type, $res, simd_lt, cmgt, cmgt, doc = "Compare signed Lesser than (vector).");
     };
 }
 
 macro_rules! arm_simd_cltu {
     ($name:ident, $type:ty) => {
-        /// Compare Lesser than (vector)
-        arm_simd_2!($name, $type, simd_lt, cmhi, cmhi);
+        arm_simd_2!($name, $type, simd_lt, cmhi, cmhi, doc = "Compare Lesser than (vector).");
     };
 }
 arm_simd_clt!(vclt_s8, int8x8_t, uint8x8_t);
@@ -893,20 +887,18 @@ arm_simd_cltu!(vclt_u16, uint16x4_t);
 arm_simd_cltu!(vcltq_u16, uint16x8_t);
 arm_simd_cltu!(vclt_u32, uint32x2_t);
 arm_simd_cltu!(vcltq_u32, uint32x4_t);
-arm_simd_2!(vclt_f32, float32x2_t, uint32x2_t, simd_lt, fcmgt, fcmgt);
-arm_simd_2!(vcltq_f32, float32x4_t, uint32x4_t, simd_lt, fcmgt, fcmgt);
+arm_simd_2!(vclt_f32, float32x2_t, uint32x2_t, simd_lt, fcmgt, fcmgt, doc = "Compare Lesser than (vector).");
+arm_simd_2!(vcltq_f32, float32x4_t, uint32x4_t, simd_lt, fcmgt, fcmgt, doc = "Compare Lesser than (vector).");
 
 macro_rules! arm_simd_cge {
     ($name:ident, $type:ty, $res:ty) => {
-        /// Compare signed Greater than equals (vector)
-        arm_simd_2!($name, $type, $res, simd_ge, cmge, cmge);
+        arm_simd_2!($name, $type, $res, simd_ge, cmge, cmge, doc = "Compare signed Greater than equals (vector).");
     };
 }
 
 macro_rules! arm_simd_cgeu {
     ($name:ident, $type:ty) => {
-        /// Compare Greater than equals (vector)
-        arm_simd_2!($name, $type, simd_ge, cmhs, cmhs);
+        arm_simd_2!($name, $type, simd_ge, cmhs, cmhs, doc = "Compare Greater than equals (vector).");
     };
 }
 arm_simd_cge!(vcge_s8, int8x8_t, uint8x8_t);
@@ -921,20 +913,18 @@ arm_simd_cgeu!(vcge_u16, uint16x4_t);
 arm_simd_cgeu!(vcgeq_u16, uint16x8_t);
 arm_simd_cgeu!(vcge_u32, uint32x2_t);
 arm_simd_cgeu!(vcgeq_u32, uint32x4_t);
-arm_simd_2!(vcge_f32, float32x2_t, uint32x2_t, simd_ge, fcmge, fcmge);
-arm_simd_2!(vcgeq_f32, float32x4_t, uint32x4_t, simd_ge, fcmge, fcmge);
+arm_simd_2!(vcge_f32, float32x2_t, uint32x2_t, simd_ge, fcmge, fcmge, doc = "Compare Greater than equals (vector).");
+arm_simd_2!(vcgeq_f32, float32x4_t, uint32x4_t, simd_ge, fcmge, fcmge, doc = "Compare Greater than equals (vector).");
 
 macro_rules! arm_simd_cle {
     ($name:ident, $type:ty, $res:ty) => {
-        /// Compare signed Lesser than equals (vector)
-        arm_simd_2!($name, $type, $res, simd_le, cmge, cmge);
+        arm_simd_2!($name, $type, $res, simd_le, cmge, cmge, doc = "Compare signed Lesser than equals (vector).");
     };
 }
 
 macro_rules! arm_simd_cleu {
     ($name:ident, $type:ty) => {
-        /// Compare Lesser than equals (vector)
-        arm_simd_2!($name, $type, simd_le, cmhs, cmhs);
+        arm_simd_2!($name, $type, simd_le, cmhs, cmhs, doc = "Compare Lesser than equals (vector).");
     };
 }
 arm_simd_cle!(vcle_s8, int8x8_t, uint8x8_t);
@@ -949,8 +939,8 @@ arm_simd_cleu!(vcle_u16, uint16x4_t);
 arm_simd_cleu!(vcleq_u16, uint16x8_t);
 arm_simd_cleu!(vcle_u32, uint32x2_t);
 arm_simd_cleu!(vcleq_u32, uint32x4_t);
-arm_simd_2!(vcle_f32, float32x2_t, uint32x2_t, simd_le, fcmge, fcmge);
-arm_simd_2!(vcleq_f32, float32x4_t, uint32x4_t, simd_le, fcmge, fcmge);
+arm_simd_2!(vcle_f32, float32x2_t, uint32x2_t, simd_le, fcmge, fcmge, doc = "Compare Lesser than equals (vector).");
+arm_simd_2!(vcleq_f32, float32x4_t, uint32x4_t, simd_le, fcmge, fcmge, doc = "Compare Lesser than equals (vector).");
 
 /// Folding minimum of adjacent pairs
 #[inline]

@@ -262,7 +262,8 @@ pub unsafe fn vmull_p64(a: poly64_t, b: poly64_t) -> poly128_t {
 /// Macro to template a simd_<something> function that has
 /// the same input and output type
 macro_rules! aarch64_simd_2 {
-    ($name:ident, $type:ty, $simd_fn:ident, $intr:ident) => {
+    ($name:ident, $type:ty, $simd_fn:ident, $intr:ident, $doc:meta) => {
+        #[$doc]
         #[inline]
         #[target_feature(enable = "neon")]
         #[cfg_attr(test, assert_instr($intr))]
@@ -275,8 +276,7 @@ macro_rules! aarch64_simd_2 {
 /// Macro to template vecq* SIMD intrinsics
 macro_rules! aarch64_simd_ceq {
     ($name:ident, $type:ty) => {
-        /// Compare bitwise Equal (vector)
-        aarch64_simd_2!($name, $type, simd_eq, cmeq);
+        aarch64_simd_2!($name, $type, simd_eq, cmeq, doc = "Compare bitwise Equal (vector).");
     };
 }
 
@@ -306,14 +306,12 @@ aarch64_simd_ceq!(vceqq_p64, uint64x2_t);
 
 macro_rules! aarch64_simd_cgt {
     ($name:ident, $type:ty) => {
-        /// Compare signed Greater than (vector)
-        aarch64_simd_2!($name, $type, simd_gt, cmgt);
+        aarch64_simd_2!($name, $type, simd_gt, cmgt, doc = "Compare signed Greater than (vector).");
     };
 }
 macro_rules! aarch64_simd_cgtu {
     ($name:ident, $type:ty) => {
-        /// Compare Greater than (vector)
-        aarch64_simd_2!($name, $type, simd_gt, cmhi);
+        aarch64_simd_2!($name, $type, simd_gt, cmhi, doc = "Compare Greater than (vector).");
     };
 }
 
@@ -340,14 +338,12 @@ pub unsafe fn vcgtq_f64(a: float64x2_t, b: float64x2_t) -> uint64x2_t {
 
 macro_rules! aarch64_simd_clt {
     ($name:ident, $type:ty) => {
-        /// Compare signed Lesser than (vector)
-        aarch64_simd_2!($name, $type, simd_lt, cmgt);
+        aarch64_simd_2!($name, $type, simd_lt, cmgt, doc = "Compare signed Lesser than (vector).");
     };
 }
 macro_rules! aarch64_simd_cltu {
     ($name:ident, $type:ty) => {
-        /// Compare Lesser than (vector)
-        aarch64_simd_2!($name, $type, simd_lt, cmhi);
+        aarch64_simd_2!($name, $type, simd_lt, cmhi, doc = "Compare Lesser than (vector).");
     };
 }
 
@@ -374,14 +370,12 @@ pub unsafe fn vcltq_f64(a: float64x2_t, b: float64x2_t) -> uint64x2_t {
 
 macro_rules! aarch64_simd_cge {
     ($name:ident, $type:ty) => {
-        /// Compare signed Greater than (vector)
-        aarch64_simd_2!($name, $type, simd_ge, cmge);
+        aarch64_simd_2!($name, $type, simd_ge, cmge, doc = "Compare signed Greater than (vector).");
     };
 }
 macro_rules! aarch64_simd_cgeu {
     ($name:ident, $type:ty) => {
-        /// Compare Greater than (vector)
-        aarch64_simd_2!($name, $type, simd_ge, cmhs);
+        aarch64_simd_2!($name, $type, simd_ge, cmhs, doc = "Compare Greater than (vector).");
     };
 }
 
@@ -408,14 +402,12 @@ pub unsafe fn vcgeq_f64(a: float64x2_t, b: float64x2_t) -> uint64x2_t {
 
 macro_rules! aarch64_simd_cle {
     ($name:ident, $type:ty) => {
-        /// Compare signed Lesser than (vector)
-        aarch64_simd_2!($name, $type, simd_le, cmge);
+        aarch64_simd_2!($name, $type, simd_le, cmge, doc = "Compare signed Lesser than (vector).");
     };
 }
 macro_rules! aarch64_simd_cleu {
     ($name:ident, $type:ty) => {
-        /// Compare Lesser than (vector)
-        aarch64_simd_2!($name, $type, simd_le, cmhs);
+        aarch64_simd_2!($name, $type, simd_le, cmhs, doc = "Compare Lesser than (vector).");
     };
 }
 
