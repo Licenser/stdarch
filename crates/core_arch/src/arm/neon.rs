@@ -1579,6 +1579,22 @@ arm_vget_lane!(vgetq_lane_u64, uint64x2_t, u64, 2);
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[rustc_args_required_const(1)]
+#[cfg_attr(test, assert_instr(fmov, imm5 = 0))]
+// gcc also turns this into a fmov instead of a umove
+// https://clang.godbolt.org/z/J5xS2T
+// #[cfg_attr(test, assert_instr(umov, imm5 = 0))]
+pub unsafe fn vget_lane_u64(v: uint64x1_t, imm5: i32) -> u64 {
+    if imm5 != 0 {
+        unreachable_unchecked()
+    }
+    simd_extract(v, 0)
+}
+
+/// Move vector element to general-purpose register
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[rustc_args_required_const(1)]
 #[cfg_attr(test, assert_instr(umov, imm5 = 0))]
 pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
     if (imm5) < 0 || (imm5) > 7 {
