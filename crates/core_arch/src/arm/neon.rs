@@ -1567,7 +1567,6 @@ pub unsafe fn vshlq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
 }
 
 /// Extract vector from pair of vectors
-//int8x16_t vextq_s8 (int8x16_t a, int8x16_t b, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
