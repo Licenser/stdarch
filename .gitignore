@@ -2,3 +2,5 @@ Cargo.lock
 .*.swp
 target
 tags
+crates/core_arch/src/aarch64/neon/generated.rs
+crates/core_arch/src/arm/neon/generated.rs
