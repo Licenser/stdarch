@@ -1212,7 +1212,21 @@ pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
     if (imm5) < 0 || (imm5) > 7 {
         unreachable_unchecked()
     }
-    let imm5 = (imm5 & 7) as u32;
+    let imm5 = (imm5 & 0b111) as u32;
+    simd_extract(v, imm5)
+}
+
+/// Move vector element to general-purpose register
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[rustc_args_required_const(1)]
+#[cfg_attr(test, assert_instr(umov, imm5 = 0))]
+pub unsafe fn vgetq_lane_u32(v: uint32x4_t, imm5: i32) -> u32 {
+    if (imm5) < 0 || (imm5) > 3 {
+        unreachable_unchecked()
+    }
+    let imm5 = (imm5 & 0b11) as u32;
     simd_extract(v, imm5)
 }
 
@@ -1624,6 +1638,13 @@ mod tests {
     unsafe fn test_vget_lane_u8() {
         let v = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
         let r = vget_lane_u8(transmute(v), 1);
+        assert_eq!(r, 2);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vgetq_lane_u32() {
+        let v = i32x4::new(1, 2, 3, 4);
+        let r = vgetq_lane_u32(transmute(v), 1);
         assert_eq!(r, 2);
     }
 
