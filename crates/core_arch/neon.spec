@@ -287,13 +287,35 @@ arm = fcmge
 // we are missing float16x4_t:uint16x4_t, float16x8_t:uint16x8_t
 generate float32x2_t:uint32x2_t, float32x4_t:uint32x4_t
 
-/// Unsigned saturating subtract
+/// Saturating subtract
 name = vqsub
 a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
 b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 e = 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26
-link-arm = llvm.arm.neon.vqsubu._EXT_
-link-aarch64 = llvm.aarch64.neon.uqsub._EXT_
 
 arm = uqsub
-generate int*_t, uint*_t
+link-arm = llvm.arm.neon.vqsubu._EXT_
+link-aarch64 = llvm.aarch64.neon.uqsub._EXT_
+generate uint*_t
+
+arm = sqsub
+link-arm = llvm.arm.neon.vqsubs._EXT_
+link-aarch64 = llvm.aarch64.neon.sqsub._EXT_
+generate int*_t
+
+/// Saturating add
+name = vqadd
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58
+
+arm = uqadd
+link-arm = llvm.arm.neon.vqaddu._EXT_
+link-aarch64 = llvm.aarch64.neon.uqadd._EXT_
+generate uint*_t
+
+arm = sqadd
+link-arm = llvm.arm.neon.vqadds._EXT_
+link-aarch64 = llvm.aarch64.neon.sqadd._EXT_
+generate int*_t
+
