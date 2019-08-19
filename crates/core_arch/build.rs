@@ -140,6 +140,7 @@ fn main() -> io::Result<()> {
     let mut e: Vec<String> = Vec::new();
     let mut out_arm = String::from(
         r#"
+#![rustfmt::skip]
 use super::*;
 use crate::core_arch::simd_llvm::*;
 #[cfg(test)]
@@ -158,6 +159,7 @@ mod test {
     );
     let mut out_aarch64 = String::from(
         r#"
+#![rustfmt::skip]
 use super::*;
 use crate::core_arch::simd_llvm::*;
 #[cfg(test)]

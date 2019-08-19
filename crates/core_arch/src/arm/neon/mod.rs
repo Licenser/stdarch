@@ -3,7 +3,7 @@
 #[rustfmt::skip]
 mod generated;
 #[rustfmt::skip]
-pub use generated::*;
+pub use self::generated::*;
 
 use crate::{core_arch::simd_llvm::*, hint::unreachable_unchecked, mem::transmute, ptr};
 #[cfg(test)]
