@@ -1,6 +1,8 @@
 //! ARMv7 NEON intrinsics
 
+#[rustfmt::skip]
 mod generated;
+#[rustfmt::skip]
 pub use generated::*;
 
 use crate::{core_arch::simd_llvm::*, hint::unreachable_unchecked, mem::transmute, ptr};
