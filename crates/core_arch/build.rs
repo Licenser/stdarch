@@ -1,6 +1,10 @@
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::prelude::*;
 use std::io::{self, BufReader};
+
+const IN: &str = "neon.spec";
+const ARM_OUT: &str = "src/arm/neon/generated.rs";
+const AARCH64_OUT: &str = "src/aarch64/neon/generated.rs";
 
 const UINT_TYPES: [&'static str; 6] = [
     "uint8x8_t",
@@ -125,9 +129,9 @@ fn type_to_global_type(t: &str) -> &str {
 }
 
 fn main() -> io::Result<()> {
-    let file = "neon.spec";
+    println!("cargo:rustc-cfg=core_arch_docs");
 
-    let f = File::open(file).expect("Failed to open neon.spec");
+    let f = File::open(IN).expect("Failed to open neon.spec");
     let f = BufReader::new(f);
 
     let mut current_comment = String::new();
@@ -321,15 +325,19 @@ pub unsafe fn {}(a: {}, b: {}) -> {} {{
     tests_arm.push('}');
     tests_aarch64.push('}');
 
-    let mut file_arm = File::create("src/arm/neon/generated.rs")?;
-    file_arm.write_all(out_arm.as_bytes())?;
-    file_arm.write_all(tests_arm.as_bytes())?;
-
-    let mut file_aarch = File::create("src/aarch64/neon/generated.rs")?;
-    file_aarch.write_all(out_aarch64.as_bytes())?;
-    file_aarch.write_all(tests_aarch64.as_bytes())?;
-
-    println!("cargo:rustc-cfg=core_arch_docs");
+    let meta_in = fs::metadata(IN)?;
+    let meta_arm = fs::metadata(ARM_OUT)?;
+    let meta_aarch64 = fs::metadata(AARCH64_OUT)?;
+    if meta_in.modified()? > meta_arm.modified()? {
+        let mut file_arm = File::create("src/arm/neon/generated.rs")?;
+        file_arm.write_all(out_arm.as_bytes())?;
+        file_arm.write_all(tests_arm.as_bytes())?;
+    }
+    if meta_in.modified()? > meta_aarch64.modified()? {
+        let mut file_aarch = File::create("src/aarch64/neon/generated.rs")?;
+        file_aarch.write_all(out_aarch64.as_bytes())?;
+        file_aarch.write_all(tests_aarch64.as_bytes())?;
+    }
     Ok(())
 }
 
