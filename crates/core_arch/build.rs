@@ -184,7 +184,6 @@ fn main() -> io::Result<()> {
 //
 #![rustfmt::skip]
 use super::*;
-use crate::core_arch::simd_llvm::*;
 #[cfg(test)]
 use stdarch_test::assert_instr;
 "#,
@@ -206,7 +205,6 @@ mod test {
 //
 #![rustfmt::skip]
 use super::*;
-use crate::core_arch::simd_llvm::*;
 #[cfg(test)]
 use stdarch_test::assert_instr;
 "#,

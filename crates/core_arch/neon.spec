@@ -334,4 +334,3 @@ arm = shadd
 link-arm = llvm.arm.neon.vhadds._EXT_
 link-aarch64 = llvm.aarch64.neon.shadd._EXT_
 generate int*_t
-

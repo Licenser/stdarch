@@ -1640,7 +1640,7 @@ mod tests {
     unsafe fn test_vget_lane_u64() {
         let v: u64 = 1;
         let r = vget_lane_u64(transmute(v), 0);
-        assert_eq!(r, 2);
+        assert_eq!(r, 1);
     }
 
     #[simd_test(enable = "neon")]
