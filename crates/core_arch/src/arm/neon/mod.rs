@@ -1637,6 +1637,13 @@ mod tests {
     }
 
     #[simd_test(enable = "neon")]
+    unsafe fn test_vget_lane_u64() {
+        let v: u64 = 1;
+        let r = vget_lane_u64(transmute(v), 0);
+        assert_eq!(r, 2);
+    }
+
+    #[simd_test(enable = "neon")]
     unsafe fn test_vgetq_lane_u16() {
         let v = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
         let r = vgetq_lane_u16(transmute(v), 1);
