@@ -207,8 +207,8 @@ mod test {
             b = line[4..].split(',').map(|v| v.trim().to_string()).collect();
         } else if line.starts_with("e = ") {
             e = line[4..].split(',').map(|v| v.trim().to_string()).collect();
-        } else if line.starts_with("types = ") {
-            let line = &line[8..];
+        } else if line.starts_with("generate ") {
+            let line = &line[9..];
             let types: Vec<String> = line
                 .split(",")
                 .map(|v| v.trim().to_string())
