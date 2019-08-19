@@ -1596,6 +1596,210 @@ pub unsafe fn vqaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     vqaddq_s32_(a, b)
 }
 
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v8i8")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v8i8")]
+    fn vhadd_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhadd_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
+    vhadd_u8_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v16i8")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v16i8")]
+    fn vhaddq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
+    vhaddq_u8_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v4i16")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v4i16")]
+    fn vhadd_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhadd_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
+    vhadd_u16_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v8i16")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v8i16")]
+    fn vhaddq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhaddq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
+    vhaddq_u16_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v2i32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v2i32")]
+    fn vhadd_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhadd_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
+    vhadd_u32_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v4i32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v4i32")]
+    fn vhaddq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(uhadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uhadd))]
+pub unsafe fn vhaddq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
+    vhaddq_u32_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v8i8")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v8i8")]
+    fn vhadd_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhadd_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
+    vhadd_s8_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v16i8")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v16i8")]
+    fn vhaddq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhaddq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
+    vhaddq_s8_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v4i16")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v4i16")]
+    fn vhadd_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhadd_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
+    vhadd_s16_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v8i16")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v8i16")]
+    fn vhaddq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhaddq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
+    vhaddq_s16_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v2i32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v2i32")]
+    fn vhadd_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhadd_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
+    vhadd_s32_(a, b)
+}
+
+#[allow(improper_ctypes)]
+extern "C" {
+    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v4i32")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v4i32")]
+    fn vhaddq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+}
+
+/// Halving add
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(shadd))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(shadd))]
+pub unsafe fn vhaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
+    vhaddq_s32_(a, b)
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -2878,6 +3082,114 @@ mod test {
         let b:i32x4 = i32x4::new(1, 2, 3, 4);
         let e:i32x4 = i32x4::new(43, 44, 45, 46);
         let r: i32x4 = transmute(vqaddq_s32(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_u8() {
+        let a:u8x8 = u8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+        let b:u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let e:u8x8 = u8x8::new(21, 22, 22, 23, 23, 24, 24, 25);
+        let r: u8x8 = transmute(vhadd_u8(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_u8() {
+        let a:u8x16 = u8x16::new(42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42);
+        let b:u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let e:u8x16 = u8x16::new(21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29);
+        let r: u8x16 = transmute(vhaddq_u8(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_u16() {
+        let a:u16x4 = u16x4::new(42, 42, 42, 42);
+        let b:u16x4 = u16x4::new(1, 2, 3, 4);
+        let e:u16x4 = u16x4::new(21, 22, 22, 23);
+        let r: u16x4 = transmute(vhadd_u16(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_u16() {
+        let a:u16x8 = u16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+        let b:u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let e:u16x8 = u16x8::new(21, 22, 22, 23, 23, 24, 24, 25);
+        let r: u16x8 = transmute(vhaddq_u16(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_u32() {
+        let a:u32x2 = u32x2::new(42, 42);
+        let b:u32x2 = u32x2::new(1, 2);
+        let e:u32x2 = u32x2::new(21, 22);
+        let r: u32x2 = transmute(vhadd_u32(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_u32() {
+        let a:u32x4 = u32x4::new(42, 42, 42, 42);
+        let b:u32x4 = u32x4::new(1, 2, 3, 4);
+        let e:u32x4 = u32x4::new(21, 22, 22, 23);
+        let r: u32x4 = transmute(vhaddq_u32(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_s8() {
+        let a:i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+        let b:i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let e:i8x8 = i8x8::new(21, 22, 22, 23, 23, 24, 24, 25);
+        let r: i8x8 = transmute(vhadd_s8(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_s8() {
+        let a:i8x16 = i8x16::new(42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42);
+        let b:i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let e:i8x16 = i8x16::new(21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29);
+        let r: i8x16 = transmute(vhaddq_s8(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_s16() {
+        let a:i16x4 = i16x4::new(42, 42, 42, 42);
+        let b:i16x4 = i16x4::new(1, 2, 3, 4);
+        let e:i16x4 = i16x4::new(21, 22, 22, 23);
+        let r: i16x4 = transmute(vhadd_s16(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_s16() {
+        let a:i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+        let b:i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+        let e:i16x8 = i16x8::new(21, 22, 22, 23, 23, 24, 24, 25);
+        let r: i16x8 = transmute(vhaddq_s16(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhadd_s32() {
+        let a:i32x2 = i32x2::new(42, 42);
+        let b:i32x2 = i32x2::new(1, 2);
+        let e:i32x2 = i32x2::new(21, 22);
+        let r: i32x2 = transmute(vhadd_s32(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhaddq_s32() {
+        let a:i32x4 = i32x4::new(42, 42, 42, 42);
+        let b:i32x4 = i32x4::new(1, 2, 3, 4);
+        let e:i32x4 = i32x4::new(21, 22, 22, 23);
+        let r: i32x4 = transmute(vhaddq_s32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 }

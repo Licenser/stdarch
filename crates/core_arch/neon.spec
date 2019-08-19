@@ -319,3 +319,19 @@ link-arm = llvm.arm.neon.vqadds._EXT_
 link-aarch64 = llvm.aarch64.neon.sqadd._EXT_
 generate int*_t
 
+/// Halving add
+name = vhadd
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29
+
+arm = uhadd
+link-arm = llvm.arm.neon.vhaddu._EXT_
+link-aarch64 = llvm.aarch64.neon.uhadd._EXT_
+generate uint*_t
+
+arm = shadd
+link-arm = llvm.arm.neon.vhadds._EXT_
+link-aarch64 = llvm.aarch64.neon.shadd._EXT_
+generate int*_t
+
