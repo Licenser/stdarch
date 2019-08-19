@@ -16,16 +16,17 @@ const UINT_TYPES: [&'static str; 6] = [
 ];
 
 const UINT_TYPES_64: [&'static str; 2] = ["uint64x1_t", "uint64x2_t"];
-const INT_TYPES: [&'static str; 8] = [
+
+const INT_TYPES: [&'static str; 6] = [
     "int8x8_t",
     "int8x16_t",
     "int16x4_t",
     "int16x8_t",
     "int32x2_t",
     "int32x4_t",
-    "int64x1_t",
-    "int64x2_t",
 ];
+
+const INT_TYPES_64: [&'static str; 2] = ["int64x1_t", "int64x2_t"];
 
 /*
 const FLOAT_TYPES: [&'static str; 6] = [
@@ -128,6 +129,38 @@ fn type_to_global_type(t: &str) -> &str {
     }
 }
 
+fn type_to_ext(t: &str) -> &str {
+    match t {
+        "int8x8_t" => "v8i8",
+        "int8x16_t" => "v16i8",
+        "int16x4_t" => "v4i16",
+        "int16x8_t" => "v8i16",
+        "int32x2_t" => "v2i32",
+        "int32x4_t" => "v4i32",
+        "int64x1_t" => "v1i64",
+        "int64x2_t" => "v2i64",
+        "uint8x8_t" => "v8i8",
+        "uint8x16_t" => "v16i8",
+        "uint16x4_t" => "v4i16",
+        "uint16x8_t" => "v8i16",
+        "uint32x2_t" => "v2i32",
+        "uint32x4_t" => "v4i32",
+        "uint64x1_t" => "v1i64",
+        "uint64x2_t" => "v2i64",
+        "float16x4_t" => "v4f16",
+        "float16x8_t" => "v8f16",
+        "float32x2_t" => "v2f32",
+        "float32x4_t" => "v4f32",
+        "float64x1_t" => "v1f64",
+        "float64x2_t" => "v2f64",
+        /*
+        "poly64x1_t" => "i64x1",
+        "poly64x2_t" => "i64x2",
+        */
+        _ => panic!("unknown type for extension: {}", t),
+    }
+}
+
 fn main() -> io::Result<()> {
     println!("cargo:rustc-cfg=core_arch_docs");
 
@@ -139,11 +172,16 @@ fn main() -> io::Result<()> {
     let mut current_fn: Option<String> = None;
     let mut current_arm: Option<String> = None;
     let mut current_aarch64: Option<String> = None;
+    let mut link_arm: Option<String> = None;
+    let mut link_aarch64: Option<String> = None;
     let mut a: Vec<String> = Vec::new();
     let mut b: Vec<String> = Vec::new();
     let mut e: Vec<String> = Vec::new();
     let mut out_arm = String::from(
         r#"
+//
+// THIS FILE IS GENERATED FORM neon.spec DO NOT CHANGE IT MANUALLY
+//
 #![rustfmt::skip]
 use super::*;
 use crate::core_arch::simd_llvm::*;
@@ -163,6 +201,9 @@ mod test {
     );
     let mut out_aarch64 = String::from(
         r#"
+//
+// THIS FILE IS GENERATED FORM neon.spec DO NOT CHANGE IT MANUALLY
+//
 #![rustfmt::skip]
 use super::*;
 use crate::core_arch::simd_llvm::*;
@@ -192,6 +233,8 @@ mod test {
             current_fn = None;
             current_arm = None;
             current_aarch64 = None;
+            link_aarch64 = None;
+            link_arm = None;
         } else if line.starts_with("//") {
         } else if line.starts_with("name = ") {
             current_name = Some(String::from(&line[7..]));
@@ -207,6 +250,10 @@ mod test {
             b = line[4..].split(',').map(|v| v.trim().to_string()).collect();
         } else if line.starts_with("e = ") {
             e = line[4..].split(',').map(|v| v.trim().to_string()).collect();
+        } else if line.starts_with("link-aarch64 = ") {
+            link_aarch64 = Some(String::from(&line[15..]));
+        } else if line.starts_with("link-arm = ") {
+            link_arm = Some(String::from(&line[11..]));
         } else if line.starts_with("generate ") {
             let line = &line[9..];
             let types: Vec<String> = line
@@ -216,6 +263,7 @@ mod test {
                     "uint*_t" => UINT_TYPES.iter().map(|v| v.to_string()).collect(),
                     "uint64x*_t" => UINT_TYPES_64.iter().map(|v| v.to_string()).collect(),
                     "int*_t" => INT_TYPES.iter().map(|v| v.to_string()).collect(),
+                    "int64x*_t" => INT_TYPES_64.iter().map(|v| v.to_string()).collect(),
                     _ => vec![v],
                 })
                 .collect();
@@ -233,16 +281,60 @@ mod test {
                 } else {
                     panic!("Bad spec: {}", line)
                 }
-                let name = format!("{}{}", current_name.clone().unwrap(), type_to_suffix(in_t),);
+                let current_name = current_name.clone().unwrap();
+                let name = format!("{}{}", current_name, type_to_suffix(in_t),);
                 let a: Vec<String> = a.iter().take(type_len(in_t)).cloned().collect();
                 let b: Vec<String> = b.iter().take(type_len(in_t)).cloned().collect();
                 let e: Vec<String> = e.iter().take(type_len(in_t)).cloned().collect();
                 let globla_t = type_to_global_type(in_t);
                 let globla_ret_t = type_to_global_type(out_t);
-                let current_fn = current_fn.clone().unwrap();
 
                 if let Some(current_arm) = current_arm.clone() {
                     let current_aarch64 = current_aarch64.clone().unwrap_or(current_arm.clone());
+
+                    let current_fn = if let Some(current_fn) = current_fn.clone() {
+                        if link_aarch64.is_some() || link_arm.is_some() {
+                            panic!(
+                                "[{}] Can't specify link and function at the same time. {} / {:?} / {:?}",
+                                name, current_fn, link_aarch64, link_arm
+                            )
+                        }
+                        current_fn
+                    } else {
+                        if link_aarch64.is_none() || link_arm.is_none() {
+                            panic!(
+                                "[{}] Either fn or link-arm and link-aarch have to be specified.",
+                                name
+                            )
+                        }
+                        format!("{}_", name)
+                    };
+
+                    let link = if let (Some(link_arm), Some(link_aarch64)) =
+                        (link_arm.clone(), link_aarch64.clone())
+                    {
+                        let ext = type_to_ext(in_t);
+
+                        format!(
+                            r#"
+#[allow(improper_ctypes)]
+extern "C" {{
+    #[cfg_attr(target_arch = "arm", link_name = "{}")]
+    #[cfg_attr(target_arch = "aarch64", link_name = "{}")]
+    fn {}(a: {}, a: {}) -> {};
+}}
+"#,
+                            link_arm.replace("_EXT_", ext),
+                            link_aarch64.replace("_EXT_", ext),
+                            current_fn,
+                            in_t,
+                            in_t,
+                            out_t
+                        )
+                    } else {
+                        String::new()
+                    };
+
                     let function = format!(
                         r#"
 {}
@@ -274,7 +366,7 @@ pub unsafe fn {}(a: {}, b: {}) -> {} {{
         let r: {} = transmute({}(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }}
-            "#,
+"#,
                         name,
                         values(globla_t, &a),
                         values(globla_t, &b),
@@ -282,10 +374,42 @@ pub unsafe fn {}(a: {}, b: {}) -> {} {{
                         globla_ret_t,
                         name
                     );
+                    out_arm.push_str(&link);
                     out_arm.push_str(&function);
                     tests_arm.push_str(&test);
                 } else {
+                    let current_fn = if let Some(current_fn) = current_fn.clone() {
+                        if link_aarch64.is_some() {
+                            panic!("[{}] Can't specify link and fn at the same time.", name)
+                        }
+                        current_fn
+                    } else {
+                        if link_aarch64.is_none() {
+                            panic!("[{}] Either fn or link-aarch have to be specified.", name)
+                        }
+                        format!("{}_", name)
+                    };
                     let current_aarch64 = current_aarch64.clone().unwrap();
+                    let link = if let Some(link_aarch64) = link_aarch64.clone() {
+                        let ext = type_to_ext(in_t);
+
+                        format!(
+                            r#"
+#[allow(improper_ctypes)]
+extern "C" {{
+    #[cfg_attr(target_arch = "aarch64", link_name = "{}")]
+    fn {}(a: {}, a: {}) -> {};
+}}
+"#,
+                            link_aarch64.replace("_EXT_", ext),
+                            current_fn,
+                            in_t,
+                            in_t,
+                            out_t
+                        )
+                    } else {
+                        String::new()
+                    };
                     let function = format!(
                         r#"
 {}
@@ -316,6 +440,7 @@ pub unsafe fn {}(a: {}, b: {}) -> {} {{
                         globla_ret_t,
                         name
                     );
+                    out_aarch64.push_str(&link);
                     out_aarch64.push_str(&function);
                     tests_aarch64.push_str(&test);
                 }
@@ -329,12 +454,12 @@ pub unsafe fn {}(a: {}, b: {}) -> {} {{
     let meta_arm = fs::metadata(ARM_OUT)?;
     let meta_aarch64 = fs::metadata(AARCH64_OUT)?;
     if meta_in.modified()? > meta_arm.modified()? {
-        let mut file_arm = File::create("src/arm/neon/generated.rs")?;
+        let mut file_arm = File::create(ARM_OUT)?;
         file_arm.write_all(out_arm.as_bytes())?;
         file_arm.write_all(tests_arm.as_bytes())?;
     }
     if meta_in.modified()? > meta_aarch64.modified()? {
-        let mut file_aarch = File::create("src/aarch64/neon/generated.rs")?;
+        let mut file_aarch = File::create(AARCH64_OUT)?;
         file_aarch.write_all(out_aarch64.as_bytes())?;
         file_aarch.write_all(tests_aarch64.as_bytes())?;
     }

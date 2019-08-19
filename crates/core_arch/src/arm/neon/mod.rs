@@ -111,10 +111,6 @@ extern "C" {
     #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqxtn.v2i32")]
     fn vqmovn_u64_(a: uint64x2_t) -> uint32x2_t;
 
-    #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v16i8")]
-    #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v16i8")]
-    fn vqsubq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
-
     #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vpmins.v8i8")]
     #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sminp.v8i8")]
     fn vpmins_v8i8(a: int8x8_t, b: int8x8_t) -> int8x8_t;
@@ -197,16 +193,6 @@ extern "C" {
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(uqxtn))]
 pub unsafe fn vqmovn_u64(a: uint64x2_t) -> uint32x2_t {
     vqmovn_u64_(a)
-}
-
-//uint8x16_t vqsubq_u8 (uint8x16_t a, uint8x16_t b)
-///Unsigned saturating subtract
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(test, assert_instr(uqsub))]
-pub unsafe fn vqsubq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
-    vqsubq_u8_(a, b)
 }
 
 /// Vector add.
@@ -1692,19 +1678,6 @@ mod tests {
         let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
         let e = u8x16::new(4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64);
         let r: u8x16 = transmute(vshlq_n_u8(transmute(a), 2));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsubq_u8() {
-        let a = u8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e = u8x16::new(
-            41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26,
-        );
-        let r: u8x16 = transmute(vqsubq_u8(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
 

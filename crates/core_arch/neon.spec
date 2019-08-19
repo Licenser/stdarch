@@ -61,7 +61,7 @@ aarch64 = and
 a = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x00
 b = 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F
 e = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x00
-generate int*_t, uint*_t, uint64x*_t
+generate int*_t, uint*_t, int64x*_t, uint64x*_t
 
 /// Vector bitwise or (immediate, inclusive)
 name = vorr
@@ -71,7 +71,7 @@ aarch64 = orr
 a = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 b = 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 e = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-generate int*_t, uint*_t, uint64x*_t
+generate int*_t, uint*_t, int64x*_t, uint64x*_t
 
 /// Vector bitwise exclusive or (vector)
 name = veor
@@ -81,7 +81,7 @@ aarch64 = eor
 a = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 b = 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 e = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-generate int*_t, uint*_t, uint64x*_t
+generate int*_t, uint*_t, int64x*_t, uint64x*_t
 
 ////////////////////
 // equality
@@ -95,7 +95,7 @@ b = 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C
 e = TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 aarch64 = cmeq
-generate uint64x1_t, uint64x2_t, int64x1_t:uint64x1_t, int64x2_t:uint64x2_t, poly64x1_t:uint64x1_t, poly64x2_t:uint64x2_t
+generate uint64x*_t, int64x1_t:uint64x1_t, int64x2_t:uint64x2_t, poly64x1_t:uint64x1_t, poly64x2_t:uint64x2_t
 
 arm = cmeq
 generate uint*_t, int8x8_t:uint8x8_t, int8x16_t:uint8x16_t, int16x4_t:uint16x4_t, int16x8_t:uint16x8_t, int32x2_t:uint32x2_t, int32x4_t:uint32x4_t
@@ -138,7 +138,7 @@ b = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 e = TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 aarch64 = cmhi
-generate uint64x1_t, uint64x2_t
+generate uint64x*_t
 
 arm = cmhi
 generate uint*_t
@@ -181,7 +181,7 @@ b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 e = TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 aarch64 = cmhi
-generate uint64x1_t, uint64x2_t
+generate uint64x*_t
 
 arm = cmhi
 generate uint*_t
@@ -225,7 +225,7 @@ b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 e = TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 aarch64 = cmhs
-generate uint64x1_t, uint64x2_t
+generate uint64x*_t
 
 arm = cmhs
 generate uint*_t
@@ -268,7 +268,7 @@ b = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 e = TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 aarch64 = cmhs
-generate uint64x1_t, uint64x2_t
+generate uint64x*_t
 
 arm = cmhs
 generate uint*_t
@@ -286,3 +286,14 @@ generate float64x1_t:uint64x1_t, float64x2_t:uint64x2_t
 arm = fcmge
 // we are missing float16x4_t:uint16x4_t, float16x8_t:uint16x8_t
 generate float32x2_t:uint32x2_t, float32x4_t:uint32x4_t
+
+/// Unsigned saturating subtract
+name = vqsub
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26
+link-arm = llvm.arm.neon.vqsubu._EXT_
+link-aarch64 = llvm.aarch64.neon.uqsub._EXT_
+
+arm = uqsub
+generate int*_t, uint*_t

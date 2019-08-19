@@ -1,4 +1,7 @@
 
+//
+// THIS FILE IS GENERATED FORM neon.spec DO NOT CHANGE IT MANUALLY
+//
 #![rustfmt::skip]
 use super::*;
 use crate::core_arch::simd_llvm::*;
