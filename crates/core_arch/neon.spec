@@ -294,29 +294,13 @@ b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 e = 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26
 
 arm = uqsub
-link-arm = llvm.arm.neon.vqsubu._EXT_
-link-aarch64 = llvm.aarch64.neon.uqsub._EXT_
+link-arm = vqsubu._EXT_
+link-aarch64 = uqsub._EXT_
 generate uint*_t
 
 arm = sqsub
-link-arm = llvm.arm.neon.vqsubs._EXT_
-link-aarch64 = llvm.aarch64.neon.sqsub._EXT_
-generate int*_t
-
-/// Saturating add
-name = vqadd
-a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
-b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-e = 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58
-
-arm = uqadd
-link-arm = llvm.arm.neon.vqaddu._EXT_
-link-aarch64 = llvm.aarch64.neon.uqadd._EXT_
-generate uint*_t
-
-arm = sqadd
-link-arm = llvm.arm.neon.vqadds._EXT_
-link-aarch64 = llvm.aarch64.neon.sqadd._EXT_
+link-arm = vqsubs._EXT_
+link-aarch64 = sqsub._EXT_
 generate int*_t
 
 /// Halving add
@@ -326,11 +310,122 @@ b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 e = 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29
 
 arm = uhadd
-link-arm = llvm.arm.neon.vhaddu._EXT_
-link-aarch64 = llvm.aarch64.neon.uhadd._EXT_
+link-arm = vhaddu._EXT_
+link-aarch64 = uhadd._EXT_
 generate uint*_t
 
 arm = shadd
-link-arm = llvm.arm.neon.vhadds._EXT_
-link-aarch64 = llvm.aarch64.neon.shadd._EXT_
+link-arm = vhadds._EXT_
+link-aarch64 = shadd._EXT_
+generate int*_t
+
+/// Rounding halving add
+name = vrhadd
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29
+
+arm = urhadd
+link-arm = vrhaddu._EXT_
+link-aarch64 = urhadd._EXT_
+generate uint*_t
+
+arm = srhadd
+link-arm = vrhadds._EXT_
+link-aarch64 = srhadd._EXT_
+generate int*_t
+
+/// Saturating add
+name = vqadd
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58
+
+arm = uqadd
+link-arm = vqaddu._EXT_
+link-aarch64 = uqadd._EXT_
+generate uint*_t
+
+arm = sqadd
+link-arm = vqadds._EXT_
+link-aarch64 = sqadd._EXT_
+generate int*_t
+
+/// Signed saturating accumulate of unsigned value
+name = vuqadd
+a = 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58
+
+// it seems like we don't have those in rustland :( 
+// aarch64 = suqadd 
+// link-aarch64 = usqadd._EXT_
+// generate int64x*_t
+
+arm = suqadd
+link-arm = vuqadds._EXT_
+link-aarch64 = suqadd._EXT_
+generate int*_t
+
+
+/// Multiply
+name = vmul
+a = 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2
+b = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+e = 1, 4, 3, 8, 5, 12, 7, 16, 9, 20, 11, 24, 13, 28, 15, 32
+arm = mul
+fn = simd_mul
+generate int*_t, uint*_t, int64x*_t, uint64x*_t
+
+/// Multiply
+name = vmul
+fn = simd_mul
+a = 1.0, 2.0, 1.0, 2.0
+b = 1.0, 2.0, 3.0, 4.0
+e = 1.0, 4.0, 3.0, 8.0
+
+aarch64 = mul
+generate float64x*_t
+
+arm = mul
+generate float*_t
+
+
+/// Subtract
+name = vsub
+a = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+b = 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2
+e = 0, 0, 2, 2, 4, 4, 6, 6, 8, 8, 10, 10, 12, 12, 14, 14
+arm = sub
+fn = simd_sub
+generate int*_t, uint*_t, int64x*_t, uint64x*_t
+
+/// Subtract
+name = vsub
+fn = simd_sub
+a = 1.0, 4.0, 3.0, 8.0
+b = 1.0, 2.0, 3.0, 4.0
+e = 0.0, 2.0, 0.0, 4.0
+
+aarch64 = sub
+generate float64x*_t
+
+arm = sub
+generate float*_t
+
+
+/// Signed halving subtract
+name = vhsub
+a = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+b = 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2
+e = 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7
+
+arm = uhsub
+link-arm = vhsubu._EXT_
+link-aarch64 = uhsub._EXT_
+generate uint*_t
+
+arm = shsub
+link-arm = vhsubs._EXT_
+link-aarch64 = shsub._EXT_
 generate int*_t

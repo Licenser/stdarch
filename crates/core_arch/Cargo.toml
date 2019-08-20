@@ -32,3 +32,6 @@ wasm-bindgen-test = "0.2.47"
 
 [package.metadata.docs.rs]
 rustdoc-args = [ "--cfg", "dox" ]
+
+[[example]]
+name = "neon_gen"

@@ -263,6 +263,38 @@ pub unsafe fn vcgeq_f64(a: float64x2_t, b: float64x2_t) -> uint64x2_t {
     simd_ge(a, b)
 }
             
+/// Multiply
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(mul))]
+pub unsafe fn vmul_f64(a: float64x1_t, b: float64x1_t) -> float64x1_t {
+    simd_mul(a, b)
+}
+            
+/// Multiply
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(mul))]
+pub unsafe fn vmulq_f64(a: float64x2_t, b: float64x2_t) -> float64x2_t {
+    simd_mul(a, b)
+}
+            
+/// Subtract
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(sub))]
+pub unsafe fn vsub_f64(a: float64x1_t, b: float64x1_t) -> float64x1_t {
+    simd_sub(a, b)
+}
+            
+/// Subtract
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(test, assert_instr(sub))]
+pub unsafe fn vsubq_f64(a: float64x2_t, b: float64x2_t) -> float64x2_t {
+    simd_sub(a, b)
+}
+            
 #[cfg(test)]
 mod test {
     use super::*;
@@ -555,6 +587,42 @@ mod test {
         let b:f64x2 = f64x2::new(0.1, 1.2);
         let e:u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
         let r: u64x2 = transmute(vcgeq_f64(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+            
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vmul_f64() {
+        let a:f64 = 1.0;
+        let b:f64 = 1.0;
+        let e:f64 = 1.0;
+        let r: f64 = transmute(vmul_f64(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+            
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vmulq_f64() {
+        let a:f64x2 = f64x2::new(1.0, 2.0);
+        let b:f64x2 = f64x2::new(1.0, 2.0);
+        let e:f64x2 = f64x2::new(1.0, 4.0);
+        let r: f64x2 = transmute(vmulq_f64(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+            
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vsub_f64() {
+        let a:f64 = 1.0;
+        let b:f64 = 1.0;
+        let e:f64 = 0.0;
+        let r: f64 = transmute(vsub_f64(transmute(a), transmute(b)));
+        assert_eq!(r, e);
+    }
+            
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vsubq_f64() {
+        let a:f64x2 = f64x2::new(1.0, 4.0);
+        let b:f64x2 = f64x2::new(1.0, 2.0);
+        let e:f64x2 = f64x2::new(0.0, 2.0);
+        let r: f64x2 = transmute(vsubq_f64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
             }
