@@ -1,6 +1,3 @@
-//
-// THIS FILE IS GENERATED FORM neon.spec DO NOT CHANGE IT MANUALLY
-//
 use super::*;
 #[cfg(test)]
 use stdarch_test::assert_instr;
