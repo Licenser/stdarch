@@ -588,8 +588,8 @@ mod test {
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_f64() {
         let a: f64 = 1.0;
-        let b: f64 = 1.0;
-        let e: f64 = 1.0;
+        let b: f64 = 2.0;
+        let e: f64 = 2.0;
         let r: f64 = transmute(vmul_f64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
@@ -597,8 +597,8 @@ mod test {
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_f64() {
         let a: f64x2 = f64x2::new(1.0, 2.0);
-        let b: f64x2 = f64x2::new(1.0, 2.0);
-        let e: f64x2 = f64x2::new(1.0, 4.0);
+        let b: f64x2 = f64x2::new(2.0, 3.0);
+        let e: f64x2 = f64x2::new(2.0, 6.0);
         let r: f64x2 = transmute(vmulq_f64(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
