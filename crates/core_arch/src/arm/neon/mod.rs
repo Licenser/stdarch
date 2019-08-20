@@ -1209,7 +1209,9 @@ pub unsafe fn vgetq_lane_u16(v: uint16x8_t, imm5: i32) -> u16 {
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[rustc_args_required_const(1)]
-#[cfg_attr(test, assert_instr(umov, imm5 = 0))]
+// see: https://clang.godbolt.org/z/J5xS2T
+//#[cfg_attr(test, assert_instr(umov, imm5 = 0))]
+#[cfg_attr(test, assert_instr(fmov, imm5 = 0))]
 pub unsafe fn vgetq_lane_u32(v: uint32x4_t, imm5: i32) -> u32 {
     if (imm5) < 0 || (imm5) > 3 {
         unreachable_unchecked()
