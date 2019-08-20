@@ -255,7 +255,6 @@ pub unsafe fn vpaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
 }
 
 /// Polynomial multiply long
-//poly128_t vmull_p64 (poly64_t a, poly64_t b)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(test, assert_instr(pmull))]
