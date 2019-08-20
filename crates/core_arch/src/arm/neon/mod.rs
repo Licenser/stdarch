@@ -1274,6 +1274,9 @@ pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpret_u64_u32(a: uint32x2_t) -> uint64x1_t {
     transmute(a)
 }
@@ -1282,6 +1285,9 @@ pub unsafe fn vreinterpret_u64_u32(a: uint32x2_t) -> uint64x1_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpretq_s8_u8(a: uint8x16_t) -> int8x16_t {
     transmute(a)
 }
@@ -1290,6 +1296,9 @@ pub unsafe fn vreinterpretq_s8_u8(a: uint8x16_t) -> int8x16_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpretq_u16_u8(a: uint8x16_t) -> uint16x8_t {
     transmute(a)
 }
@@ -1298,6 +1307,9 @@ pub unsafe fn vreinterpretq_u16_u8(a: uint8x16_t) -> uint16x8_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpretq_u32_u8(a: uint8x16_t) -> uint32x4_t {
     transmute(a)
 }
@@ -1306,6 +1318,9 @@ pub unsafe fn vreinterpretq_u32_u8(a: uint8x16_t) -> uint32x4_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpretq_u64_u8(a: uint8x16_t) -> uint64x2_t {
     transmute(a)
 }
@@ -1314,6 +1329,9 @@ pub unsafe fn vreinterpretq_u64_u8(a: uint8x16_t) -> uint64x2_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+// This doesn't actually has an assembly instruction but simdarch-verify
+//requires it to have one ... it's a function so it returns.
+#[cfg_attr(test, assert_instr(ret))]
 pub unsafe fn vreinterpretq_u8_s8(a: uint8x16_t) -> uint8x16_t {
     transmute(a)
 }
