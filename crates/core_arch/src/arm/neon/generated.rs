@@ -2,7 +2,6 @@
 //
 // THIS FILE IS GENERATED FORM neon.spec DO NOT CHANGE IT MANUALLY
 //
-#![rustfmt::skip]
 use super::*;
 #[cfg(test)]
 use stdarch_test::assert_instr;
@@ -1199,7 +1198,7 @@ pub unsafe fn vqsub_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v8i8")]
-        fn vqsub_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+        fn vqsub_u8_(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t;
     }
 vqsub_u8_(a, b)
 }
@@ -1216,7 +1215,7 @@ pub unsafe fn vqsubq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v16i8")]
-        fn vqsubq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+        fn vqsubq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
     }
 vqsubq_u8_(a, b)
 }
@@ -1233,7 +1232,7 @@ pub unsafe fn vqsub_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v4i16")]
-        fn vqsub_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+        fn vqsub_u16_(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t;
     }
 vqsub_u16_(a, b)
 }
@@ -1250,7 +1249,7 @@ pub unsafe fn vqsubq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v8i16")]
-        fn vqsubq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+        fn vqsubq_u16_(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t;
     }
 vqsubq_u16_(a, b)
 }
@@ -1267,7 +1266,7 @@ pub unsafe fn vqsub_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v2i32")]
-        fn vqsub_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+        fn vqsub_u32_(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t;
     }
 vqsub_u32_(a, b)
 }
@@ -1284,7 +1283,7 @@ pub unsafe fn vqsubq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubu.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqsub.v4i32")]
-        fn vqsubq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+        fn vqsubq_u32_(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t;
     }
 vqsubq_u32_(a, b)
 }
@@ -1301,7 +1300,7 @@ pub unsafe fn vqsub_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v8i8")]
-        fn vqsub_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vqsub_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vqsub_s8_(a, b)
 }
@@ -1318,7 +1317,7 @@ pub unsafe fn vqsubq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v16i8")]
-        fn vqsubq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vqsubq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vqsubq_s8_(a, b)
 }
@@ -1335,7 +1334,7 @@ pub unsafe fn vqsub_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v4i16")]
-        fn vqsub_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vqsub_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vqsub_s16_(a, b)
 }
@@ -1352,7 +1351,7 @@ pub unsafe fn vqsubq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v8i16")]
-        fn vqsubq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vqsubq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vqsubq_s16_(a, b)
 }
@@ -1369,7 +1368,7 @@ pub unsafe fn vqsub_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v2i32")]
-        fn vqsub_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vqsub_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vqsub_s32_(a, b)
 }
@@ -1386,7 +1385,7 @@ pub unsafe fn vqsubq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqsubs.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqsub.v4i32")]
-        fn vqsubq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vqsubq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vqsubq_s32_(a, b)
 }
@@ -1403,7 +1402,7 @@ pub unsafe fn vhadd_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v8i8")]
-        fn vhadd_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+        fn vhadd_u8_(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t;
     }
 vhadd_u8_(a, b)
 }
@@ -1420,7 +1419,7 @@ pub unsafe fn vhaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v16i8")]
-        fn vhaddq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+        fn vhaddq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
     }
 vhaddq_u8_(a, b)
 }
@@ -1437,7 +1436,7 @@ pub unsafe fn vhadd_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v4i16")]
-        fn vhadd_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+        fn vhadd_u16_(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t;
     }
 vhadd_u16_(a, b)
 }
@@ -1454,7 +1453,7 @@ pub unsafe fn vhaddq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v8i16")]
-        fn vhaddq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+        fn vhaddq_u16_(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t;
     }
 vhaddq_u16_(a, b)
 }
@@ -1471,7 +1470,7 @@ pub unsafe fn vhadd_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v2i32")]
-        fn vhadd_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+        fn vhadd_u32_(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t;
     }
 vhadd_u32_(a, b)
 }
@@ -1488,7 +1487,7 @@ pub unsafe fn vhaddq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhaddu.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhadd.v4i32")]
-        fn vhaddq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+        fn vhaddq_u32_(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t;
     }
 vhaddq_u32_(a, b)
 }
@@ -1505,7 +1504,7 @@ pub unsafe fn vhadd_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v8i8")]
-        fn vhadd_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vhadd_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vhadd_s8_(a, b)
 }
@@ -1522,7 +1521,7 @@ pub unsafe fn vhaddq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v16i8")]
-        fn vhaddq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vhaddq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vhaddq_s8_(a, b)
 }
@@ -1539,7 +1538,7 @@ pub unsafe fn vhadd_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v4i16")]
-        fn vhadd_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vhadd_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vhadd_s16_(a, b)
 }
@@ -1556,7 +1555,7 @@ pub unsafe fn vhaddq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v8i16")]
-        fn vhaddq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vhaddq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vhaddq_s16_(a, b)
 }
@@ -1573,7 +1572,7 @@ pub unsafe fn vhadd_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v2i32")]
-        fn vhadd_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vhadd_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vhadd_s32_(a, b)
 }
@@ -1590,7 +1589,7 @@ pub unsafe fn vhaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhadds.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shadd.v4i32")]
-        fn vhaddq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vhaddq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vhaddq_s32_(a, b)
 }
@@ -1607,7 +1606,7 @@ pub unsafe fn vrhadd_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v8i8")]
-        fn vrhadd_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+        fn vrhadd_u8_(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t;
     }
 vrhadd_u8_(a, b)
 }
@@ -1624,7 +1623,7 @@ pub unsafe fn vrhaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v16i8")]
-        fn vrhaddq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+        fn vrhaddq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
     }
 vrhaddq_u8_(a, b)
 }
@@ -1641,7 +1640,7 @@ pub unsafe fn vrhadd_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v4i16")]
-        fn vrhadd_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+        fn vrhadd_u16_(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t;
     }
 vrhadd_u16_(a, b)
 }
@@ -1658,7 +1657,7 @@ pub unsafe fn vrhaddq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v8i16")]
-        fn vrhaddq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+        fn vrhaddq_u16_(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t;
     }
 vrhaddq_u16_(a, b)
 }
@@ -1675,7 +1674,7 @@ pub unsafe fn vrhadd_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v2i32")]
-        fn vrhadd_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+        fn vrhadd_u32_(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t;
     }
 vrhadd_u32_(a, b)
 }
@@ -1692,7 +1691,7 @@ pub unsafe fn vrhaddq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhaddu.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.urhadd.v4i32")]
-        fn vrhaddq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+        fn vrhaddq_u32_(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t;
     }
 vrhaddq_u32_(a, b)
 }
@@ -1709,7 +1708,7 @@ pub unsafe fn vrhadd_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v8i8")]
-        fn vrhadd_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vrhadd_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vrhadd_s8_(a, b)
 }
@@ -1726,7 +1725,7 @@ pub unsafe fn vrhaddq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v16i8")]
-        fn vrhaddq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vrhaddq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vrhaddq_s8_(a, b)
 }
@@ -1743,7 +1742,7 @@ pub unsafe fn vrhadd_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v4i16")]
-        fn vrhadd_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vrhadd_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vrhadd_s16_(a, b)
 }
@@ -1760,7 +1759,7 @@ pub unsafe fn vrhaddq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v8i16")]
-        fn vrhaddq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vrhaddq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vrhaddq_s16_(a, b)
 }
@@ -1777,7 +1776,7 @@ pub unsafe fn vrhadd_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v2i32")]
-        fn vrhadd_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vrhadd_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vrhadd_s32_(a, b)
 }
@@ -1794,7 +1793,7 @@ pub unsafe fn vrhaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vrhadds.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.srhadd.v4i32")]
-        fn vrhaddq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vrhaddq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vrhaddq_s32_(a, b)
 }
@@ -1811,7 +1810,7 @@ pub unsafe fn vqadd_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v8i8")]
-        fn vqadd_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+        fn vqadd_u8_(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t;
     }
 vqadd_u8_(a, b)
 }
@@ -1828,7 +1827,7 @@ pub unsafe fn vqaddq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v16i8")]
-        fn vqaddq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+        fn vqaddq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
     }
 vqaddq_u8_(a, b)
 }
@@ -1845,7 +1844,7 @@ pub unsafe fn vqadd_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v4i16")]
-        fn vqadd_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+        fn vqadd_u16_(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t;
     }
 vqadd_u16_(a, b)
 }
@@ -1862,7 +1861,7 @@ pub unsafe fn vqaddq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v8i16")]
-        fn vqaddq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+        fn vqaddq_u16_(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t;
     }
 vqaddq_u16_(a, b)
 }
@@ -1879,7 +1878,7 @@ pub unsafe fn vqadd_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v2i32")]
-        fn vqadd_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+        fn vqadd_u32_(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t;
     }
 vqadd_u32_(a, b)
 }
@@ -1896,7 +1895,7 @@ pub unsafe fn vqaddq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqaddu.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uqadd.v4i32")]
-        fn vqaddq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+        fn vqaddq_u32_(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t;
     }
 vqaddq_u32_(a, b)
 }
@@ -1913,7 +1912,7 @@ pub unsafe fn vqadd_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v8i8")]
-        fn vqadd_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vqadd_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vqadd_s8_(a, b)
 }
@@ -1930,7 +1929,7 @@ pub unsafe fn vqaddq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v16i8")]
-        fn vqaddq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vqaddq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vqaddq_s8_(a, b)
 }
@@ -1947,7 +1946,7 @@ pub unsafe fn vqadd_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v4i16")]
-        fn vqadd_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vqadd_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vqadd_s16_(a, b)
 }
@@ -1964,7 +1963,7 @@ pub unsafe fn vqaddq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v8i16")]
-        fn vqaddq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vqaddq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vqaddq_s16_(a, b)
 }
@@ -1981,7 +1980,7 @@ pub unsafe fn vqadd_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v2i32")]
-        fn vqadd_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vqadd_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vqadd_s32_(a, b)
 }
@@ -1998,7 +1997,7 @@ pub unsafe fn vqaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vqadds.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.sqadd.v4i32")]
-        fn vqaddq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vqaddq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vqaddq_s32_(a, b)
 }
@@ -2015,7 +2014,7 @@ pub unsafe fn vuqadd_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v8i8")]
-        fn vuqadd_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vuqadd_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vuqadd_s8_(a, b)
 }
@@ -2032,7 +2031,7 @@ pub unsafe fn vuqaddq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v16i8")]
-        fn vuqaddq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vuqaddq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vuqaddq_s8_(a, b)
 }
@@ -2049,7 +2048,7 @@ pub unsafe fn vuqadd_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v4i16")]
-        fn vuqadd_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vuqadd_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vuqadd_s16_(a, b)
 }
@@ -2066,7 +2065,7 @@ pub unsafe fn vuqaddq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v8i16")]
-        fn vuqaddq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vuqaddq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vuqaddq_s16_(a, b)
 }
@@ -2083,7 +2082,7 @@ pub unsafe fn vuqadd_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v2i32")]
-        fn vuqadd_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vuqadd_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vuqadd_s32_(a, b)
 }
@@ -2100,7 +2099,7 @@ pub unsafe fn vuqaddq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vuqadds.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.suqadd.v4i32")]
-        fn vuqaddq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vuqaddq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vuqaddq_s32_(a, b)
 }
@@ -2477,7 +2476,7 @@ pub unsafe fn vhsub_u8(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v8i8")]
-        fn vhsub_u8_(a: uint8x8_t, a: uint8x8_t) -> uint8x8_t;
+        fn vhsub_u8_(a: uint8x8_t, b: uint8x8_t) -> uint8x8_t;
     }
 vhsub_u8_(a, b)
 }
@@ -2494,7 +2493,7 @@ pub unsafe fn vhsubq_u8(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v16i8")]
-        fn vhsubq_u8_(a: uint8x16_t, a: uint8x16_t) -> uint8x16_t;
+        fn vhsubq_u8_(a: uint8x16_t, b: uint8x16_t) -> uint8x16_t;
     }
 vhsubq_u8_(a, b)
 }
@@ -2511,7 +2510,7 @@ pub unsafe fn vhsub_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v4i16")]
-        fn vhsub_u16_(a: uint16x4_t, a: uint16x4_t) -> uint16x4_t;
+        fn vhsub_u16_(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t;
     }
 vhsub_u16_(a, b)
 }
@@ -2528,7 +2527,7 @@ pub unsafe fn vhsubq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v8i16")]
-        fn vhsubq_u16_(a: uint16x8_t, a: uint16x8_t) -> uint16x8_t;
+        fn vhsubq_u16_(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t;
     }
 vhsubq_u16_(a, b)
 }
@@ -2545,7 +2544,7 @@ pub unsafe fn vhsub_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v2i32")]
-        fn vhsub_u32_(a: uint32x2_t, a: uint32x2_t) -> uint32x2_t;
+        fn vhsub_u32_(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t;
     }
 vhsub_u32_(a, b)
 }
@@ -2562,7 +2561,7 @@ pub unsafe fn vhsubq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubu.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.uhsub.v4i32")]
-        fn vhsubq_u32_(a: uint32x4_t, a: uint32x4_t) -> uint32x4_t;
+        fn vhsubq_u32_(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t;
     }
 vhsubq_u32_(a, b)
 }
@@ -2579,7 +2578,7 @@ pub unsafe fn vhsub_s8(a: int8x8_t, b: int8x8_t) -> int8x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v8i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v8i8")]
-        fn vhsub_s8_(a: int8x8_t, a: int8x8_t) -> int8x8_t;
+        fn vhsub_s8_(a: int8x8_t, b: int8x8_t) -> int8x8_t;
     }
 vhsub_s8_(a, b)
 }
@@ -2596,7 +2595,7 @@ pub unsafe fn vhsubq_s8(a: int8x16_t, b: int8x16_t) -> int8x16_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v16i8")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v16i8")]
-        fn vhsubq_s8_(a: int8x16_t, a: int8x16_t) -> int8x16_t;
+        fn vhsubq_s8_(a: int8x16_t, b: int8x16_t) -> int8x16_t;
     }
 vhsubq_s8_(a, b)
 }
@@ -2613,7 +2612,7 @@ pub unsafe fn vhsub_s16(a: int16x4_t, b: int16x4_t) -> int16x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v4i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v4i16")]
-        fn vhsub_s16_(a: int16x4_t, a: int16x4_t) -> int16x4_t;
+        fn vhsub_s16_(a: int16x4_t, b: int16x4_t) -> int16x4_t;
     }
 vhsub_s16_(a, b)
 }
@@ -2630,7 +2629,7 @@ pub unsafe fn vhsubq_s16(a: int16x8_t, b: int16x8_t) -> int16x8_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v8i16")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v8i16")]
-        fn vhsubq_s16_(a: int16x8_t, a: int16x8_t) -> int16x8_t;
+        fn vhsubq_s16_(a: int16x8_t, b: int16x8_t) -> int16x8_t;
     }
 vhsubq_s16_(a, b)
 }
@@ -2647,7 +2646,7 @@ pub unsafe fn vhsub_s32(a: int32x2_t, b: int32x2_t) -> int32x2_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v2i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v2i32")]
-        fn vhsub_s32_(a: int32x2_t, a: int32x2_t) -> int32x2_t;
+        fn vhsub_s32_(a: int32x2_t, b: int32x2_t) -> int32x2_t;
     }
 vhsub_s32_(a, b)
 }
@@ -2664,7 +2663,7 @@ pub unsafe fn vhsubq_s32(a: int32x4_t, b: int32x4_t) -> int32x4_t {
     extern "C" {
         #[cfg_attr(target_arch = "arm", link_name = "llvm.arm.neon.vhsubs.v4i32")]
         #[cfg_attr(target_arch = "aarch64", link_name = "llvm.aarch64.neon.shsub.v4i32")]
-        fn vhsubq_s32_(a: int32x4_t, a: int32x4_t) -> int32x4_t;
+        fn vhsubq_s32_(a: int32x4_t, b: int32x4_t) -> int32x4_t;
     }
 vhsubq_s32_(a, b)
 }
