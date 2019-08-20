@@ -1235,7 +1235,6 @@ pub unsafe fn vget_lane_u8(v: uint8x8_t, imm5: i32) -> u8 {
 }
 
 /// Duplicate vector element to vector or scalar
-// int8x16_t vdupq_n_s8 (int8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1249,7 +1248,6 @@ pub unsafe fn vdupq_n_s8(value: i8) -> int8x16_t {
 }
 
 /// Duplicate vector element to vector or scalar
-// uint8x16_t vdupq_n_u8 (uint8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1263,7 +1261,6 @@ pub unsafe fn vdupq_n_u8(value: u8) -> uint8x16_t {
 }
 
 /// Duplicate vector element to vector or scalar
-// uint8x16_t vmovq_n_u8 (uint8_t value)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1273,38 +1270,55 @@ pub unsafe fn vmovq_n_u8(value: u8) -> uint8x16_t {
     vdupq_n_u8(value)
 }
 
-macro_rules! arm_reinterpret {
-    ($name:ident, $from:ty, $to:ty) => {
-        /// Vector reinterpret cast operation
-        #[inline]
-        #[target_feature(enable = "neon")]
-        #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-        pub unsafe fn $name(a: $from) -> $to {
-            transmute(a)
-        }
-    };
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpret_u64_u32(a: uint32x2_t) -> uint64x1_t {
+    transmute(a)
 }
 
-// uint64x1_t vreinterpret_u64_u32 (uint32x2_t a)
-arm_reinterpret!(vreinterpret_u64_u32, uint32x2_t, uint64x1_t);
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpretq_s8_u8(a: uint8x16_t) -> int8x16_t {
+    transmute(a)
+}
 
-// int8x16_t vreinterpretq_s8_u8 (uint8x16_t a)
-arm_reinterpret!(vreinterpretq_s8_u8, uint8x16_t, int8x16_t);
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpretq_u16_u8(a: uint8x16_t) -> uint16x8_t {
+    transmute(a)
+}
 
-// uint16x8_t vreinterpretq_u16_u8 (uint8x16_t a)
-arm_reinterpret!(vreinterpretq_u16_u8, uint8x16_t, uint16x8_t);
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpretq_u32_u8(a: uint8x16_t) -> uint32x4_t {
+    transmute(a)
+}
 
-// uint32x4_t vreinterpretq_u32_u8 (uint8x16_t a)
-arm_reinterpret!(vreinterpretq_u32_u8, uint8x16_t, uint32x4_t);
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpretq_u64_u8(a: uint8x16_t) -> uint64x2_t {
+    transmute(a)
+}
 
-// uint64x2_t vreinterpretq_u64_u8 (uint8x16_t a)
-arm_reinterpret!(vreinterpretq_u64_u8, uint8x16_t, uint64x2_t);
-
-// uint8x16_t vreinterpretq_u8_s8 (int8x16_t a)
-arm_reinterpret!(vreinterpretq_u8_s8, int8x16_t, uint8x16_t);
+/// Vector reinterpret cast operation
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+pub unsafe fn vreinterpretq_u8_s8(a: uint8x16_t) -> uint8x16_t {
+    transmute(a)
+}
 
 /// Unsigned shift right
-//uint8x16_t vshrq_n_u8 (uint8x16_t a, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1336,7 +1350,6 @@ pub unsafe fn vshrq_n_u8(a: uint8x16_t, imm3: i32) -> uint8x16_t {
 }
 
 /// Shift right
-//uint8x16_t vshlq_n_u8 (uint8x16_t a, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1473,7 +1486,6 @@ pub unsafe fn vextq_s8(a: int8x16_t, b: int8x16_t, n: i32) -> int8x16_t {
 }
 
 /// Extract vector from pair of vectors
-//uint8x16_t vextq_s8 (uint8x16_t a, uint8x16_t b, const int n)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1579,7 +1591,6 @@ pub unsafe fn vextq_u8(a: uint8x16_t, b: uint8x16_t, n: i32) -> uint8x16_t {
 }
 
 /// Load multiple single-element structures to one, two, three, or four registers
-// int8x16_t vld1q_s8 (int8_t const * ptr)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -1591,7 +1602,6 @@ pub unsafe fn vld1q_s8(addr: *const i8) -> int8x16_t {
 }
 
 /// Load multiple single-element structures to one, two, three, or four registers
-// int8x16_t vld1q_u8 (uint8_t const * ptr)
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
@@ -2284,5 +2294,4 @@ mod tests {
 
 #[cfg(test)]
 #[cfg(target_endian = "little")]
-//#[path = "table_lookup_tests.rs"]
 mod table_lookup_tests;
