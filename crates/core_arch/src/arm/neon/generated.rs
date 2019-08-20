@@ -2172,46 +2172,6 @@ pub unsafe fn vmulq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(mul))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mul))]
-pub unsafe fn vmul_s64(a: int64x1_t, b: int64x1_t) -> int64x1_t {
-    simd_mul(a, b)
-}
-
-/// Multiply
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(mul))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mul))]
-pub unsafe fn vmulq_s64(a: int64x2_t, b: int64x2_t) -> int64x2_t {
-    simd_mul(a, b)
-}
-
-/// Multiply
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(mul))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mul))]
-pub unsafe fn vmul_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
-    simd_mul(a, b)
-}
-
-/// Multiply
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(mul))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mul))]
-pub unsafe fn vmulq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
-    simd_mul(a, b)
-}
-
-/// Multiply
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
-#[cfg_attr(all(test, target_arch = "arm"), assert_instr(mul))]
-#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mul))]
 pub unsafe fn vmul_f32(a: float32x2_t, b: float32x2_t) -> float32x2_t {
     simd_mul(a, b)
 }
@@ -4414,46 +4374,10 @@ mod test {
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vmul_s64() {
-        let a: i64x1 = i64x1::new(1);
-        let b: i64x1 = i64x1::new(1);
-        let e: i64x1 = i64x1::new(1);
-        let r: i64x1 = transmute(vmul_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vmulq_s64() {
-        let a: i64x2 = i64x2::new(1, 2);
-        let b: i64x2 = i64x2::new(1, 2);
-        let e: i64x2 = i64x2::new(1, 4);
-        let r: i64x2 = transmute(vmulq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vmul_u64() {
-        let a: u64x1 = u64x1::new(1);
-        let b: u64x1 = u64x1::new(1);
-        let e: u64x1 = u64x1::new(1);
-        let r: u64x1 = transmute(vmul_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vmulq_u64() {
-        let a: u64x2 = u64x2::new(1, 2);
-        let b: u64x2 = u64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(1, 4);
-        let r: u64x2 = transmute(vmulq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
     unsafe fn test_vmul_f32() {
         let a: f32x2 = f32x2::new(1.0, 2.0);
-        let b: f32x2 = f32x2::new(1.0, 2.0);
-        let e: f32x2 = f32x2::new(1.0, 4.0);
+        let b: f32x2 = f32x2::new(2.0, 3.0);
+        let e: f32x2 = f32x2::new(2.0, 6.0);
         let r: f32x2 = transmute(vmul_f32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
@@ -4461,8 +4385,8 @@ mod test {
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_f32() {
         let a: f32x4 = f32x4::new(1.0, 2.0, 1.0, 2.0);
-        let b: f32x4 = f32x4::new(1.0, 2.0, 3.0, 4.0);
-        let e: f32x4 = f32x4::new(1.0, 4.0, 3.0, 8.0);
+        let b: f32x4 = f32x4::new(2.0, 3.0, 4.0, 5.0);
+        let e: f32x4 = f32x4::new(2.0, 6.0, 4.0, 10.0);
         let r: f32x4 = transmute(vmulq_f32(transmute(a), transmute(b)));
         assert_eq!(r, e);
     }
