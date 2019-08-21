@@ -1332,7 +1332,7 @@ pub unsafe fn vreinterpretq_u64_u8(a: uint8x16_t) -> uint64x2_t {
 // This doesn't actually has an assembly instruction but simdarch-verify
 //requires it to have one ... it's a function so it returns.
 #[cfg_attr(test, assert_instr(ret))]
-pub unsafe fn vreinterpretq_u8_s8(a: uint8x16_t) -> uint8x16_t {
+pub unsafe fn vreinterpretq_u8_s8(a: int8x16_t) -> uint8x16_t {
     transmute(a)
 }
 
@@ -2307,6 +2307,44 @@ mod tests {
         let e = f32x2::new(1., 3.);
         let r: f32x2 = transmute(vpmax_f32(transmute(a), transmute(b)));
         assert_eq!(r, e);
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vreinterpretq_s8_u8() {
+        let a = i8x16::new(-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let r: u8x16 = transmute(vreinterpretq_s8_u8(transmute(a)));
+        let e = u8x16::new(0xFF, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        assert_eq!(r, e)
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vreinterpretq_u16_u8() {
+        let a = u16x8::new(
+            0x01_00, 0x03_02, 0x05_04, 0x07_06, 0x09_08, 0x0B_0A, 0x0D_0C, 0x0F_0E,
+        );
+        let r: u8x16 = transmute(vreinterpretq_u16_u8(transmute(a)));
+        let e = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        assert_eq!(r, e)
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vreinterpretq_u32_u8() {
+        let a = u32x4::new(0x03_02_01_00, 0x07_06_05_04, 0x0B_0A_09_08, 0x0F_0E_0D_0C);
+        let r: u8x16 = transmute(vreinterpretq_u32_u8(transmute(a)));
+        let e = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        assert_eq!(r, e)
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vreinterpretq_u64_u8() {
+        let a: u64x2 = u64x2::new(0x07_06_05_04_03_02_01_00, 0x0F_0E_0D_0C_0B_0A_09_08);
+        let r: u8x16 = transmute(vreinterpretq_u64_u8(transmute(a)));
+        let e = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        assert_eq!(r, e)
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vreinterpretq_u8_s8() {
+        let a = u8x16::new(0xFF, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        let r: i8x16 = transmute(vreinterpretq_u8_s8(transmute(a)));
+        let e = i8x16::new(-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+        assert_eq!(r, e)
     }
 }
 
