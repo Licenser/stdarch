@@ -297,292 +297,320 @@ mod test {
     use std::mem::transmute;
     use stdarch_test::simd_test;
 
+    macro_rules! verify_fn {
+        ($f: ident, $a:expr, $b:expr, $e: expr, $t: ident) => {
+            let r : $t = transmute($f(transmute($a), transmute($b)));
+            assert_eq!(r, transmute($e));
+        };
+    }
+
+    macro_rules! mku64x1 {
+        ($n: expr) => {
+            u64x1::new($n as u64)
+        };
+    }
+
+    macro_rules! mku64x2 {
+        ($a: expr, $b: expr) => {
+            u64x2::new($a as u64, $b as u64)
+        };
+    }
+
+    macro_rules! mks64x1 {
+        ($n: expr) => {
+            i64x1::new($n as i64)
+        };
+    }
+
+    macro_rules! mks64x2 {
+        ($a: expr, $b: expr) => {
+            i64x2::new($a as i64, $b as i64)
+        };
+    }
+
+    macro_rules! mkf64x1 {
+        ($n: expr) => {
+            $n as f64
+        };
+    }
+
+    macro_rules! mkf64x2 {
+        ($a: expr, $b: expr) => {
+            f64x2::new($a as f64, $b as f64)
+        };
+    }
+
+    const ZERO : i128  = 0x00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00i128;
+    const ONE : i128   = 0x00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_01i128;
+    const N_ONE : u128 = 0xFF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FFu128;
+    const EVEN_BYTES : u128 = 0xFF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00u128;
+    const ODD_BYTES : u128  = EVEN_BYTES >> 8;
+
+    const FLT_A : f64 = 1.2f64;
+    const FLT_B : f64 = 3.4f64;
+
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_u64() {
-        let a: u64x1 = u64x1::new(0x00);
-        let b: u64x1 = u64x1::new(0x00);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vceq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_u64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_u64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_u64, mku64x1!(N_ONE), mku64x1!(ZERO), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_u64() {
-        let a: u64x2 = u64x2::new(0x00, 0x01);
-        let b: u64x2 = u64x2::new(0x00, 0x01);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vceqq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_u64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_u64, mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_u64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vceqq_u64, mku64x2!(N_ONE, N_ONE), mku64x2!(N_ONE, N_ONE), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s64() {
-        let a: i64x1 = i64x1::new(0x00);
-        let b: i64x1 = i64x1::new(0x00);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vceq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_s64, mks64x1!(ZERO), mks64x1!(ZERO), mks64x1!(N_ONE), i64);
+        verify_fn!(vceq_s64, mks64x1!(N_ONE), mks64x1!(N_ONE), mks64x1!(N_ONE), i64);
+        verify_fn!(vceq_s64, mks64x1!(N_ONE), mks64x1!(ZERO), mks64x1!(ZERO), i64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s64() {
-        let a: i64x2 = i64x2::new(0x00, 0x01);
-        let b: i64x2 = i64x2::new(0x00, 0x01);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vceqq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_s64, mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_s64, mks64x2!(N_ONE, ZERO), mks64x2!(N_ONE, ZERO), mks64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_s64, mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, ZERO), i128);
+        verify_fn!(vceqq_s64, mks64x2!(N_ONE, N_ONE), mks64x2!(N_ONE, N_ONE), mks64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_p64() {
-        let a: i64x1 = i64x1::new(0x00);
-        let b: i64x1 = i64x1::new(0x00);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vceq_p64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_p64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_p64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_p64, mku64x1!(N_ONE), mku64x1!(ZERO), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_p64() {
-        let a: i64x2 = i64x2::new(0x00, 0x01);
-        let b: i64x2 = i64x2::new(0x00, 0x01);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vceqq_p64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_p64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_p64, mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_p64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vceqq_p64, mku64x2!(N_ONE, N_ONE), mku64x2!(N_ONE, N_ONE), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_f64() {
-        let a: f64 = 1.2;
-        let b: f64 = 1.2;
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vceq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_A), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_B), mku64x1!(N_ONE), u64);
+        verify_fn!(vceq_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_B), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_f64() {
-        let a: f64x2 = f64x2::new(1.2, 3.4);
-        let b: f64x2 = f64x2::new(1.2, 3.4);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vceqq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_A, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_B, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vceqq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vceqq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s64() {
-        let a: i64x1 = i64x1::new(1);
-        let b: i64x1 = i64x1::new(0);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcgt_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_s64, mks64x1!(ZERO), mks64x1!(ZERO), mks64x1!(ZERO), i64);
+        verify_fn!(vcgt_s64, mks64x1!(ZERO), mks64x1!(N_ONE), mks64x1!(N_ONE), i64);
+        verify_fn!(vcgt_s64, mks64x1!(N_ONE), mks64x1!(N_ONE), mks64x1!(ZERO), i64);
+        verify_fn!(vcgt_s64, mks64x1!(ODD_BYTES), mks64x1!(EVEN_BYTES), mks64x1!(N_ONE), i64);
+        verify_fn!(vcgt_s64, mks64x1!(EVEN_BYTES), mks64x1!(ODD_BYTES), mks64x1!(ZERO), i64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s64() {
-        let a: i64x2 = i64x2::new(1, 2);
-        let b: i64x2 = i64x2::new(0, 1);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgtq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_s64, mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcgtq_s64, mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), mks64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgtq_s64, mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), mks64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgtq_s64, mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), mks64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u64() {
-        let a: u64x1 = u64x1::new(1);
-        let b: u64x1 = u64x1::new(0);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcgt_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_u64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_u64, mku64x1!(N_ONE), mku64x1!(ZERO), mku64x1!(N_ONE), u64);
+        verify_fn!(vcgt_u64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_u64, mku64x1!(ODD_BYTES), mku64x1!(EVEN_BYTES), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_u64, mku64x1!(EVEN_BYTES), mku64x1!(ODD_BYTES), mku64x1!(N_ONE), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u64() {
-        let a: u64x2 = u64x2::new(1, 2);
-        let b: u64x2 = u64x2::new(0, 1);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgtq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_u64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcgtq_u64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgtq_u64, mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgtq_u64, mku64x2!(N_ONE, N_ONE), mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_f64() {
-        let a: f64 = 1.2;
-        let b: f64 = 0.1;
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcgt_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_A), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_B), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_B), mku64x1!(ZERO), u64);
+        verify_fn!(vcgt_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_A), mku64x1!(N_ONE), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_f64() {
-        let a: f64x2 = f64x2::new(1.2, 2.3);
-        let b: f64x2 = f64x2::new(0.1, 1.2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgtq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_A, FLT_A), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcgtq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_B, FLT_A), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcgtq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgtq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_A, FLT_B), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgtq_f64, mkf64x2!(FLT_B, FLT_B), mkf64x2!(FLT_A, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s64() {
-        let a: i64x1 = i64x1::new(0);
-        let b: i64x1 = i64x1::new(1);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vclt_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_s64, mks64x1!(ZERO), mks64x1!(ZERO), mks64x1!(ZERO), i64);
+        verify_fn!(vclt_s64, mks64x1!(N_ONE), mks64x1!(ZERO), mks64x1!(N_ONE), i64);
+        verify_fn!(vclt_s64, mks64x1!(N_ONE), mks64x1!(N_ONE), mks64x1!(ZERO), i64);
+        verify_fn!(vclt_s64, mks64x1!(EVEN_BYTES), mks64x1!(ODD_BYTES), mks64x1!(N_ONE), i64);
+        verify_fn!(vclt_s64, mks64x1!(ODD_BYTES), mks64x1!(EVEN_BYTES), mks64x1!(ZERO), i64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s64() {
-        let a: i64x2 = i64x2::new(0, 1);
-        let b: i64x2 = i64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcltq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_s64, mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcltq_s64, mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcltq_s64, mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcltq_s64, mks64x2!(N_ONE, N_ONE), mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u64() {
-        let a: u64x1 = u64x1::new(0);
-        let b: u64x1 = u64x1::new(1);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vclt_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_u64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(ZERO), u64);
+        verify_fn!(vclt_u64, mku64x1!(ZERO), mku64x1!(N_ONE), mku64x1!(N_ONE), u64);
+        verify_fn!(vclt_u64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(ZERO), u64);
+        verify_fn!(vclt_u64, mku64x1!(ODD_BYTES), mku64x1!(EVEN_BYTES), mku64x1!(N_ONE), u64);
+        verify_fn!(vclt_u64, mku64x1!(EVEN_BYTES), mku64x1!(ODD_BYTES), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u64() {
-        let a: u64x2 = u64x2::new(0, 1);
-        let b: u64x2 = u64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcltq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_u64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcltq_u64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcltq_u64, mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcltq_u64, mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_f64() {
-        let a: f64 = 0.1;
-        let b: f64 = 1.2;
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vclt_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_A), mku64x1!(ZERO), u64);
+        verify_fn!(vclt_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_B), mku64x1!(ZERO), u64);
+        verify_fn!(vclt_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_A), mku64x1!(ZERO), u64);
+        verify_fn!(vclt_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_B), mku64x1!(N_ONE), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_f64() {
-        let a: f64x2 = f64x2::new(0.1, 1.2);
-        let b: f64x2 = f64x2::new(1.2, 2.3);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcltq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_A, FLT_A), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcltq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_A, FLT_B), mku64x2!(ZERO, ZERO), i128);
+        verify_fn!(vcltq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcltq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_A, FLT_B), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcltq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_B, FLT_B), mku64x2!(N_ONE, N_ONE), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s64() {
-        let a: i64x1 = i64x1::new(0);
-        let b: i64x1 = i64x1::new(1);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcle_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_s64, mks64x1!(ZERO), mks64x1!(ZERO), mks64x1!(N_ONE), i64);
+        verify_fn!(vcle_s64, mks64x1!(ZERO), mks64x1!(N_ONE), mks64x1!(ZERO), i64);
+        verify_fn!(vcle_s64, mks64x1!(N_ONE), mks64x1!(N_ONE), mks64x1!(N_ONE), i64);
+        verify_fn!(vcle_s64, mks64x1!(ODD_BYTES), mks64x1!(EVEN_BYTES), mks64x1!(ZERO), i64);
+        verify_fn!(vcle_s64, mks64x1!(EVEN_BYTES), mks64x1!(ODD_BYTES), mks64x1!(N_ONE), i64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s64() {
-        let a: i64x2 = i64x2::new(0, 1);
-        let b: i64x2 = i64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcleq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_s64, mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcleq_s64, mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcleq_s64, mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcleq_s64, mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), mks64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u64() {
-        let a: u64x1 = u64x1::new(0);
-        let b: u64x1 = u64x1::new(1);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcle_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_u64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_u64, mku64x1!(N_ONE), mku64x1!(ZERO), mku64x1!(ZERO), u64);
+        verify_fn!(vcle_u64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_u64, mku64x1!(ODD_BYTES), mku64x1!(EVEN_BYTES), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_u64, mku64x1!(EVEN_BYTES), mku64x1!(ODD_BYTES), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u64() {
-        let a: u64x2 = u64x2::new(0, 1);
-        let b: u64x2 = u64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcleq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_u64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcleq_u64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcleq_u64, mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcleq_u64, mku64x2!(N_ONE, N_ONE), mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_f64() {
-        let a: f64 = 0.1;
-        let b: f64 = 1.2;
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcle_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_A), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_B), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_B), mku64x1!(N_ONE), u64);
+        verify_fn!(vcle_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_A), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_f64() {
-        let a: f64x2 = f64x2::new(0.1, 1.2);
-        let b: f64x2 = f64x2::new(1.2, 2.3);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcleq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_A, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcleq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_B, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcleq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcleq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_A, FLT_B), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcleq_f64, mkf64x2!(FLT_B, FLT_B), mkf64x2!(FLT_A, FLT_A), mku64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s64() {
-        let a: i64x1 = i64x1::new(1);
-        let b: i64x1 = i64x1::new(0);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcge_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_s64, mks64x1!(ZERO), mks64x1!(ZERO), mks64x1!(N_ONE), i64);
+        verify_fn!(vcge_s64, mks64x1!(N_ONE), mks64x1!(ZERO), mks64x1!(ZERO), i64);
+        verify_fn!(vcge_s64, mks64x1!(N_ONE), mks64x1!(N_ONE), mks64x1!(N_ONE), i64);
+        verify_fn!(vcge_s64, mks64x1!(EVEN_BYTES), mks64x1!(ODD_BYTES), mks64x1!(ZERO), i64);
+        verify_fn!(vcge_s64, mks64x1!(ODD_BYTES), mks64x1!(EVEN_BYTES), mks64x1!(N_ONE), i64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s64() {
-        let a: i64x2 = i64x2::new(1, 2);
-        let b: i64x2 = i64x2::new(0, 1);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgeq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_s64, mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), mks64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcgeq_s64, mks64x2!(N_ONE, ZERO), mks64x2!(ZERO, N_ONE), mks64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgeq_s64, mks64x2!(ZERO, N_ONE), mks64x2!(N_ONE, ZERO), mks64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgeq_s64, mks64x2!(N_ONE, N_ONE), mks64x2!(ZERO, ZERO), mks64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u64() {
-        let a: u64x1 = u64x1::new(1);
-        let b: u64x1 = u64x1::new(0);
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcge_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_u64, mku64x1!(ZERO), mku64x1!(ZERO), mku64x1!(N_ONE), u64);
+        verify_fn!(vcge_u64, mku64x1!(ZERO), mku64x1!(N_ONE), mku64x1!(ZERO), u64);
+        verify_fn!(vcge_u64, mku64x1!(N_ONE), mku64x1!(N_ONE), mku64x1!(N_ONE), u64);
+        verify_fn!(vcge_u64, mku64x1!(ODD_BYTES), mku64x1!(EVEN_BYTES), mku64x1!(ZERO), u64);
+        verify_fn!(vcge_u64, mku64x1!(EVEN_BYTES), mku64x1!(ODD_BYTES), mku64x1!(N_ONE), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u64() {
-        let a: u64x2 = u64x2::new(1, 2);
-        let b: u64x2 = u64x2::new(0, 1);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgeq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_u64, mku64x2!(ZERO, ZERO), mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcgeq_u64, mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgeq_u64, mku64x2!(N_ONE, ZERO), mku64x2!(ZERO, N_ONE), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgeq_u64, mku64x2!(ZERO, ZERO), mku64x2!(N_ONE, N_ONE), mku64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_f64() {
-        let a: f64 = 1.2;
-        let b: f64 = 0.1;
-        let e: u64x1 = u64x1::new(0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x1 = transmute(vcge_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_A), mku64x1!(N_ONE), u64);
+        verify_fn!(vcge_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_B), mku64x1!(N_ONE), u64);
+        verify_fn!(vcge_f64, mkf64x1!(FLT_B), mkf64x1!(FLT_A), mku64x1!(N_ONE), u64);
+        verify_fn!(vcge_f64, mkf64x1!(FLT_A), mkf64x1!(FLT_B), mku64x1!(ZERO), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_f64() {
-        let a: f64x2 = f64x2::new(1.2, 2.3);
-        let b: f64x2 = f64x2::new(0.1, 1.2);
-        let e: u64x2 = u64x2::new(0xFF_FF_FF_FF_FF_FF_FF_FF, 0xFF_FF_FF_FF_FF_FF_FF_FF);
-        let r: u64x2 = transmute(vcgeq_f64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_A, FLT_A), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcgeq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_A, FLT_B), mku64x2!(N_ONE, N_ONE), i128);
+        verify_fn!(vcgeq_f64, mkf64x2!(FLT_A, FLT_B), mkf64x2!(FLT_B, FLT_A), mku64x2!(ZERO, N_ONE), i128);
+        verify_fn!(vcgeq_f64, mkf64x2!(FLT_B, FLT_A), mkf64x2!(FLT_A, FLT_B), mku64x2!(N_ONE, ZERO), i128);
+        verify_fn!(vcgeq_f64, mkf64x2!(FLT_A, FLT_A), mkf64x2!(FLT_B, FLT_B), mku64x2!(ZERO, ZERO), i128);
     }
 
     #[simd_test(enable = "neon")]
