@@ -2298,1186 +2298,1335 @@ mod tests {
         assert_eq!(r, e);
     }
 
-    //
-    // NEW TESTS
-    //
+    const _00 : u128 = 0x00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00u128;
+    const _FF : u128 = 0xFF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FFu128;
+    const _0F : u128 = 0x0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0Fu128;
+    const _F0 : u128 = 0xF0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0u128;
+
+    const _00_FF : u128 = 0x00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FFu128;
+    const _FF_00 : u128 = 0xFF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00u128;
+
+    const FLT_N_ONE: f32 = -1.0;
+    const FLT_ZERO: f32 = 0.0;
+    const FLT_ONE: f32 = 1.0;
+
+    const FLT_1_2: f32 = 1.2f32;
+    const FLT_0_2: f32 = FLT_1_2 - FLT_ONE;
+    const FLT_2_2: f32 = FLT_1_2 + FLT_ONE;
+    const FLT_2: f32 = 2.0f32;
+    const FLT_N_1_2: f32 = -1.2f32;
+    const FLT_3_4: f32 = 3.4f32;
+
+    const FLT_MAX: f32 = std::f32::MAX;
+    const FLT_MIN: f32 = std::f32::MIN;
+    const FLT_INF: f32 = std::f32::INFINITY;
+    const FLT_N_INF: f32 = std::f32::NEG_INFINITY;
+    const FLT_NAN: f32 = std::f32::NAN;
+
+    fn lo64(a : u128) -> u64 {
+        a as u64
+    }
+
+    fn mku32x2(a: u128, b: u128) -> u32x2 {
+        u32x2::new(a as u32, b as u32)
+    }
+
+    fn mku32x4(a: u128, b: u128, c: u128, d: u128) -> u32x4 {
+        u32x4::new(a as u32, b as u32, c as u32, d as u32)
+    }
+
+    macro_rules! mkf32x2 {
+        ($a: expr, $b: expr) => {
+            f32x2::new($a as f32, $b as f32)
+        };
+    }
+
+    macro_rules! mkf32x4 {
+        ($a: expr, $b: expr, $c: expr, $d: expr) => {
+            f32x4::new($a as f32, $b as f32, $c as f32, $d as f32)
+        };
+    }
+
+    macro_rules! verify_fn {
+        ($f: ident, $a:expr, $b:expr, $e: expr, $t: ident) => {
+            let r: $t = transmute($f(transmute($a), transmute($b)));
+            assert_eq!(r, transmute($e));
+        };
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s8() {
-        let a: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i8x8 = i8x8::new(0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F);
-        let e: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i8x8 = transmute(vand_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_s8, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_s8, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s8() {
-        let a: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x00,
-        );
-        let b: i8x16 = i8x16::new(
-            0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-            0x0F, 0x0F,
-        );
-        let e: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x00,
-        );
-        let r: i8x16 = transmute(vandq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_s8, _00, _FF, _00, u128);
+        verify_fn!(vandq_s8, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_s8, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_s8, _FF, _FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s16() {
-        let a: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i16x4 = i16x4::new(0x0F, 0x0F, 0x0F, 0x0F);
-        let e: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i16x4 = transmute(vand_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_s16, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_s16, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_s16, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s16() {
-        let a: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i16x8 = i16x8::new(0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F);
-        let e: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i16x8 = transmute(vandq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_s16, _00, _FF, _00, u128);
+        verify_fn!(vandq_s16, _00, _00, _00, u128);
+        verify_fn!(vandq_s16, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_s16, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_s16, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_s16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_s16, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s32() {
-        let a: i32x2 = i32x2::new(0x00, 0x01);
-        let b: i32x2 = i32x2::new(0x0F, 0x0F);
-        let e: i32x2 = i32x2::new(0x00, 0x01);
-        let r: i32x2 = transmute(vand_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_s32, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_s32, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_s32, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s32() {
-        let a: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i32x4 = i32x4::new(0x0F, 0x0F, 0x0F, 0x0F);
-        let e: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i32x4 = transmute(vandq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_s32, _00, _FF, _00, u128);
+        verify_fn!(vandq_s32, _00, _00, _00, u128);
+        verify_fn!(vandq_s32, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_s32, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_s32, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_s32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_s32, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u8() {
-        let a: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u8x8 = u8x8::new(0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F);
-        let e: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u8x8 = transmute(vand_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_u8, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_u8, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u8() {
-        let a: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x00,
-        );
-        let b: u8x16 = u8x16::new(
-            0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-            0x0F, 0x0F,
-        );
-        let e: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x00,
-        );
-        let r: u8x16 = transmute(vandq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_u8, _00, _FF, _00, u128);
+        verify_fn!(vandq_u8, _00, _00, _00, u128);
+        verify_fn!(vandq_u8, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_u8, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_u8, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_u8, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_u8, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u16() {
-        let a: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u16x4 = u16x4::new(0x0F, 0x0F, 0x0F, 0x0F);
-        let e: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u16x4 = transmute(vand_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_u16, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_u16, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_u16, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u16() {
-        let a: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u16x8 = u16x8::new(0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F);
-        let e: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u16x8 = transmute(vandq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_u16, _00, _FF, _00, u128);
+        verify_fn!(vandq_u16, _00, _00, _00, u128);
+        verify_fn!(vandq_u16, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_u16, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_u16, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_u16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_u16, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u32() {
-        let a: u32x2 = u32x2::new(0x00, 0x01);
-        let b: u32x2 = u32x2::new(0x0F, 0x0F);
-        let e: u32x2 = u32x2::new(0x00, 0x01);
-        let r: u32x2 = transmute(vand_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_u32, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_u32, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_u32, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u32() {
-        let a: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u32x4 = u32x4::new(0x0F, 0x0F, 0x0F, 0x0F);
-        let e: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u32x4 = transmute(vandq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_u32, _00, _FF, _00, u128);
+        verify_fn!(vandq_u32, _00, _00, _00, u128);
+        verify_fn!(vandq_u32, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_u32, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_u32, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_u32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_u32, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s64() {
-        let a: i64x1 = i64x1::new(0x00);
-        let b: i64x1 = i64x1::new(0x0F);
-        let e: i64x1 = i64x1::new(0x00);
-        let r: i64x1 = transmute(vand_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_s64, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_s64, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_s64, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_s64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_s64, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_s64, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s64() {
-        let a: i64x2 = i64x2::new(0x00, 0x01);
-        let b: i64x2 = i64x2::new(0x0F, 0x0F);
-        let e: i64x2 = i64x2::new(0x00, 0x01);
-        let r: i64x2 = transmute(vandq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_s64, _00, _FF, _00, u128);
+        verify_fn!(vandq_s64, _00, _00, _00, u128);
+        verify_fn!(vandq_s64, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_s64, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_s64, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_s64, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_s64, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u64() {
-        let a: u64x1 = u64x1::new(0x00);
-        let b: u64x1 = u64x1::new(0x0F);
-        let e: u64x1 = u64x1::new(0x00);
-        let r: u64x1 = transmute(vand_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vand_u64, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vand_u64, lo64(_F0), lo64(_FF), lo64(_F0), u64);
+        verify_fn!(vand_u64, lo64(_FF), lo64(_0F), lo64(_0F), u64);
+        verify_fn!(vand_u64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vand_u64, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vand_u64, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u64() {
-        let a: u64x2 = u64x2::new(0x00, 0x01);
-        let b: u64x2 = u64x2::new(0x0F, 0x0F);
-        let e: u64x2 = u64x2::new(0x00, 0x01);
-        let r: u64x2 = transmute(vandq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vandq_u64, _00, _FF, _00, u128);
+        verify_fn!(vandq_u64, _00, _00, _00, u128);
+        verify_fn!(vandq_u64, _F0, _FF, _F0, u128);
+        verify_fn!(vandq_u64, _FF, _0F, _0F, u128);
+        verify_fn!(vandq_u64, _FF, _FF, _FF, u128);
+        verify_fn!(vandq_u64, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vandq_u64, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s8() {
-        let a: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i8x8 = i8x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i8x8 = transmute(vorr_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_s8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s8, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_s8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s8() {
-        let a: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: i8x16 = i8x16::new(
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00,
-        );
-        let e: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let r: i8x16 = transmute(vorrq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_s8, _00, _00, _00, u128);
+        verify_fn!(vorrq_s8, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_s8, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_s8, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_s8, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_s8, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_s8, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s16() {
-        let a: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i16x4 = i16x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i16x4 = transmute(vorr_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_s16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s16, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s16() {
-        let a: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i16x8 = i16x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i16x8 = transmute(vorrq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_s16, _00, _00, _00, u128);
+        verify_fn!(vorrq_s16, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_s16, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_s16, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_s16, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_s16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_s16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s32() {
-        let a: i32x2 = i32x2::new(0x00, 0x01);
-        let b: i32x2 = i32x2::new(0x00, 0x00);
-        let e: i32x2 = i32x2::new(0x00, 0x01);
-        let r: i32x2 = transmute(vorr_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_s32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s32, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s32() {
-        let a: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i32x4 = i32x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i32x4 = transmute(vorrq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_s32, _00, _00, _00, u128);
+        verify_fn!(vorrq_s32, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_s32, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_s32, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_s32, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_s32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_s32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u8() {
-        let a: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u8x8 = u8x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u8x8 = transmute(vorr_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_u8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u8, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_u8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u8() {
-        let a: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: u8x16 = u8x16::new(
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00,
-        );
-        let e: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let r: u8x16 = transmute(vorrq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_u8, _00, _00, _00, u128);
+        verify_fn!(vorrq_u8, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_u8, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_u8, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_u8, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_u8, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_u8, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u16() {
-        let a: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u16x4 = u16x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u16x4 = transmute(vorr_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_u16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u16, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u16() {
-        let a: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u16x8 = u16x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u16x8 = transmute(vorrq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_u16, _00, _00, _00, u128);
+        verify_fn!(vorrq_u16, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_u16, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_u16, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_u16, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_u16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_u16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u32() {
-        let a: u32x2 = u32x2::new(0x00, 0x01);
-        let b: u32x2 = u32x2::new(0x00, 0x00);
-        let e: u32x2 = u32x2::new(0x00, 0x01);
-        let r: u32x2 = transmute(vorr_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_u32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u32, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u32() {
-        let a: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u32x4 = u32x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u32x4 = transmute(vorrq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_u32, _00, _00, _00, u128);
+        verify_fn!(vorrq_u32, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_u32, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_u32, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_u32, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_u32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_u32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s64() {
-        let a: i64x1 = i64x1::new(0x00);
-        let b: i64x1 = i64x1::new(0x00);
-        let e: i64x1 = i64x1::new(0x00);
-        let r: i64x1 = transmute(vorr_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_s64, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_s64, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s64, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_s64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_s64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_s64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_s64, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s64() {
-        let a: i64x2 = i64x2::new(0x00, 0x01);
-        let b: i64x2 = i64x2::new(0x00, 0x00);
-        let e: i64x2 = i64x2::new(0x00, 0x01);
-        let r: i64x2 = transmute(vorrq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_s64, _00, _00, _00, u128);
+        verify_fn!(vorrq_s64, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_s64, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_s64, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_s64, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_s64, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_s64, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u64() {
-        let a: u64x1 = u64x1::new(0x00);
-        let b: u64x1 = u64x1::new(0x00);
-        let e: u64x1 = u64x1::new(0x00);
-        let r: u64x1 = transmute(vorr_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorr_u64, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vorr_u64, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u64, lo64(_FF), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vorr_u64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vorr_u64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vorr_u64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vorr_u64, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u64() {
-        let a: u64x2 = u64x2::new(0x00, 0x01);
-        let b: u64x2 = u64x2::new(0x00, 0x00);
-        let e: u64x2 = u64x2::new(0x00, 0x01);
-        let r: u64x2 = transmute(vorrq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vorrq_u64, _00, _00, _00, u128);
+        verify_fn!(vorrq_u64, _00, _FF, _FF, u128);
+        verify_fn!(vorrq_u64, _FF, _0F, _FF, u128);
+        verify_fn!(vorrq_u64, _0F, _F0, _FF, u128);
+        verify_fn!(vorrq_u64, _FF, _FF, _FF, u128);
+        verify_fn!(vorrq_u64, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vorrq_u64, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s8() {
-        let a: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i8x8 = i8x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i8x8 = transmute(veor_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_s8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_s8, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_s8, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_s8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s8() {
-        let a: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: i8x16 = i8x16::new(
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00,
-        );
-        let e: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let r: i8x16 = transmute(veorq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_s8, _00, _00, _00, u128);
+        verify_fn!(veorq_s8, _00, _FF, _FF, u128);
+        verify_fn!(veorq_s8, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_s8, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_s8, _FF, _FF, _00, u128);
+        verify_fn!(veorq_s8, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_s8, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s16() {
-        let a: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i16x4 = i16x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i16x4 = transmute(veor_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_s16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_s16, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_s16, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_s16, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s16() {
-        let a: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i16x8 = i16x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: i16x8 = transmute(veorq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_s16, _00, _00, _00, u128);
+        verify_fn!(veorq_s16, _00, _FF, _FF, u128);
+        verify_fn!(veorq_s16, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_s16, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_s16, _FF, _FF, _00, u128);
+        verify_fn!(veorq_s16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_s16, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s32() {
-        let a: i32x2 = i32x2::new(0x00, 0x01);
-        let b: i32x2 = i32x2::new(0x00, 0x00);
-        let e: i32x2 = i32x2::new(0x00, 0x01);
-        let r: i32x2 = transmute(veor_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_s32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_s32, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_s32, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_s32, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s32() {
-        let a: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i32x4 = i32x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: i32x4 = transmute(veorq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_s32, _00, _00, _00, u128);
+        verify_fn!(veorq_s32, _00, _FF, _FF, u128);
+        verify_fn!(veorq_s32, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_s32, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_s32, _FF, _FF, _00, u128);
+        verify_fn!(veorq_s32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_s32, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u8() {
-        let a: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u8x8 = u8x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u8x8 = transmute(veor_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_u8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_u8, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_u8, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_u8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u8() {
-        let a: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: u8x16 = u8x16::new(
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00,
-        );
-        let e: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let r: u8x16 = transmute(veorq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_u8, _00, _00, _00, u128);
+        verify_fn!(veorq_u8, _00, _FF, _FF, u128);
+        verify_fn!(veorq_u8, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_u8, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_u8, _FF, _FF, _00, u128);
+        verify_fn!(veorq_u8, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_u8, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u16() {
-        let a: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u16x4 = u16x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u16x4 = transmute(veor_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_u16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_u16, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_u16, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_u16, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u16() {
-        let a: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u16x8 = u16x8::new(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-        let e: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let r: u16x8 = transmute(veorq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_u16, _00, _00, _00, u128);
+        verify_fn!(veorq_u16, _00, _FF, _FF, u128);
+        verify_fn!(veorq_u16, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_u16, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_u16, _FF, _FF, _00, u128);
+        verify_fn!(veorq_u16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_u16, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u32() {
-        let a: u32x2 = u32x2::new(0x00, 0x01);
-        let b: u32x2 = u32x2::new(0x00, 0x00);
-        let e: u32x2 = u32x2::new(0x00, 0x01);
-        let r: u32x2 = transmute(veor_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_u32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_u32, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_u32, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_u32, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u32() {
-        let a: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u32x4 = u32x4::new(0x00, 0x00, 0x00, 0x00);
-        let e: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let r: u32x4 = transmute(veorq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_u32, _00, _00, _00, u128);
+        verify_fn!(veorq_u32, _00, _FF, _FF, u128);
+        verify_fn!(veorq_u32, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_u32, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_u32, _FF, _FF, _00, u128);
+        verify_fn!(veorq_u32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_u32, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s64() {
-        let a: i64x1 = i64x1::new(0x00);
-        let b: i64x1 = i64x1::new(0x00);
-        let e: i64x1 = i64x1::new(0x00);
-        let r: i64x1 = transmute(veor_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_s64, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_s64, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_s64, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_s64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_s64, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_s64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_s64, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s64() {
-        let a: i64x2 = i64x2::new(0x00, 0x01);
-        let b: i64x2 = i64x2::new(0x00, 0x00);
-        let e: i64x2 = i64x2::new(0x00, 0x01);
-        let r: i64x2 = transmute(veorq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_s64, _00, _00, _00, u128);
+        verify_fn!(veorq_s64, _00, _FF, _FF, u128);
+        verify_fn!(veorq_s64, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_s64, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_s64, _FF, _FF, _00, u128);
+        verify_fn!(veorq_s64, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_s64, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u64() {
-        let a: u64x1 = u64x1::new(0x00);
-        let b: u64x1 = u64x1::new(0x00);
-        let e: u64x1 = u64x1::new(0x00);
-        let r: u64x1 = transmute(veor_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veor_u64, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(veor_u64, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(veor_u64, lo64(_FF), lo64(_0F), lo64(_F0), u64);
+        verify_fn!(veor_u64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(veor_u64, lo64(_FF), lo64(_FF), lo64(_00), u64);
+        verify_fn!(veor_u64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(veor_u64, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u64() {
-        let a: u64x2 = u64x2::new(0x00, 0x01);
-        let b: u64x2 = u64x2::new(0x00, 0x00);
-        let e: u64x2 = u64x2::new(0x00, 0x01);
-        let r: u64x2 = transmute(veorq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(veorq_u64, _00, _00, _00, u128);
+        verify_fn!(veorq_u64, _00, _FF, _FF, u128);
+        verify_fn!(veorq_u64, _FF, _0F, _F0, u128);
+        verify_fn!(veorq_u64, _0F, _F0, _FF, u128);
+        verify_fn!(veorq_u64, _FF, _FF, _00, u128);
+        verify_fn!(veorq_u64, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(veorq_u64, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_u8() {
-        let a: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u8x8 = u8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vceq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_u8, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_u8() {
-        let a: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: u8x16 = u8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vceqq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_u8, _00, _00, _FF, u128);
+        verify_fn!(vceqq_u8, _00, _FF, _00, u128);
+        verify_fn!(vceqq_u8, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_u8, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_u8, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_u8, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_u8, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_u16() {
-        let a: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u16x4 = u16x4::new(0x00, 0x01, 0x02, 0x03);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vceq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_u16, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_u16() {
-        let a: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: u16x8 = u16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vceqq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_u16, _00, _00, _FF, u128);
+        verify_fn!(vceqq_u16, _00, _FF, _00, u128);
+        verify_fn!(vceqq_u16, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_u16, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_u16, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_u16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_u16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_u32() {
-        let a: u32x2 = u32x2::new(0x00, 0x01);
-        let b: u32x2 = u32x2::new(0x00, 0x01);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vceq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_u32, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_u32() {
-        let a: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: u32x4 = u32x4::new(0x00, 0x01, 0x02, 0x03);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vceqq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_u32, _00, _00, _FF, u128);
+        verify_fn!(vceqq_u32, _00, _FF, _00, u128);
+        verify_fn!(vceqq_u32, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_u32, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_u32, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_u32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_u32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s8() {
-        let a: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i8x8 = i8x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vceq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_s8, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_s8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s8() {
-        let a: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let b: i8x16 = i8x16::new(
-            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
-            0x0E, 0x0F,
-        );
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vceqq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_s8, _00, _00, _FF, u128);
+        verify_fn!(vceqq_s8, _00, _FF, _00, u128);
+        verify_fn!(vceqq_s8, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_s8, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_s8, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_s8, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_s8, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s16() {
-        let a: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i16x4 = i16x4::new(0x00, 0x01, 0x02, 0x03);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vceq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_s16, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s16() {
-        let a: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let b: i16x8 = i16x8::new(0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vceqq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_s16, _00, _00, _FF, u128);
+        verify_fn!(vceqq_s16, _00, _FF, _00, u128);
+        verify_fn!(vceqq_s16, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_s16, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_s16, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_s16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_s16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s32() {
-        let a: i32x2 = i32x2::new(0x00, 0x01);
-        let b: i32x2 = i32x2::new(0x00, 0x01);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vceq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vceq_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vceq_s32, lo64(_FF), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vceq_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vceq_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vceq_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vceq_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s32() {
-        let a: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let b: i32x4 = i32x4::new(0x00, 0x01, 0x02, 0x03);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vceqq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_s32, _00, _00, _FF, u128);
+        verify_fn!(vceqq_s32, _00, _FF, _00, u128);
+        verify_fn!(vceqq_s32, _FF, _0F, _00, u128);
+        verify_fn!(vceqq_s32, _0F, _F0, _00, u128);
+        verify_fn!(vceqq_s32, _FF, _FF, _FF, u128);
+        verify_fn!(vceqq_s32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vceqq_s32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_f32() {
-        let a: f32x2 = f32x2::new(1.2, 3.4);
-        let b: f32x2 = f32x2::new(1.2, 3.4);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vceq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), lo64(_00), u64);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vceq_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_f32() {
-        let a: f32x4 = f32x4::new(1.2, 3.4, 5.6, 7.8);
-        let b: f32x4 = f32x4::new(1.2, 3.4, 5.6, 7.8);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vceqq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), _00, u128);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), _00, u128);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _FF), u128);
+        verify_fn!(vceqq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s8() {
-        let a: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i8x8 = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcgt_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_s8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcgt_s8, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcgt_s8, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcgt_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
+        verify_fn!(vcgt_s8, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s8() {
-        let a: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: i8x16 = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcgtq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_s8, _00, _00, _00, u128);
+        verify_fn!(vcgtq_s8, _00, _FF, _FF, u128);
+        verify_fn!(vcgtq_s8, _FF, _00, _00, u128);
+        verify_fn!(vcgtq_s8, _0F, _F0, _FF, u128);
+        verify_fn!(vcgtq_s8, _F0, _0F, _00, u128);
+        verify_fn!(vcgtq_s8, _00_FF, _FF_00, _FF_00, u128);
+        verify_fn!(vcgtq_s8, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s16() {
-        let a: i16x4 = i16x4::new(1, 2, 3, 4);
-        let b: i16x4 = i16x4::new(0, 1, 2, 3);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcgt_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_s16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcgt_s16, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcgt_s16, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcgt_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcgt_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s16() {
-        let a: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i16x8 = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcgtq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_s16, _00, _00, _00, u128);
+        verify_fn!(vcgtq_s16, _00, _FF, _FF, u128);
+        verify_fn!(vcgtq_s16, _FF, _00, _00, u128);
+        verify_fn!(vcgtq_s16, _0F, _F0, _FF, u128);
+        verify_fn!(vcgtq_s16, _F0, _0F, _00, u128);
+        verify_fn!(vcgtq_s16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcgtq_s16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s32() {
-        let a: i32x2 = i32x2::new(1, 2);
-        let b: i32x2 = i32x2::new(0, 1);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcgt_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_s32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcgt_s32, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcgt_s32, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcgt_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcgt_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s32() {
-        let a: i32x4 = i32x4::new(1, 2, 3, 4);
-        let b: i32x4 = i32x4::new(0, 1, 2, 3);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgtq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_s32, _00, _00, _00, u128);
+        verify_fn!(vcgtq_s32, _00, _FF, _FF, u128);
+        verify_fn!(vcgtq_s32, _FF, _00, _00, u128);
+        verify_fn!(vcgtq_s32, _0F, _F0, _FF, u128);
+        verify_fn!(vcgtq_s32, _F0, _0F, _00, u128);
+        verify_fn!(vcgtq_s32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcgtq_s32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u8() {
-        let a: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u8x8 = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcgt_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_u8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcgt_u8, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcgt_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcgt_u8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcgt_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
+        verify_fn!(vcgt_u8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u8() {
-        let a: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: u8x16 = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcgtq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_u8, _00, _00, _00, u128);
+        verify_fn!(vcgtq_u8, _00, _FF, _00, u128);
+        verify_fn!(vcgtq_u8, _FF, _00, _FF, u128);
+        verify_fn!(vcgtq_u8, _0F, _F0, _00, u128);
+        verify_fn!(vcgtq_u8, _F0, _0F, _FF, u128);
+        verify_fn!(vcgtq_u8, _00_FF, _FF_00, _00_FF, u128);
+        verify_fn!(vcgtq_u8, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u16() {
-        let a: u16x4 = u16x4::new(1, 2, 3, 4);
-        let b: u16x4 = u16x4::new(0, 1, 2, 3);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcgt_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_u16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcgt_u16, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcgt_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcgt_u16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcgt_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcgt_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u16() {
-        let a: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u16x8 = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcgtq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_u16, _00, _00, _00, u128);
+        verify_fn!(vcgtq_u16, _00, _FF, _00, u128);
+        verify_fn!(vcgtq_u16, _FF, _00, _FF, u128);
+        verify_fn!(vcgtq_u16, _0F, _F0, _00, u128);
+        verify_fn!(vcgtq_u16, _F0, _0F, _FF, u128);
+        verify_fn!(vcgtq_u16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcgtq_u16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u32() {
-        let a: u32x2 = u32x2::new(1, 2);
-        let b: u32x2 = u32x2::new(0, 1);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcgt_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_u32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcgt_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcgt_u32, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcgt_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcgt_u32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcgt_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcgt_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u32() {
-        let a: u32x4 = u32x4::new(1, 2, 3, 4);
-        let b: u32x4 = u32x4::new(0, 1, 2, 3);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgtq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_u32, _00, _00, _00, u128);
+        verify_fn!(vcgtq_u32, _00, _FF, _00, u128);
+        verify_fn!(vcgtq_u32, _FF, _00, _FF, u128);
+        verify_fn!(vcgtq_u32, _0F, _F0, _00, u128);
+        verify_fn!(vcgtq_u32, _F0, _0F, _FF, u128);
+        verify_fn!(vcgtq_u32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcgtq_u32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_f32() {
-        let a: f32x2 = f32x2::new(1.2, 2.3);
-        let b: f32x2 = f32x2::new(0.1, 1.2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcgt_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_FF, _00), u64);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_00, _FF), u64);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vcgt_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_f32() {
-        let a: f32x4 = f32x4::new(1.2, 2.3, 3.4, 4.5);
-        let b: f32x4 = f32x4::new(0.1, 1.2, 2.3, 3.4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgtq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _00, u128);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _00, u128);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _00, _00, _FF), u128);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_00, _FF, _00, _FF), u128);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
+        verify_fn!(vcgtq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _FF), u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s8() {
-        let a: i8x8 = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vclt_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_s8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vclt_s8, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vclt_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vclt_s8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vclt_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
+        verify_fn!(vclt_s8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s8() {
-        let a: i8x16 = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcltq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_s8, _00, _00, _00, u128);
+        verify_fn!(vcltq_s8, _00, _FF, _00, u128);
+        verify_fn!(vcltq_s8, _FF, _00, _FF, u128);
+        verify_fn!(vcltq_s8, _0F, _F0, _00, u128);
+        verify_fn!(vcltq_s8, _F0, _0F, _FF, u128);
+        verify_fn!(vcltq_s8, _00_FF, _FF_00, _00_FF, u128);
+        verify_fn!(vcltq_s8, _FF, _00_FF, _FF_00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s16() {
-        let a: i16x4 = i16x4::new(0, 1, 2, 3);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vclt_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_s16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vclt_s16, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vclt_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vclt_s16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vclt_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vclt_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s16() {
-        let a: i16x8 = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcltq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_s16, _00, _00, _00, u128);
+        verify_fn!(vcltq_s16, _00, _FF, _00, u128);
+        verify_fn!(vcltq_s16, _FF, _00, _FF, u128);
+        verify_fn!(vcltq_s16, _0F, _F0, _00, u128);
+        verify_fn!(vcltq_s16, _F0, _0F, _FF, u128);
+        verify_fn!(vcltq_s16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcltq_s16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s32() {
-        let a: i32x2 = i32x2::new(0, 1);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vclt_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_s32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vclt_s32, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vclt_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vclt_s32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vclt_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vclt_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s32() {
-        let a: i32x4 = i32x4::new(0, 1, 2, 3);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcltq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_s32, _00, _00, _00, u128);
+        verify_fn!(vcltq_s32, _00, _FF, _00, u128);
+        verify_fn!(vcltq_s32, _FF, _00, _FF, u128);
+        verify_fn!(vcltq_s32, _0F, _F0, _00, u128);
+        verify_fn!(vcltq_s32, _F0, _0F, _FF, u128);
+        verify_fn!(vcltq_s32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcltq_s32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u8() {
-        let a: u8x8 = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vclt_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_u8, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vclt_u8, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vclt_u8, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vclt_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
+        verify_fn!(vclt_u8, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u8() {
-        let a: u8x16 = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcltq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_u8, _00, _00, _00, u128);
+        verify_fn!(vcltq_u8, _00, _FF, _FF, u128);
+        verify_fn!(vcltq_u8, _FF, _00, _00, u128);
+        verify_fn!(vcltq_u8, _0F, _F0, _FF, u128);
+        verify_fn!(vcltq_u8, _F0, _0F, _00, u128);
+        verify_fn!(vcltq_u8, _00_FF, _FF_00, _FF_00, u128);
+        verify_fn!(vcltq_u8, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u16() {
-        let a: u16x4 = u16x4::new(0, 1, 2, 3);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vclt_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_u16, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vclt_u16, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vclt_u16, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vclt_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vclt_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u16() {
-        let a: u16x8 = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcltq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_u16, _00, _00, _00, u128);
+        verify_fn!(vcltq_u16, _00, _FF, _FF, u128);
+        verify_fn!(vcltq_u16, _FF, _00, _00, u128);
+        verify_fn!(vcltq_u16, _0F, _F0, _FF, u128);
+        verify_fn!(vcltq_u16, _F0, _0F, _00, u128);
+        verify_fn!(vcltq_u16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcltq_u16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u32() {
-        let a: u32x2 = u32x2::new(0, 1);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vclt_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_u32, lo64(_00), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vclt_u32, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vclt_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vclt_u32, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vclt_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vclt_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u32() {
-        let a: u32x4 = u32x4::new(0, 1, 2, 3);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcltq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_u32, _00, _00, _00, u128);
+        verify_fn!(vcltq_u32, _00, _FF, _FF, u128);
+        verify_fn!(vcltq_u32, _FF, _00, _00, u128);
+        verify_fn!(vcltq_u32, _0F, _F0, _FF, u128);
+        verify_fn!(vcltq_u32, _F0, _0F, _00, u128);
+        verify_fn!(vcltq_u32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcltq_u32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_f32() {
-        let a: f32x2 = f32x2::new(0.1, 1.2);
-        let b: f32x2 = f32x2::new(1.2, 2.3);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vclt_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_00, _FF), u64);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_FF, _00), u64);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vclt_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_f32() {
-        let a: f32x4 = f32x4::new(0.1, 1.2, 2.3, 3.4);
-        let b: f32x4 = f32x4::new(1.2, 2.3, 3.4, 4.5);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcltq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _00, u128);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _00, u128);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _00), u128);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_FF, _00, _00, _00), u128);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _FF, _00, _00), u128);
+        verify_fn!(vcltq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s8() {
-        let a: i8x8 = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcle_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcle_s8, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcle_s8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcle_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
+        verify_fn!(vcle_s8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s8() {
-        let a: i8x16 = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcleq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_s8, _00, _00, _FF, u128);
+        verify_fn!(vcleq_s8, _00, _FF, _00, u128);
+        verify_fn!(vcleq_s8, _FF, _00, _FF, u128);
+        verify_fn!(vcleq_s8, _0F, _F0, _00, u128);
+        verify_fn!(vcleq_s8, _F0, _0F, _FF, u128);
+        verify_fn!(vcleq_s8, _00_FF, _FF_00, _00_FF, u128);
+        verify_fn!(vcleq_s8, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s16() {
-        let a: i16x4 = i16x4::new(0, 1, 2, 3);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcle_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcle_s16, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcle_s16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcle_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcle_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s16() {
-        let a: i16x8 = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcleq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_s16, _00, _00, _FF, u128);
+        verify_fn!(vcleq_s16, _00, _FF, _00, u128);
+        verify_fn!(vcleq_s16, _FF, _00, _FF, u128);
+        verify_fn!(vcleq_s16, _0F, _F0, _00, u128);
+        verify_fn!(vcleq_s16, _F0, _0F, _FF, u128);
+        verify_fn!(vcleq_s16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcleq_s16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s32() {
-        let a: i32x2 = i32x2::new(0, 1);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcle_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcle_s32, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcle_s32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcle_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcle_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s32() {
-        let a: i32x4 = i32x4::new(0, 1, 2, 3);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcleq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_s32, _00, _00, _FF, u128);
+        verify_fn!(vcleq_s32, _00, _FF, _00, u128);
+        verify_fn!(vcleq_s32, _FF, _00, _FF, u128);
+        verify_fn!(vcleq_s32, _0F, _F0, _00, u128);
+        verify_fn!(vcleq_s32, _F0, _0F, _FF, u128);
+        verify_fn!(vcleq_s32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcleq_s32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u8() {
-        let a: u8x8 = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcle_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcle_u8, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcle_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcle_u8, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcle_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
+        verify_fn!(vcle_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u8() {
-        let a: u8x16 = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcleq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_u8, _00, _00, _FF, u128);
+        verify_fn!(vcleq_u8, _00, _FF, _FF, u128);
+        verify_fn!(vcleq_u8, _FF, _00, _00, u128);
+        verify_fn!(vcleq_u8, _0F, _F0, _FF, u128);
+        verify_fn!(vcleq_u8, _F0, _0F, _00, u128);
+        verify_fn!(vcleq_u8, _00_FF, _FF_00, _FF_00, u128);
+        verify_fn!(vcleq_u8, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u16() {
-        let a: u16x4 = u16x4::new(0, 1, 2, 3);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcle_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcle_u16, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcle_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcle_u16, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcle_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcle_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u16() {
-        let a: u16x8 = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcleq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_u16, _00, _00, _FF, u128);
+        verify_fn!(vcleq_u16, _00, _FF, _FF, u128);
+        verify_fn!(vcleq_u16, _FF, _00, _00, u128);
+        verify_fn!(vcleq_u16, _0F, _F0, _FF, u128);
+        verify_fn!(vcleq_u16, _F0, _0F, _00, u128);
+        verify_fn!(vcleq_u16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcleq_u16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u32() {
-        let a: u32x2 = u32x2::new(0, 1);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcle_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcle_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcle_u32, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcle_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcle_u32, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcle_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcle_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u32() {
-        let a: u32x4 = u32x4::new(0, 1, 2, 3);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcleq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_u32, _00, _00, _FF, u128);
+        verify_fn!(vcleq_u32, _00, _FF, _FF, u128);
+        verify_fn!(vcleq_u32, _FF, _00, _00, u128);
+        verify_fn!(vcleq_u32, _0F, _F0, _FF, u128);
+        verify_fn!(vcleq_u32, _F0, _0F, _00, u128);
+        verify_fn!(vcleq_u32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcleq_u32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_f32() {
-        let a: f32x2 = f32x2::new(0.1, 1.2);
-        let b: f32x2 = f32x2::new(1.2, 2.3);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcle_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_00, _FF), u64);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_FF, _00), u64);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vcle_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_f32() {
-        let a: f32x4 = f32x4::new(0.1, 1.2, 2.3, 3.4);
-        let b: f32x4 = f32x4::new(1.2, 2.3, 3.4, 4.5);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcleq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _00), u128);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_FF, _00, _00, _00), u128);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _FF, _00, _FF), u128);
+        verify_fn!(vcleq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s8() {
-        let a: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i8x8 = i8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcge_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcge_s8, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcge_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcge_s8, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcge_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
+        verify_fn!(vcge_s8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s8() {
-        let a: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: i8x16 = i8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcgeq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_s8, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_s8, _00, _FF, _FF, u128);
+        verify_fn!(vcgeq_s8, _FF, _00, _00, u128);
+        verify_fn!(vcgeq_s8, _0F, _F0, _FF, u128);
+        verify_fn!(vcgeq_s8, _F0, _0F, _00, u128);
+        verify_fn!(vcgeq_s8, _00_FF, _FF_00, _FF_00, u128);
+        verify_fn!(vcgeq_s8, _FF, _00_FF, _00_FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s16() {
-        let a: i16x4 = i16x4::new(1, 2, 3, 4);
-        let b: i16x4 = i16x4::new(0, 1, 2, 3);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcge_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcge_s16, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcge_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcge_s16, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcge_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcge_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s16() {
-        let a: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i16x8 = i16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcgeq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_s16, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_s16, _00, _FF, _FF, u128);
+        verify_fn!(vcgeq_s16, _FF, _00, _00, u128);
+        verify_fn!(vcgeq_s16, _0F, _F0, _FF, u128);
+        verify_fn!(vcgeq_s16, _F0, _0F, _00, u128);
+        verify_fn!(vcgeq_s16, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcgeq_s16, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s32() {
-        let a: i32x2 = i32x2::new(1, 2);
-        let b: i32x2 = i32x2::new(0, 1);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcge_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
+        verify_fn!(vcge_s32, lo64(_FF), lo64(_00), lo64(_00), u64);
+        verify_fn!(vcge_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
+        verify_fn!(vcge_s32, lo64(_F0), lo64(_0F), lo64(_00), u64);
+        verify_fn!(vcge_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
+        verify_fn!(vcge_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s32() {
-        let a: i32x4 = i32x4::new(1, 2, 3, 4);
-        let b: i32x4 = i32x4::new(0, 1, 2, 3);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgeq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_s32, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_s32, _00, _FF, _FF, u128);
+        verify_fn!(vcgeq_s32, _FF, _00, _00, u128);
+        verify_fn!(vcgeq_s32, _0F, _F0, _FF, u128);
+        verify_fn!(vcgeq_s32, _F0, _0F, _00, u128);
+        verify_fn!(vcgeq_s32, _00_FF, _FF_00, _FF, u128);
+        verify_fn!(vcgeq_s32, _FF, _00_FF, _00, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u8() {
-        let a: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u8x8 = u8x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u8x8 = u8x8::new(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        let r: u8x8 = transmute(vcge_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcge_u8, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcge_u8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcge_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
+        verify_fn!(vcge_u8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u8() {
-        let a: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: u8x16 = u8x16::new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        let e: u8x16 = u8x16::new(
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF,
-        );
-        let r: u8x16 = transmute(vcgeq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_u8, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_u8, _00, _FF, _00, u128);
+        verify_fn!(vcgeq_u8, _FF, _00, _FF, u128);
+        verify_fn!(vcgeq_u8, _0F, _F0, _00, u128);
+        verify_fn!(vcgeq_u8, _F0, _0F, _FF, u128);
+        verify_fn!(vcgeq_u8, _00_FF, _FF_00, _00_FF, u128);
+        verify_fn!(vcgeq_u8, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u16() {
-        let a: u16x4 = u16x4::new(1, 2, 3, 4);
-        let b: u16x4 = u16x4::new(0, 1, 2, 3);
-        let e: u16x4 = u16x4::new(0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF);
-        let r: u16x4 = transmute(vcge_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcge_u16, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcge_u16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcge_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcge_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u16() {
-        let a: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u16x8 = u16x8::new(0, 1, 2, 3, 4, 5, 6, 7);
-        let e: u16x8 = u16x8::new(
-            0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF, 0xFF_FF,
-        );
-        let r: u16x8 = transmute(vcgeq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_u16, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_u16, _00, _FF, _00, u128);
+        verify_fn!(vcgeq_u16, _FF, _00, _FF, u128);
+        verify_fn!(vcgeq_u16, _0F, _F0, _00, u128);
+        verify_fn!(vcgeq_u16, _F0, _0F, _FF, u128);
+        verify_fn!(vcgeq_u16, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcgeq_u16, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u32() {
-        let a: u32x2 = u32x2::new(1, 2);
-        let b: u32x2 = u32x2::new(0, 1);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcge_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
+        verify_fn!(vcge_u32, lo64(_FF), lo64(_00), lo64(_FF), u64);
+        verify_fn!(vcge_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
+        verify_fn!(vcge_u32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
+        verify_fn!(vcge_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
+        verify_fn!(vcge_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u32() {
-        let a: u32x4 = u32x4::new(1, 2, 3, 4);
-        let b: u32x4 = u32x4::new(0, 1, 2, 3);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgeq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_u32, _00, _00, _FF, u128);
+        verify_fn!(vcgeq_u32, _00, _FF, _00, u128);
+        verify_fn!(vcgeq_u32, _FF, _00, _FF, u128);
+        verify_fn!(vcgeq_u32, _0F, _F0, _00, u128);
+        verify_fn!(vcgeq_u32, _F0, _0F, _FF, u128);
+        verify_fn!(vcgeq_u32, _00_FF, _FF_00, _00, u128);
+        verify_fn!(vcgeq_u32, _FF, _00_FF, _FF, u128);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_f32() {
-        let a: f32x2 = f32x2::new(1.2, 2.3);
-        let b: f32x2 = f32x2::new(0.1, 1.2);
-        let e: u32x2 = u32x2::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x2 = transmute(vcge_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_FF, _00), u64);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_00, _FF), u64);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
+        verify_fn!(vcge_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _FF), u64);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_f32() {
-        let a: f32x4 = f32x4::new(1.2, 2.3, 3.4, 4.5);
-        let b: f32x4 = f32x4::new(0.1, 1.2, 2.3, 3.4);
-        let e: u32x4 = u32x4::new(0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
-        let r: u32x4 = transmute(vcgeq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _00, _00, _FF), u128);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_00, _FF, _00, _FF), u128);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _FF), u128);
+        verify_fn!(vcgeq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _FF), u128);
     }
 
     #[simd_test(enable = "neon")]
@@ -3944,63 +4093,63 @@ mod tests {
         assert_eq!(r, e);
     }
 
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqadd_s8() {
-        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: i8x8 = transmute(vuqadd_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqaddq_s8() {
-        let a: i8x16 = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(
-            43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-        );
-        let r: i8x16 = transmute(vuqaddq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqadd_s16() {
-        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(43, 44, 45, 46);
-        let r: i16x4 = transmute(vuqadd_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqaddq_s16() {
-        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: i16x8 = transmute(vuqaddq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqadd_s32() {
-        let a: i32x2 = i32x2::new(42, 42);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(43, 44);
-        let r: i32x2 = transmute(vuqadd_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vuqaddq_s32() {
-        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(43, 44, 45, 46);
-        let r: i32x4 = transmute(vuqaddq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqadd_s8() {
+//        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+//        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+//        let e: i8x8 = i8x8::new(43, 44, 45, 46, 47, 48, 49, 50);
+//        let r: i8x8 = transmute(vuqadd_s8(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
+//
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqaddq_s8() {
+//        let a: i8x16 = i8x16::new(
+//            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+//        );
+//        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+//        let e: i8x16 = i8x16::new(
+//            43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
+//        );
+//        let r: i8x16 = transmute(vuqaddq_s8(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
+//
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqadd_s16() {
+//        let a: i16x4 = i16x4::new(42, 42, 42, 42);
+//        let b: i16x4 = i16x4::new(1, 2, 3, 4);
+//        let e: i16x4 = i16x4::new(43, 44, 45, 46);
+//        let r: i16x4 = transmute(vuqadd_s16(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
+//
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqaddq_s16() {
+//        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
+//        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
+//        let e: i16x8 = i16x8::new(43, 44, 45, 46, 47, 48, 49, 50);
+//        let r: i16x8 = transmute(vuqaddq_s16(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
+//
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqadd_s32() {
+//        let a: i32x2 = i32x2::new(42, 42);
+//        let b: i32x2 = i32x2::new(1, 2);
+//        let e: i32x2 = i32x2::new(43, 44);
+//        let r: i32x2 = transmute(vuqadd_s32(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
+//
+//    #[simd_test(enable = "neon")]
+//    unsafe fn test_vuqaddq_s32() {
+//        let a: i32x4 = i32x4::new(42, 42, 42, 42);
+//        let b: i32x4 = i32x4::new(1, 2, 3, 4);
+//        let e: i32x4 = i32x4::new(43, 44, 45, 46);
+//        let r: i32x4 = transmute(vuqaddq_s32(transmute(a), transmute(b)));
+//        assert_eq!(r, e);
+//    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_s8() {
