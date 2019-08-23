@@ -92,7 +92,7 @@ pub fn assert(_fnptr: usize, fnname: &str, expected: &str) {
     // If the expected intrinsic is a nop it is compiled away so we
     // can't check for it - aka the intrinsic is not generating any code
     if expected == "nop" {
-        return
+        return;
     }
 
     // Look for `expected` as the first part of any instruction in this
