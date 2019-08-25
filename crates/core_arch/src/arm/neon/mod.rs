@@ -1622,7 +1622,7 @@ pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
 mod tests {
     use super::*;
     use crate::core_arch::{arm::*, simd::*};
-    use std::{i16, i32, i8, mem::transmute, u16, u32, u8};
+    use std::{i16, i32, i8, mem::transmute, u16, u32, u8, vec::Vec};
     use stdarch_test::simd_test;
 
     #[simd_test(enable = "neon")]
@@ -1764,128 +1764,97 @@ mod tests {
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_s8() {
-        let a = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b = i8x8::new(8, 7, 6, 5, 4, 3, 2, 1);
-        let e = i8x8::new(9, 9, 9, 9, 9, 9, 9, 9);
-        let r: i8x8 = transmute(vadd_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(
+            |i, j| vadd_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_s8() {
-        let a = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8);
-        let b = i8x16::new(8, 7, 6, 5, 4, 3, 2, 1, 8, 7, 6, 5, 4, 3, 2, 1);
-        let e = i8x16::new(9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
-        let r: i8x16 = transmute(vaddq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(
+            |i, j| vaddq_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_s16() {
-        let a = i16x4::new(1, 2, 3, 4);
-        let b = i16x4::new(8, 7, 6, 5);
-        let e = i16x4::new(9, 9, 9, 9);
-        let r: i16x4 = transmute(vadd_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(
+            |i, j| vadd_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_s16() {
-        let a = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b = i16x8::new(8, 7, 6, 5, 4, 3, 2, 1);
-        let e = i16x8::new(9, 9, 9, 9, 9, 9, 9, 9);
-        let r: i16x8 = transmute(vaddq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(
+            |i, j| vaddq_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_s32() {
-        let a = i32x2::new(1, 2);
-        let b = i32x2::new(8, 7);
-        let e = i32x2::new(9, 9);
-        let r: i32x2 = transmute(vadd_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(
+            |i, j| vadd_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_s32() {
-        let a = i32x4::new(1, 2, 3, 4);
-        let b = i32x4::new(8, 7, 6, 5);
-        let e = i32x4::new(9, 9, 9, 9);
-        let r: i32x4 = transmute(vaddq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s32(
+            |i, j| vaddq_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.overflowing_add(b).0 },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_u8() {
-        let a = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b = u8x8::new(8, 7, 6, 5, 4, 3, 2, 1);
-        let e = u8x8::new(9, 9, 9, 9, 9, 9, 9, 9);
-        let r: u8x8 = transmute(vadd_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u8(
+            |i, j| vadd_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_u8() {
-        let a = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8);
-        let b = u8x16::new(8, 7, 6, 5, 4, 3, 2, 1, 8, 7, 6, 5, 4, 3, 2, 1);
-        let e = u8x16::new(9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
-        let r: u8x16 = transmute(vaddq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u8(
+            |i, j| vaddq_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_u16() {
-        let a = u16x4::new(1, 2, 3, 4);
-        let b = u16x4::new(8, 7, 6, 5);
-        let e = u16x4::new(9, 9, 9, 9);
-        let r: u16x4 = transmute(vadd_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u16(
+            |i, j| vadd_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_u16() {
-        let a = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b = u16x8::new(8, 7, 6, 5, 4, 3, 2, 1);
-        let e = u16x8::new(9, 9, 9, 9, 9, 9, 9, 9);
-        let r: u16x8 = transmute(vaddq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u16(
+            |i, j| vaddq_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_u32() {
-        let a = u32x2::new(1, 2);
-        let b = u32x2::new(8, 7);
-        let e = u32x2::new(9, 9);
-        let r: u32x2 = transmute(vadd_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u32(
+            |i, j| vadd_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.overflowing_add(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_u32() {
-        let a = u32x4::new(1, 2, 3, 4);
-        let b = u32x4::new(8, 7, 6, 5);
-        let e = u32x4::new(9, 9, 9, 9);
-        let r: u32x4 = transmute(vaddq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u32(
+            |i, j| vaddq_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.overflowing_add(b).0 },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vadd_f32() {
-        let a = f32x2::new(1., 2.);
-        let b = f32x2::new(8., 7.);
-        let e = f32x2::new(9., 9.);
-        let r: f32x2 = transmute(vadd_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_f32(|i, j| vadd_f32(i, j), |a: f32, b: f32| -> f32 { a + b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vaddq_f32() {
-        let a = f32x4::new(1., 2., 3., 4.);
-        let b = f32x4::new(8., 7., 6., 5.);
-        let e = f32x4::new(9., 9., 9., 9.);
-        let r: f32x4 = transmute(vaddq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_f32(|i, j| vaddq_f32(i, j), |a: f32, b: f32| -> f32 { a + b });
     }
 
     #[simd_test(enable = "neon")]
@@ -2298,2253 +2267,2725 @@ mod tests {
         assert_eq!(r, e);
     }
 
-    const _00 : u128 = 0x00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00u128;
-    const _FF : u128 = 0xFF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FF_FFu128;
-    const _0F : u128 = 0x0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0F_0Fu128;
-    const _F0 : u128 = 0xF0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0_F0u128;
-
-    const _00_FF : u128 = 0x00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FFu128;
-    const _FF_00 : u128 = 0xFF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00_FF_00u128;
-
-    const FLT_N_ONE: f32 = -1.0;
-    const FLT_ZERO: f32 = 0.0;
-    const FLT_ONE: f32 = 1.0;
-
-    const FLT_1_2: f32 = 1.2f32;
-    const FLT_0_2: f32 = FLT_1_2 - FLT_ONE;
-    const FLT_2_2: f32 = FLT_1_2 + FLT_ONE;
-    const FLT_2: f32 = 2.0f32;
-    const FLT_N_1_2: f32 = -1.2f32;
-    const FLT_3_4: f32 = 3.4f32;
-
-    const FLT_MAX: f32 = std::f32::MAX;
-    const FLT_MIN: f32 = std::f32::MIN;
-    const FLT_INF: f32 = std::f32::INFINITY;
-    const FLT_N_INF: f32 = std::f32::NEG_INFINITY;
-    const FLT_NAN: f32 = std::f32::NAN;
-
-    fn lo64(a : u128) -> u64 {
-        a as u64
+    macro_rules! V_u8 {
+        () => {
+            vec![0x00u8, 0x01u8, 0x02u8, 0x0Fu8, 0x80u8, 0xF0u8, 0xFFu8]
+        };
     }
-
-    fn mku32x2(a: u128, b: u128) -> u32x2 {
-        u32x2::new(a as u32, b as u32)
+    macro_rules! V_u16 {
+        () => {
+            vec![
+                0x0000u16, 0x0101u16, 0x0202u16, 0x0F0Fu16, 0x8000u16, 0xF0F0u16, 0xFFFFu16,
+            ]
+        };
     }
-
-    fn mku32x4(a: u128, b: u128, c: u128, d: u128) -> u32x4 {
-        u32x4::new(a as u32, b as u32, c as u32, d as u32)
+    macro_rules! V_u32 {
+        () => {
+            vec![
+                0x00000000u32,
+                0x01010101u32,
+                0x02020202u32,
+                0x0F0F0F0Fu32,
+                0x80000000u32,
+                0xF0F0F0F0u32,
+                0xFFFFFFFFu32,
+            ]
+        };
     }
-
-    macro_rules! mkf32x2 {
-        ($a: expr, $b: expr) => {
-            f32x2::new($a as f32, $b as f32)
+    macro_rules! V_u64 {
+        () => {
+            vec![
+                0x0000000000000000u64,
+                0x0101010101010101u64,
+                0x0202020202020202u64,
+                0x0F0F0F0F0F0F0F0Fu64,
+                0x8080808080808080u64,
+                0xF0F0F0F0F0F0F0F0u64,
+                0xFFFFFFFFFFFFFFFFu64,
+            ]
         };
     }
 
-    macro_rules! mkf32x4 {
-        ($a: expr, $b: expr, $c: expr, $d: expr) => {
-            f32x4::new($a as f32, $b as f32, $c as f32, $d as f32)
+    macro_rules! V_i8 {
+        () => {
+            vec![
+                0x00i8, 0x01i8, 0x02i8, 0x0Fi8, -128i8, /* 0x80 */
+                -16i8,  /* 0xF0 */
+                -1i8,   /* 0xFF */
+            ]
+        };
+    }
+    macro_rules! V_i16 {
+        () => {
+            vec![
+                0x0000i16, 0x0101i16, 0x0202i16, 0x0F0Fi16, -32768i16, /* 0x8000 */
+                -3856i16,  /* 0xF0F0 */
+                -1i16,     /* 0xFFF */
+            ]
+        };
+    }
+    macro_rules! V_i32 {
+        () => {
+            vec![
+                0x00000000i32,
+                0x01010101i32,
+                0x02020202i32,
+                0x0F0F0F0Fi32,
+                -2139062144i32, /* 0x80000000 */
+                -252645136i32,  /* 0xF0F0F0F0 */
+                -1i32,          /* 0xFFFFFFFF */
+            ]
         };
     }
 
-    macro_rules! verify_fn {
-        ($f: ident, $a:expr, $b:expr, $e: expr, $t: ident) => {
-            let r: $t = transmute($f(transmute($a), transmute($b)));
-            assert_eq!(r, transmute($e));
+    macro_rules! V_i64 {
+        () => {
+            vec![
+                0x0000000000000000i64,
+                0x0101010101010101i64,
+                0x0202020202020202i64,
+                0x0F0F0F0F0F0F0F0Fi64,
+                -9223372036854775808i64, /* 0x8000000000000000 */
+                -1152921504606846976i64, /* 0xF000000000000000 */
+                -1i64,                   /* 0xFFFFFFFFFFFFFFFF */
+            ]
         };
     }
+
+    macro_rules! V_f32 {
+        () => {
+            vec![
+                0.0f32,
+                1.0f32,
+                -1.0f32,
+                1.2f32,
+                2.4f32,
+                std::f32::MAX,
+                std::f32::MIN,
+                std::f32::INFINITY,
+                std::f32::NEG_INFINITY,
+                std::f32::NAN,
+            ]
+        };
+    }
+
+    macro_rules! to64 {
+        ($t : ident) => {
+            |v: $t| -> u64 { transmute(v) }
+        };
+    }
+
+    macro_rules! to128 {
+        ($t : ident) => {
+            |v: $t| -> u128 { transmute(v) }
+        };
+    }
+
+    unsafe fn test<T, U, V, W, X>(
+        vals: Vec<T>,
+        fill1: fn(T) -> V,
+        fill2: fn(U) -> W,
+        cast: fn(W) -> X,
+        test_fun: fn(V, V) -> W,
+        verify_fun: fn(T, T) -> U,
+    ) where
+        T: Copy + core::fmt::Debug + std::cmp::PartialEq,
+        U: Copy + core::fmt::Debug + std::cmp::PartialEq,
+        V: Copy + core::fmt::Debug,
+        W: Copy + core::fmt::Debug,
+        X: Copy + core::fmt::Debug + std::cmp::PartialEq,
+    {
+        let pairs = vals.iter().zip(vals.iter());
+
+        for (i, j) in pairs {
+            let a: V = fill1(*i);
+            let b: V = fill1(*j);
+
+            let actual_pre: W = test_fun(a, b);
+            let expected_pre: W = fill2(verify_fun(*i, *j));
+
+            let actual: X = cast(actual_pre);
+            let expected: X = cast(expected_pre);
+
+            assert_eq!(
+                actual, expected,
+                "[{:?}:{:?}] :\nf({:?}, {:?}) = {:?}\ng({:?}, {:?}) = {:?}\n",
+                *i, *j, &a, &b, actual_pre, &a, &b, expected_pre
+            );
+        }
+    }
+
+    macro_rules! gen_test_fn {
+        ($n: ident, $t: ident, $u: ident, $v: ident, $w: ident, $x: ident, $vals: expr, $fill1: expr, $fill2: expr, $cast: expr) => {
+            unsafe fn $n(test_fun: fn($v, $v) -> $w, verify_fun: fn($t, $t) -> $u) {
+                test::<$t, $u, $v, $w, $x>($vals, $fill1, $fill2, $cast, test_fun, verify_fun);
+            }
+        };
+    }
+
+    macro_rules! gen_fill_fn {
+        ($id: ident, $el_width: expr, $num_els: expr, $in_t : ident, $out_t: ident, $cmp_t: ident) => {
+            fn $id(val: $in_t) -> $out_t {
+                let initial: [$in_t; $num_els] = [val; $num_els];
+                let result: $cmp_t = unsafe { transmute(initial) };
+                let result_out: $out_t = unsafe { transmute(result) };
+
+                // println!("FILL: {:016x} as {} x {}: {:016x}", val.reverse_bits(), $el_width, $num_els, (result as u64).reverse_bits());
+
+                result_out
+            }
+        };
+    }
+
+    gen_fill_fn!(fill_u8, 8, 8, u8, uint8x8_t, u64);
+    gen_fill_fn!(fill_s8, 8, 8, i8, int8x8_t, u64);
+    gen_fill_fn!(fillq_u8, 8, 16, u8, uint8x16_t, u128);
+    gen_fill_fn!(fillq_s8, 8, 16, i8, int8x16_t, u128);
+
+    gen_fill_fn!(fill_u16, 16, 4, u16, uint16x4_t, u64);
+    gen_fill_fn!(fill_s16, 16, 4, i16, int16x4_t, u64);
+    gen_fill_fn!(fillq_u16, 16, 8, u16, uint16x8_t, u128);
+    gen_fill_fn!(fillq_s16, 16, 8, i16, int16x8_t, u128);
+
+    gen_fill_fn!(fill_u32, 32, 2, u32, uint32x2_t, u64);
+    gen_fill_fn!(fill_s32, 32, 2, i32, int32x2_t, u64);
+    gen_fill_fn!(fillq_u32, 32, 4, u32, uint32x4_t, u128);
+    gen_fill_fn!(fillq_s32, 32, 4, i32, int32x4_t, u128);
+
+    gen_fill_fn!(fill_u64, 64, 1, u64, uint64x1_t, u64);
+    gen_fill_fn!(fill_s64, 64, 1, i64, int64x1_t, u64);
+    gen_fill_fn!(fillq_u64, 64, 2, u64, uint64x2_t, u128);
+    gen_fill_fn!(fillq_s64, 64, 2, i64, int64x2_t, u128);
+
+    gen_fill_fn!(fill_f32, 32, 2, f32, float32x2_t, u64);
+    gen_fill_fn!(fillq_f32, 32, 4, f32, float32x4_t, u128);
+
+    gen_test_fn!(
+        test_ari_u8,
+        u8,
+        u8,
+        uint8x8_t,
+        uint8x8_t,
+        u64,
+        V_u8!(),
+        fill_u8,
+        fill_u8,
+        to64!(uint8x8_t)
+    );
+    gen_test_fn!(
+        test_bit_u8,
+        u8,
+        u8,
+        uint8x8_t,
+        uint8x8_t,
+        u64,
+        V_u8!(),
+        fill_u8,
+        fill_u8,
+        to64!(uint8x8_t)
+    );
+    gen_test_fn!(
+        test_cmp_u8,
+        u8,
+        u8,
+        uint8x8_t,
+        uint8x8_t,
+        u64,
+        V_u8!(),
+        fill_u8,
+        fill_u8,
+        to64!(uint8x8_t)
+    );
+    gen_test_fn!(
+        testq_ari_u8,
+        u8,
+        u8,
+        uint8x16_t,
+        uint8x16_t,
+        u128,
+        V_u8!(),
+        fillq_u8,
+        fillq_u8,
+        to128!(uint8x16_t)
+    );
+    gen_test_fn!(
+        testq_bit_u8,
+        u8,
+        u8,
+        uint8x16_t,
+        uint8x16_t,
+        u128,
+        V_u8!(),
+        fillq_u8,
+        fillq_u8,
+        to128!(uint8x16_t)
+    );
+    gen_test_fn!(
+        testq_cmp_u8,
+        u8,
+        u8,
+        uint8x16_t,
+        uint8x16_t,
+        u128,
+        V_u8!(),
+        fillq_u8,
+        fillq_u8,
+        to128!(uint8x16_t)
+    );
+
+    gen_test_fn!(
+        test_ari_s8,
+        i8,
+        i8,
+        int8x8_t,
+        int8x8_t,
+        u64,
+        V_i8!(),
+        fill_s8,
+        fill_s8,
+        to64!(int8x8_t)
+    );
+    gen_test_fn!(
+        test_bit_s8,
+        i8,
+        i8,
+        int8x8_t,
+        int8x8_t,
+        u64,
+        V_i8!(),
+        fill_s8,
+        fill_s8,
+        to64!(int8x8_t)
+    );
+    gen_test_fn!(
+        test_cmp_s8,
+        i8,
+        u8,
+        int8x8_t,
+        uint8x8_t,
+        u64,
+        V_i8!(),
+        fill_s8,
+        fill_u8,
+        to64!(uint8x8_t)
+    );
+    gen_test_fn!(
+        testq_ari_s8,
+        i8,
+        i8,
+        int8x16_t,
+        int8x16_t,
+        u128,
+        V_i8!(),
+        fillq_s8,
+        fillq_s8,
+        to128!(int8x16_t)
+    );
+    gen_test_fn!(
+        testq_bit_s8,
+        i8,
+        i8,
+        int8x16_t,
+        int8x16_t,
+        u128,
+        V_i8!(),
+        fillq_s8,
+        fillq_s8,
+        to128!(int8x16_t)
+    );
+    gen_test_fn!(
+        testq_cmp_s8,
+        i8,
+        u8,
+        int8x16_t,
+        uint8x16_t,
+        u128,
+        V_i8!(),
+        fillq_s8,
+        fillq_u8,
+        to128!(uint8x16_t)
+    );
+
+    gen_test_fn!(
+        test_ari_u16,
+        u16,
+        u16,
+        uint16x4_t,
+        uint16x4_t,
+        u64,
+        V_u16!(),
+        fill_u16,
+        fill_u16,
+        to64!(uint16x4_t)
+    );
+    gen_test_fn!(
+        test_bit_u16,
+        u16,
+        u16,
+        uint16x4_t,
+        uint16x4_t,
+        u64,
+        V_u16!(),
+        fill_u16,
+        fill_u16,
+        to64!(uint16x4_t)
+    );
+    gen_test_fn!(
+        test_cmp_u16,
+        u16,
+        u16,
+        uint16x4_t,
+        uint16x4_t,
+        u64,
+        V_u16!(),
+        fill_u16,
+        fill_u16,
+        to64!(uint16x4_t)
+    );
+    gen_test_fn!(
+        testq_ari_u16,
+        u16,
+        u16,
+        uint16x8_t,
+        uint16x8_t,
+        u128,
+        V_u16!(),
+        fillq_u16,
+        fillq_u16,
+        to128!(uint16x8_t)
+    );
+    gen_test_fn!(
+        testq_bit_u16,
+        u16,
+        u16,
+        uint16x8_t,
+        uint16x8_t,
+        u128,
+        V_u16!(),
+        fillq_u16,
+        fillq_u16,
+        to128!(uint16x8_t)
+    );
+    gen_test_fn!(
+        testq_cmp_u16,
+        u16,
+        u16,
+        uint16x8_t,
+        uint16x8_t,
+        u128,
+        V_u16!(),
+        fillq_u16,
+        fillq_u16,
+        to128!(uint16x8_t)
+    );
+
+    gen_test_fn!(
+        test_ari_s16,
+        i16,
+        i16,
+        int16x4_t,
+        int16x4_t,
+        u64,
+        V_i16!(),
+        fill_s16,
+        fill_s16,
+        to64!(int16x4_t)
+    );
+    gen_test_fn!(
+        test_bit_s16,
+        i16,
+        i16,
+        int16x4_t,
+        int16x4_t,
+        u64,
+        V_i16!(),
+        fill_s16,
+        fill_s16,
+        to64!(int16x4_t)
+    );
+    gen_test_fn!(
+        test_cmp_s16,
+        i16,
+        u16,
+        int16x4_t,
+        uint16x4_t,
+        u64,
+        V_i16!(),
+        fill_s16,
+        fill_u16,
+        to64!(uint16x4_t)
+    );
+    gen_test_fn!(
+        testq_ari_s16,
+        i16,
+        i16,
+        int16x8_t,
+        int16x8_t,
+        u128,
+        V_i16!(),
+        fillq_s16,
+        fillq_s16,
+        to128!(int16x8_t)
+    );
+    gen_test_fn!(
+        testq_bit_s16,
+        i16,
+        i16,
+        int16x8_t,
+        int16x8_t,
+        u128,
+        V_i16!(),
+        fillq_s16,
+        fillq_s16,
+        to128!(int16x8_t)
+    );
+    gen_test_fn!(
+        testq_cmp_s16,
+        i16,
+        u16,
+        int16x8_t,
+        uint16x8_t,
+        u128,
+        V_i16!(),
+        fillq_s16,
+        fillq_u16,
+        to128!(uint16x8_t)
+    );
+
+    gen_test_fn!(
+        test_ari_u32,
+        u32,
+        u32,
+        uint32x2_t,
+        uint32x2_t,
+        u64,
+        V_u32!(),
+        fill_u32,
+        fill_u32,
+        to64!(uint32x2_t)
+    );
+    gen_test_fn!(
+        test_bit_u32,
+        u32,
+        u32,
+        uint32x2_t,
+        uint32x2_t,
+        u64,
+        V_u32!(),
+        fill_u32,
+        fill_u32,
+        to64!(uint32x2_t)
+    );
+    gen_test_fn!(
+        test_cmp_u32,
+        u32,
+        u32,
+        uint32x2_t,
+        uint32x2_t,
+        u64,
+        V_u32!(),
+        fill_u32,
+        fill_u32,
+        to64!(uint32x2_t)
+    );
+    gen_test_fn!(
+        testq_ari_u32,
+        u32,
+        u32,
+        uint32x4_t,
+        uint32x4_t,
+        u128,
+        V_u32!(),
+        fillq_u32,
+        fillq_u32,
+        to128!(uint32x4_t)
+    );
+    gen_test_fn!(
+        testq_bit_u32,
+        u32,
+        u32,
+        uint32x4_t,
+        uint32x4_t,
+        u128,
+        V_u32!(),
+        fillq_u32,
+        fillq_u32,
+        to128!(uint32x4_t)
+    );
+    gen_test_fn!(
+        testq_cmp_u32,
+        u32,
+        u32,
+        uint32x4_t,
+        uint32x4_t,
+        u128,
+        V_u32!(),
+        fillq_u32,
+        fillq_u32,
+        to128!(uint32x4_t)
+    );
+
+    gen_test_fn!(
+        test_ari_s32,
+        i32,
+        i32,
+        int32x2_t,
+        int32x2_t,
+        u64,
+        V_i32!(),
+        fill_s32,
+        fill_s32,
+        to64!(int32x2_t)
+    );
+    gen_test_fn!(
+        test_bit_s32,
+        i32,
+        i32,
+        int32x2_t,
+        int32x2_t,
+        u64,
+        V_i32!(),
+        fill_s32,
+        fill_s32,
+        to64!(int32x2_t)
+    );
+    gen_test_fn!(
+        test_cmp_s32,
+        i32,
+        u32,
+        int32x2_t,
+        uint32x2_t,
+        u64,
+        V_i32!(),
+        fill_s32,
+        fill_u32,
+        to64!(uint32x2_t)
+    );
+    gen_test_fn!(
+        testq_ari_s32,
+        i32,
+        i32,
+        int32x4_t,
+        int32x4_t,
+        u128,
+        V_i32!(),
+        fillq_s32,
+        fillq_s32,
+        to128!(int32x4_t)
+    );
+    gen_test_fn!(
+        testq_bit_s32,
+        i32,
+        i32,
+        int32x4_t,
+        int32x4_t,
+        u128,
+        V_i32!(),
+        fillq_s32,
+        fillq_s32,
+        to128!(int32x4_t)
+    );
+    gen_test_fn!(
+        testq_cmp_s32,
+        i32,
+        u32,
+        int32x4_t,
+        uint32x4_t,
+        u128,
+        V_i32!(),
+        fillq_s32,
+        fillq_u32,
+        to128!(uint32x4_t)
+    );
+
+    gen_test_fn!(
+        test_ari_u64,
+        u64,
+        u64,
+        uint64x1_t,
+        uint64x1_t,
+        u64,
+        V_u64!(),
+        fill_u64,
+        fill_u64,
+        to64!(uint64x1_t)
+    );
+    gen_test_fn!(
+        test_bit_u64,
+        u64,
+        u64,
+        uint64x1_t,
+        uint64x1_t,
+        u64,
+        V_u64!(),
+        fill_u64,
+        fill_u64,
+        to64!(uint64x1_t)
+    );
+    gen_test_fn!(
+        test_cmp_u64,
+        u64,
+        u64,
+        uint64x1_t,
+        uint64x1_t,
+        u64,
+        V_u64!(),
+        fill_u64,
+        fill_u64,
+        to64!(uint64x1_t)
+    );
+    gen_test_fn!(
+        testq_ari_u64,
+        u64,
+        u64,
+        uint64x2_t,
+        uint64x2_t,
+        u128,
+        V_u64!(),
+        fillq_u64,
+        fillq_u64,
+        to128!(uint64x2_t)
+    );
+    gen_test_fn!(
+        testq_bit_u64,
+        u64,
+        u64,
+        uint64x2_t,
+        uint64x2_t,
+        u128,
+        V_u64!(),
+        fillq_u64,
+        fillq_u64,
+        to128!(uint64x2_t)
+    );
+    gen_test_fn!(
+        testq_cmp_u64,
+        u64,
+        u64,
+        uint64x2_t,
+        uint64x2_t,
+        u128,
+        V_u64!(),
+        fillq_u64,
+        fillq_u64,
+        to128!(uint64x2_t)
+    );
+
+    gen_test_fn!(
+        test_ari_s64,
+        i64,
+        i64,
+        int64x1_t,
+        int64x1_t,
+        u64,
+        V_i64!(),
+        fill_s64,
+        fill_s64,
+        to64!(int64x1_t)
+    );
+    gen_test_fn!(
+        test_bit_s64,
+        i64,
+        i64,
+        int64x1_t,
+        int64x1_t,
+        u64,
+        V_i64!(),
+        fill_s64,
+        fill_s64,
+        to64!(int64x1_t)
+    );
+    gen_test_fn!(
+        test_cmp_s64,
+        i64,
+        u64,
+        int64x1_t,
+        uint64x1_t,
+        u64,
+        V_i64!(),
+        fill_s64,
+        fill_u64,
+        to64!(uint64x1_t)
+    );
+    gen_test_fn!(
+        testq_ari_s64,
+        i64,
+        i64,
+        int64x2_t,
+        int64x2_t,
+        u128,
+        V_i64!(),
+        fillq_s64,
+        fillq_s64,
+        to128!(int64x2_t)
+    );
+    gen_test_fn!(
+        testq_bit_s64,
+        i64,
+        i64,
+        int64x2_t,
+        int64x2_t,
+        u128,
+        V_i64!(),
+        fillq_s64,
+        fillq_s64,
+        to128!(int64x2_t)
+    );
+    gen_test_fn!(
+        testq_cmp_s64,
+        i64,
+        u64,
+        int64x2_t,
+        uint64x2_t,
+        u128,
+        V_i64!(),
+        fillq_s64,
+        fillq_u64,
+        to128!(uint64x2_t)
+    );
+
+    gen_test_fn!(
+        test_ari_f32,
+        f32,
+        f32,
+        float32x2_t,
+        float32x2_t,
+        u64,
+        V_f32!(),
+        fill_f32,
+        fill_f32,
+        to64!(float32x2_t)
+    );
+    gen_test_fn!(
+        test_cmp_f32,
+        f32,
+        u32,
+        float32x2_t,
+        uint32x2_t,
+        u64,
+        V_f32!(),
+        fill_f32,
+        fill_u32,
+        to64!(uint32x2_t)
+    );
+    gen_test_fn!(
+        testq_ari_f32,
+        f32,
+        f32,
+        float32x4_t,
+        float32x4_t,
+        u128,
+        V_f32!(),
+        fillq_f32,
+        fillq_f32,
+        to128!(float32x4_t)
+    );
+    gen_test_fn!(
+        testq_cmp_f32,
+        f32,
+        u32,
+        float32x4_t,
+        uint32x4_t,
+        u128,
+        V_f32!(),
+        fillq_f32,
+        fillq_u32,
+        to128!(uint32x4_t)
+    );
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s8() {
-        verify_fn!(vand_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_s8, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_s8, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
+        test_bit_s8(|i, j| vand_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s8() {
-        verify_fn!(vandq_s8, _00, _FF, _00, u128);
-        verify_fn!(vandq_s8, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_s8, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_s8, _FF, _FF, _FF, u128);
+        testq_bit_s8(|i, j| vandq_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s16() {
-        verify_fn!(vand_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_s16, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_s16, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_s16, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_s16(|i, j| vand_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s16() {
-        verify_fn!(vandq_s16, _00, _FF, _00, u128);
-        verify_fn!(vandq_s16, _00, _00, _00, u128);
-        verify_fn!(vandq_s16, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_s16, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_s16, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_s16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_s16, _FF, _00_FF, _00_FF, u128);
+        testq_bit_s16(|i, j| vandq_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_s32() {
-        verify_fn!(vand_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_s32, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_s32, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_s32, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_s32(|i, j| vand_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_s32() {
-        verify_fn!(vandq_s32, _00, _FF, _00, u128);
-        verify_fn!(vandq_s32, _00, _00, _00, u128);
-        verify_fn!(vandq_s32, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_s32, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_s32, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_s32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_s32, _FF, _00_FF, _00_FF, u128);
+        testq_bit_s32(|i, j| vandq_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vand_s64() {
+        test_bit_s64(|i, j| vand_s64(i, j), |a: i64, b: i64| -> i64 { a & b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vandq_s64() {
+        testq_bit_s64(|i, j| vandq_s64(i, j), |a: i64, b: i64| -> i64 { a & b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u8() {
-        verify_fn!(vand_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_u8, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_u8, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_u8(|i, j| vand_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u8() {
-        verify_fn!(vandq_u8, _00, _FF, _00, u128);
-        verify_fn!(vandq_u8, _00, _00, _00, u128);
-        verify_fn!(vandq_u8, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_u8, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_u8, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_u8, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_u8, _FF, _00_FF, _00_FF, u128);
+        testq_bit_u8(|i, j| vandq_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u16() {
-        verify_fn!(vand_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_u16, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_u16, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_u16, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_u16(|i, j| vand_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u16() {
-        verify_fn!(vandq_u16, _00, _FF, _00, u128);
-        verify_fn!(vandq_u16, _00, _00, _00, u128);
-        verify_fn!(vandq_u16, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_u16, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_u16, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_u16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_u16, _FF, _00_FF, _00_FF, u128);
+        testq_bit_u16(|i, j| vandq_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u32() {
-        verify_fn!(vand_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_u32, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_u32, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_u32, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_u32(|i, j| vand_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u32() {
-        verify_fn!(vandq_u32, _00, _FF, _00, u128);
-        verify_fn!(vandq_u32, _00, _00, _00, u128);
-        verify_fn!(vandq_u32, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_u32, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_u32, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_u32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_u32, _FF, _00_FF, _00_FF, u128);
+        testq_bit_u32(|i, j| vandq_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vand_s64() {
-        verify_fn!(vand_s64, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_s64, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_s64, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_s64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_s64, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_s64, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vandq_s64() {
-        verify_fn!(vandq_s64, _00, _FF, _00, u128);
-        verify_fn!(vandq_s64, _00, _00, _00, u128);
-        verify_fn!(vandq_s64, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_s64, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_s64, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_s64, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_s64, _FF, _00_FF, _00_FF, u128);
-    }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vand_u64() {
-        verify_fn!(vand_u64, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vand_u64, lo64(_F0), lo64(_FF), lo64(_F0), u64);
-        verify_fn!(vand_u64, lo64(_FF), lo64(_0F), lo64(_0F), u64);
-        verify_fn!(vand_u64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vand_u64, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vand_u64, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_bit_u64(|i, j| vand_u64(i, j), |a: u64, b: u64| -> u64 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vandq_u64() {
-        verify_fn!(vandq_u64, _00, _FF, _00, u128);
-        verify_fn!(vandq_u64, _00, _00, _00, u128);
-        verify_fn!(vandq_u64, _F0, _FF, _F0, u128);
-        verify_fn!(vandq_u64, _FF, _0F, _0F, u128);
-        verify_fn!(vandq_u64, _FF, _FF, _FF, u128);
-        verify_fn!(vandq_u64, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vandq_u64, _FF, _00_FF, _00_FF, u128);
+        testq_bit_u64(|i, j| vandq_u64(i, j), |a: u64, b: u64| -> u64 { a & b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s8() {
-        verify_fn!(vorr_s8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s8, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_s8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_s8(|i, j| vorr_s8(i, j), |a: i8, b: i8| -> i8 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s8() {
-        verify_fn!(vorrq_s8, _00, _00, _00, u128);
-        verify_fn!(vorrq_s8, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_s8, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_s8, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_s8, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_s8, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_s8, _FF, _00_FF, _FF, u128);
+        testq_bit_s8(|i, j| vorrq_s8(i, j), |a: i8, b: i8| -> i8 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s16() {
-        verify_fn!(vorr_s16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s16, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_s16(|i, j| vorr_s16(i, j), |a: i16, b: i16| -> i16 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s16() {
-        verify_fn!(vorrq_s16, _00, _00, _00, u128);
-        verify_fn!(vorrq_s16, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_s16, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_s16, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_s16, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_s16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_s16, _FF, _00_FF, _FF, u128);
+        testq_bit_s16(|i, j| vorrq_s16(i, j), |a: i16, b: i16| -> i16 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_s32() {
-        verify_fn!(vorr_s32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s32, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_s32(|i, j| vorr_s32(i, j), |a: i32, b: i32| -> i32 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_s32() {
-        verify_fn!(vorrq_s32, _00, _00, _00, u128);
-        verify_fn!(vorrq_s32, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_s32, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_s32, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_s32, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_s32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_s32, _FF, _00_FF, _FF, u128);
+        testq_bit_s32(|i, j| vorrq_s32(i, j), |a: i32, b: i32| -> i32 { a | b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vorr_s64() {
+        test_bit_s64(|i, j| vorr_s64(i, j), |a: i64, b: i64| -> i64 { a | b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vorrq_s64() {
+        testq_bit_s64(|i, j| vorrq_s64(i, j), |a: i64, b: i64| -> i64 { a | b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u8() {
-        verify_fn!(vorr_u8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u8, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_u8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_u8(|i, j| vorr_u8(i, j), |a: u8, b: u8| -> u8 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u8() {
-        verify_fn!(vorrq_u8, _00, _00, _00, u128);
-        verify_fn!(vorrq_u8, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_u8, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_u8, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_u8, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_u8, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_u8, _FF, _00_FF, _FF, u128);
+        testq_bit_u8(|i, j| vorrq_u8(i, j), |a: u8, b: u8| -> u8 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u16() {
-        verify_fn!(vorr_u16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u16, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_u16(|i, j| vorr_u16(i, j), |a: u16, b: u16| -> u16 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u16() {
-        verify_fn!(vorrq_u16, _00, _00, _00, u128);
-        verify_fn!(vorrq_u16, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_u16, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_u16, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_u16, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_u16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_u16, _FF, _00_FF, _FF, u128);
+        testq_bit_u16(|i, j| vorrq_u16(i, j), |a: u16, b: u16| -> u16 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u32() {
-        verify_fn!(vorr_u32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u32, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_u32(|i, j| vorr_u32(i, j), |a: u32, b: u32| -> u32 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u32() {
-        verify_fn!(vorrq_u32, _00, _00, _00, u128);
-        verify_fn!(vorrq_u32, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_u32, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_u32, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_u32, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_u32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_u32, _FF, _00_FF, _FF, u128);
+        testq_bit_u32(|i, j| vorrq_u32(i, j), |a: u32, b: u32| -> u32 { a | b });
     }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vorr_s64() {
-        verify_fn!(vorr_s64, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_s64, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s64, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_s64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_s64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_s64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_s64, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vorrq_s64() {
-        verify_fn!(vorrq_s64, _00, _00, _00, u128);
-        verify_fn!(vorrq_s64, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_s64, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_s64, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_s64, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_s64, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_s64, _FF, _00_FF, _FF, u128);
-    }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorr_u64() {
-        verify_fn!(vorr_u64, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vorr_u64, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u64, lo64(_FF), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vorr_u64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vorr_u64, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vorr_u64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vorr_u64, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_bit_u64(|i, j| vorr_u64(i, j), |a: u64, b: u64| -> u64 { a | b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vorrq_u64() {
-        verify_fn!(vorrq_u64, _00, _00, _00, u128);
-        verify_fn!(vorrq_u64, _00, _FF, _FF, u128);
-        verify_fn!(vorrq_u64, _FF, _0F, _FF, u128);
-        verify_fn!(vorrq_u64, _0F, _F0, _FF, u128);
-        verify_fn!(vorrq_u64, _FF, _FF, _FF, u128);
-        verify_fn!(vorrq_u64, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vorrq_u64, _FF, _00_FF, _FF, u128);
+        testq_bit_u64(|i, j| vorrq_u64(i, j), |a: u64, b: u64| -> u64 { a | b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s8() {
-        verify_fn!(veor_s8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_s8, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_s8, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_s8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_s8(|i, j| veor_s8(i, j), |a: i8, b: i8| -> i8 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s8() {
-        verify_fn!(veorq_s8, _00, _00, _00, u128);
-        verify_fn!(veorq_s8, _00, _FF, _FF, u128);
-        verify_fn!(veorq_s8, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_s8, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_s8, _FF, _FF, _00, u128);
-        verify_fn!(veorq_s8, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_s8, _FF, _00_FF, _FF_00, u128);
+        testq_bit_s8(|i, j| veorq_s8(i, j), |a: i8, b: i8| -> i8 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s16() {
-        verify_fn!(veor_s16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_s16, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_s16, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_s16, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_s16(|i, j| veor_s16(i, j), |a: i16, b: i16| -> i16 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s16() {
-        verify_fn!(veorq_s16, _00, _00, _00, u128);
-        verify_fn!(veorq_s16, _00, _FF, _FF, u128);
-        verify_fn!(veorq_s16, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_s16, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_s16, _FF, _FF, _00, u128);
-        verify_fn!(veorq_s16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_s16, _FF, _00_FF, _FF_00, u128);
+        testq_bit_s16(|i, j| veorq_s16(i, j), |a: i16, b: i16| -> i16 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_s32() {
-        verify_fn!(veor_s32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_s32, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_s32, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_s32, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_s32(|i, j| veor_s32(i, j), |a: i32, b: i32| -> i32 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_s32() {
-        verify_fn!(veorq_s32, _00, _00, _00, u128);
-        verify_fn!(veorq_s32, _00, _FF, _FF, u128);
-        verify_fn!(veorq_s32, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_s32, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_s32, _FF, _FF, _00, u128);
-        verify_fn!(veorq_s32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_s32, _FF, _00_FF, _FF_00, u128);
+        testq_bit_s32(|i, j| veorq_s32(i, j), |a: i32, b: i32| -> i32 { a ^ b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_veor_s64() {
+        test_bit_s64(|i, j| veor_s64(i, j), |a: i64, b: i64| -> i64 { a ^ b });
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_veorq_s64() {
+        testq_bit_s64(|i, j| veorq_s64(i, j), |a: i64, b: i64| -> i64 { a ^ b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u8() {
-        verify_fn!(veor_u8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_u8, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_u8, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_u8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_u8(|i, j| veor_u8(i, j), |a: u8, b: u8| -> u8 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u8() {
-        verify_fn!(veorq_u8, _00, _00, _00, u128);
-        verify_fn!(veorq_u8, _00, _FF, _FF, u128);
-        verify_fn!(veorq_u8, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_u8, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_u8, _FF, _FF, _00, u128);
-        verify_fn!(veorq_u8, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_u8, _FF, _00_FF, _FF_00, u128);
+        testq_bit_u8(|i, j| veorq_u8(i, j), |a: u8, b: u8| -> u8 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u16() {
-        verify_fn!(veor_u16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_u16, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_u16, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_u16, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_u16(|i, j| veor_u16(i, j), |a: u16, b: u16| -> u16 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u16() {
-        verify_fn!(veorq_u16, _00, _00, _00, u128);
-        verify_fn!(veorq_u16, _00, _FF, _FF, u128);
-        verify_fn!(veorq_u16, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_u16, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_u16, _FF, _FF, _00, u128);
-        verify_fn!(veorq_u16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_u16, _FF, _00_FF, _FF_00, u128);
+        testq_bit_u16(|i, j| veorq_u16(i, j), |a: u16, b: u16| -> u16 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u32() {
-        verify_fn!(veor_u32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_u32, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_u32, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_u32, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_u32(|i, j| veor_u32(i, j), |a: u32, b: u32| -> u32 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u32() {
-        verify_fn!(veorq_u32, _00, _00, _00, u128);
-        verify_fn!(veorq_u32, _00, _FF, _FF, u128);
-        verify_fn!(veorq_u32, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_u32, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_u32, _FF, _FF, _00, u128);
-        verify_fn!(veorq_u32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_u32, _FF, _00_FF, _FF_00, u128);
+        testq_bit_u32(|i, j| veorq_u32(i, j), |a: u32, b: u32| -> u32 { a ^ b });
     }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_veor_s64() {
-        verify_fn!(veor_s64, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_s64, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_s64, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_s64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_s64, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_s64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_s64, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_veorq_s64() {
-        verify_fn!(veorq_s64, _00, _00, _00, u128);
-        verify_fn!(veorq_s64, _00, _FF, _FF, u128);
-        verify_fn!(veorq_s64, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_s64, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_s64, _FF, _FF, _00, u128);
-        verify_fn!(veorq_s64, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_s64, _FF, _00_FF, _FF_00, u128);
-    }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veor_u64() {
-        verify_fn!(veor_u64, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(veor_u64, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(veor_u64, lo64(_FF), lo64(_0F), lo64(_F0), u64);
-        verify_fn!(veor_u64, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(veor_u64, lo64(_FF), lo64(_FF), lo64(_00), u64);
-        verify_fn!(veor_u64, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(veor_u64, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_bit_u64(|i, j| veor_u64(i, j), |a: u64, b: u64| -> u64 { a ^ b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_veorq_u64() {
-        verify_fn!(veorq_u64, _00, _00, _00, u128);
-        verify_fn!(veorq_u64, _00, _FF, _FF, u128);
-        verify_fn!(veorq_u64, _FF, _0F, _F0, u128);
-        verify_fn!(veorq_u64, _0F, _F0, _FF, u128);
-        verify_fn!(veorq_u64, _FF, _FF, _00, u128);
-        verify_fn!(veorq_u64, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(veorq_u64, _FF, _00_FF, _FF_00, u128);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceq_u8() {
-        verify_fn!(vceq_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_u8, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_u8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceqq_u8() {
-        verify_fn!(vceqq_u8, _00, _00, _FF, u128);
-        verify_fn!(vceqq_u8, _00, _FF, _00, u128);
-        verify_fn!(vceqq_u8, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_u8, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_u8, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_u8, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_u8, _FF, _00_FF, _00_FF, u128);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceq_u16() {
-        verify_fn!(vceq_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_u16, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_u16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceqq_u16() {
-        verify_fn!(vceqq_u16, _00, _00, _FF, u128);
-        verify_fn!(vceqq_u16, _00, _FF, _00, u128);
-        verify_fn!(vceqq_u16, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_u16, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_u16, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_u16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_u16, _FF, _00_FF, _00, u128);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceq_u32() {
-        verify_fn!(vceq_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_u32, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_u32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vceqq_u32() {
-        verify_fn!(vceqq_u32, _00, _00, _FF, u128);
-        verify_fn!(vceqq_u32, _00, _FF, _00, u128);
-        verify_fn!(vceqq_u32, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_u32, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_u32, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_u32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_u32, _FF, _00_FF, _00, u128);
+        testq_bit_u64(|i, j| veorq_u64(i, j), |a: u64, b: u64| -> u64 { a ^ b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s8() {
-        verify_fn!(vceq_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_s8, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_s8, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_s8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_cmp_s8(
+            |i, j| vceq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a == b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s8() {
-        verify_fn!(vceqq_s8, _00, _00, _FF, u128);
-        verify_fn!(vceqq_s8, _00, _FF, _00, u128);
-        verify_fn!(vceqq_s8, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_s8, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_s8, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_s8, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_s8, _FF, _00_FF, _00_FF, u128);
+        testq_cmp_s8(
+            |i, j| vceqq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a == b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s16() {
-        verify_fn!(vceq_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_s16, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_s16, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s16(
+            |i, j| vceq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a == b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_s16() {
-        verify_fn!(vceqq_s16, _00, _00, _FF, u128);
-        verify_fn!(vceqq_s16, _00, _FF, _00, u128);
-        verify_fn!(vceqq_s16, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_s16, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_s16, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_s16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_s16, _FF, _00_FF, _00, u128);
+        testq_cmp_s16(
+            |i, j| vceqq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a == b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_s32() {
-        verify_fn!(vceq_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vceq_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vceq_s32, lo64(_FF), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vceq_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vceq_s32, lo64(_FF), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vceq_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vceq_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s32(
+            |i, j| vceq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_s32() {
+        testq_cmp_s32(
+            |i, j| vceqq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceq_s64() {
+        test_cmp_s64(
+            |i, j| vceq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a == b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_s64() {
+        testq_cmp_s64(
+            |i, j| vceqq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a == b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vceqq_s32() {
-        verify_fn!(vceqq_s32, _00, _00, _FF, u128);
-        verify_fn!(vceqq_s32, _00, _FF, _00, u128);
-        verify_fn!(vceqq_s32, _FF, _0F, _00, u128);
-        verify_fn!(vceqq_s32, _0F, _F0, _00, u128);
-        verify_fn!(vceqq_s32, _FF, _FF, _FF, u128);
-        verify_fn!(vceqq_s32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vceqq_s32, _FF, _00_FF, _00, u128);
+    unsafe fn test_vceq_u8() {
+        test_cmp_u8(
+            |i, j| vceq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a == b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_u8() {
+        testq_cmp_u8(
+            |i, j| vceqq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a == b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceq_u16() {
+        test_cmp_u16(
+            |i, j| vceq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a == b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_u16() {
+        testq_cmp_u16(
+            |i, j| vceqq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a == b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceq_u32() {
+        test_cmp_u32(
+            |i, j| vceq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_u32() {
+        testq_cmp_u32(
+            |i, j| vceqq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceq_u64() {
+        test_cmp_u64(
+            |i, j| vceq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a == b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vceqq_u64() {
+        testq_cmp_u64(
+            |i, j| vceqq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a == b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vceq_f32() {
-        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vceq_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vceq_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), lo64(_00), u64);
-        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vceq_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vceq_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), lo64(_00), u64);
+        test_cmp_f32(
+            |i, j| vcge_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vceqq_f32() {
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), _00, u128);
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), _00, u128);
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _FF), u128);
-        verify_fn!(vceqq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), _00, u128);
+        testq_cmp_f32(
+            |i, j| vcgeq_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a == b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s8() {
-        verify_fn!(vcgt_s8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcgt_s8, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcgt_s8, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcgt_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
-        verify_fn!(vcgt_s8, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s8(
+            |i, j| vcgt_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a > b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s8() {
-        verify_fn!(vcgtq_s8, _00, _00, _00, u128);
-        verify_fn!(vcgtq_s8, _00, _FF, _FF, u128);
-        verify_fn!(vcgtq_s8, _FF, _00, _00, u128);
-        verify_fn!(vcgtq_s8, _0F, _F0, _FF, u128);
-        verify_fn!(vcgtq_s8, _F0, _0F, _00, u128);
-        verify_fn!(vcgtq_s8, _00_FF, _FF_00, _FF_00, u128);
-        verify_fn!(vcgtq_s8, _FF, _00_FF, _00, u128);
+        testq_cmp_s8(
+            |i, j| vcgtq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a > b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s16() {
-        verify_fn!(vcgt_s16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcgt_s16, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcgt_s16, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcgt_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcgt_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s16(
+            |i, j| vcgt_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a > b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s16() {
-        verify_fn!(vcgtq_s16, _00, _00, _00, u128);
-        verify_fn!(vcgtq_s16, _00, _FF, _FF, u128);
-        verify_fn!(vcgtq_s16, _FF, _00, _00, u128);
-        verify_fn!(vcgtq_s16, _0F, _F0, _FF, u128);
-        verify_fn!(vcgtq_s16, _F0, _0F, _00, u128);
-        verify_fn!(vcgtq_s16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcgtq_s16, _FF, _00_FF, _00, u128);
+        testq_cmp_s16(
+            |i, j| vcgtq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a > b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_s32() {
-        verify_fn!(vcgt_s32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcgt_s32, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcgt_s32, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcgt_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcgt_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s32(
+            |i, j| vcgt_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a > b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_s32() {
-        verify_fn!(vcgtq_s32, _00, _00, _00, u128);
-        verify_fn!(vcgtq_s32, _00, _FF, _FF, u128);
-        verify_fn!(vcgtq_s32, _FF, _00, _00, u128);
-        verify_fn!(vcgtq_s32, _0F, _F0, _FF, u128);
-        verify_fn!(vcgtq_s32, _F0, _0F, _00, u128);
-        verify_fn!(vcgtq_s32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcgtq_s32, _FF, _00_FF, _00, u128);
+        testq_cmp_s32(
+            |i, j| vcgtq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a > b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgt_s64() {
+        test_cmp_s64(
+            |i, j| vcgt_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a > b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgtq_s64() {
+        testq_cmp_s64(
+            |i, j| vcgtq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a > b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u8() {
-        verify_fn!(vcgt_u8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcgt_u8, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcgt_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcgt_u8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcgt_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
-        verify_fn!(vcgt_u8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_cmp_u8(
+            |i, j| vcgt_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a > b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u8() {
-        verify_fn!(vcgtq_u8, _00, _00, _00, u128);
-        verify_fn!(vcgtq_u8, _00, _FF, _00, u128);
-        verify_fn!(vcgtq_u8, _FF, _00, _FF, u128);
-        verify_fn!(vcgtq_u8, _0F, _F0, _00, u128);
-        verify_fn!(vcgtq_u8, _F0, _0F, _FF, u128);
-        verify_fn!(vcgtq_u8, _00_FF, _FF_00, _00_FF, u128);
-        verify_fn!(vcgtq_u8, _FF, _00_FF, _FF_00, u128);
+        testq_cmp_u8(
+            |i, j| vcgtq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a > b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u16() {
-        verify_fn!(vcgt_u16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcgt_u16, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcgt_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcgt_u16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcgt_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcgt_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_u16(
+            |i, j| vcgt_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a > b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u16() {
-        verify_fn!(vcgtq_u16, _00, _00, _00, u128);
-        verify_fn!(vcgtq_u16, _00, _FF, _00, u128);
-        verify_fn!(vcgtq_u16, _FF, _00, _FF, u128);
-        verify_fn!(vcgtq_u16, _0F, _F0, _00, u128);
-        verify_fn!(vcgtq_u16, _F0, _0F, _FF, u128);
-        verify_fn!(vcgtq_u16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcgtq_u16, _FF, _00_FF, _FF, u128);
+        testq_cmp_u16(
+            |i, j| vcgtq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a > b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_u32() {
-        verify_fn!(vcgt_u32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcgt_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcgt_u32, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcgt_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcgt_u32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcgt_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcgt_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_u32(
+            |i, j| vcgt_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a > b {
+                    0xFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_u32() {
-        verify_fn!(vcgtq_u32, _00, _00, _00, u128);
-        verify_fn!(vcgtq_u32, _00, _FF, _00, u128);
-        verify_fn!(vcgtq_u32, _FF, _00, _FF, u128);
-        verify_fn!(vcgtq_u32, _0F, _F0, _00, u128);
-        verify_fn!(vcgtq_u32, _F0, _0F, _FF, u128);
-        verify_fn!(vcgtq_u32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcgtq_u32, _FF, _00_FF, _FF, u128);
+        testq_cmp_u32(
+            |i, j| vcgtq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a > b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgt_u64() {
+        test_cmp_u64(
+            |i, j| vcgt_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a > b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgtq_u64() {
+        testq_cmp_u64(
+            |i, j| vcgtq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a > b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgt_f32() {
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_FF, _00), u64);
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_00, _FF), u64);
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vcgt_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _FF), u64);
+        test_cmp_f32(
+            |i, j| vcgt_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a > b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgtq_f32() {
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _00, u128);
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _00, u128);
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _00, _00, _FF), u128);
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_00, _FF, _00, _FF), u128);
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
-        verify_fn!(vcgtq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _FF), u128);
+        testq_cmp_f32(
+            |i, j| vcgtq_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a > b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s8() {
-        verify_fn!(vclt_s8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vclt_s8, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vclt_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vclt_s8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vclt_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
-        verify_fn!(vclt_s8, lo64(_FF), lo64(_00_FF), lo64(_FF_00), u64);
+        test_cmp_s8(
+            |i, j| vclt_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a < b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s8() {
-        verify_fn!(vcltq_s8, _00, _00, _00, u128);
-        verify_fn!(vcltq_s8, _00, _FF, _00, u128);
-        verify_fn!(vcltq_s8, _FF, _00, _FF, u128);
-        verify_fn!(vcltq_s8, _0F, _F0, _00, u128);
-        verify_fn!(vcltq_s8, _F0, _0F, _FF, u128);
-        verify_fn!(vcltq_s8, _00_FF, _FF_00, _00_FF, u128);
-        verify_fn!(vcltq_s8, _FF, _00_FF, _FF_00, u128);
+        testq_cmp_s8(
+            |i, j| vcltq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a < b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s16() {
-        verify_fn!(vclt_s16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vclt_s16, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vclt_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vclt_s16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vclt_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vclt_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_s16(
+            |i, j| vclt_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a < b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s16() {
-        verify_fn!(vcltq_s16, _00, _00, _00, u128);
-        verify_fn!(vcltq_s16, _00, _FF, _00, u128);
-        verify_fn!(vcltq_s16, _FF, _00, _FF, u128);
-        verify_fn!(vcltq_s16, _0F, _F0, _00, u128);
-        verify_fn!(vcltq_s16, _F0, _0F, _FF, u128);
-        verify_fn!(vcltq_s16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcltq_s16, _FF, _00_FF, _FF, u128);
+        testq_cmp_s16(
+            |i, j| vcltq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a < b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_s32() {
-        verify_fn!(vclt_s32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vclt_s32, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vclt_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vclt_s32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vclt_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vclt_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_s32(
+            |i, j| vclt_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a < b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_s32() {
-        verify_fn!(vcltq_s32, _00, _00, _00, u128);
-        verify_fn!(vcltq_s32, _00, _FF, _00, u128);
-        verify_fn!(vcltq_s32, _FF, _00, _FF, u128);
-        verify_fn!(vcltq_s32, _0F, _F0, _00, u128);
-        verify_fn!(vcltq_s32, _F0, _0F, _FF, u128);
-        verify_fn!(vcltq_s32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcltq_s32, _FF, _00_FF, _FF, u128);
+        testq_cmp_s32(
+            |i, j| vcltq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a < b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vclt_s64() {
+        test_cmp_s64(
+            |i, j| vclt_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a < b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcltq_s64() {
+        testq_cmp_s64(
+            |i, j| vcltq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a < b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u8() {
-        verify_fn!(vclt_u8, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vclt_u8, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vclt_u8, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vclt_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
-        verify_fn!(vclt_u8, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_u8(
+            |i, j| vclt_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a < b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u8() {
-        verify_fn!(vcltq_u8, _00, _00, _00, u128);
-        verify_fn!(vcltq_u8, _00, _FF, _FF, u128);
-        verify_fn!(vcltq_u8, _FF, _00, _00, u128);
-        verify_fn!(vcltq_u8, _0F, _F0, _FF, u128);
-        verify_fn!(vcltq_u8, _F0, _0F, _00, u128);
-        verify_fn!(vcltq_u8, _00_FF, _FF_00, _FF_00, u128);
-        verify_fn!(vcltq_u8, _FF, _00_FF, _00, u128);
+        testq_cmp_u8(
+            |i, j| vcltq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a < b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u16() {
-        verify_fn!(vclt_u16, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vclt_u16, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vclt_u16, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vclt_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vclt_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_u16(
+            |i, j| vclt_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a < b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u16() {
-        verify_fn!(vcltq_u16, _00, _00, _00, u128);
-        verify_fn!(vcltq_u16, _00, _FF, _FF, u128);
-        verify_fn!(vcltq_u16, _FF, _00, _00, u128);
-        verify_fn!(vcltq_u16, _0F, _F0, _FF, u128);
-        verify_fn!(vcltq_u16, _F0, _0F, _00, u128);
-        verify_fn!(vcltq_u16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcltq_u16, _FF, _00_FF, _00, u128);
+        testq_cmp_u16(
+            |i, j| vcltq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a < b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_u32() {
-        verify_fn!(vclt_u32, lo64(_00), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vclt_u32, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vclt_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vclt_u32, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vclt_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vclt_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_u32(
+            |i, j| vclt_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a < b {
+                    0xFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_u32() {
-        verify_fn!(vcltq_u32, _00, _00, _00, u128);
-        verify_fn!(vcltq_u32, _00, _FF, _FF, u128);
-        verify_fn!(vcltq_u32, _FF, _00, _00, u128);
-        verify_fn!(vcltq_u32, _0F, _F0, _FF, u128);
-        verify_fn!(vcltq_u32, _F0, _0F, _00, u128);
-        verify_fn!(vcltq_u32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcltq_u32, _FF, _00_FF, _00, u128);
+        testq_cmp_u32(
+            |i, j| vcltq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a < b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vclt_u64() {
+        test_cmp_u64(
+            |i, j| vclt_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a < b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcltq_u64() {
+        testq_cmp_u64(
+            |i, j| vcltq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a < b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vclt_f32() {
-        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vclt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vclt_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_00, _FF), u64);
-        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_FF, _00), u64);
-        verify_fn!(vclt_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vclt_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _00), u64);
+        test_cmp_f32(
+            |i, j| vclt_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a < b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcltq_f32() {
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _00, u128);
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _00, u128);
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _00), u128);
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_FF, _00, _00, _00), u128);
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _FF, _00, _00), u128);
-        verify_fn!(vcltq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
+        testq_cmp_f32(
+            |i, j| vcltq_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a < b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s8() {
-        verify_fn!(vcle_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcle_s8, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcle_s8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcle_s8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
-        verify_fn!(vcle_s8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_s8(
+            |i, j| vcle_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a <= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s8() {
-        verify_fn!(vcleq_s8, _00, _00, _FF, u128);
-        verify_fn!(vcleq_s8, _00, _FF, _00, u128);
-        verify_fn!(vcleq_s8, _FF, _00, _FF, u128);
-        verify_fn!(vcleq_s8, _0F, _F0, _00, u128);
-        verify_fn!(vcleq_s8, _F0, _0F, _FF, u128);
-        verify_fn!(vcleq_s8, _00_FF, _FF_00, _00_FF, u128);
-        verify_fn!(vcleq_s8, _FF, _00_FF, _FF, u128);
+        testq_cmp_s8(
+            |i, j| vcleq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a <= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s16() {
-        verify_fn!(vcle_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcle_s16, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcle_s16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcle_s16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcle_s16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_s16(
+            |i, j| vcle_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a <= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s16() {
-        verify_fn!(vcleq_s16, _00, _00, _FF, u128);
-        verify_fn!(vcleq_s16, _00, _FF, _00, u128);
-        verify_fn!(vcleq_s16, _FF, _00, _FF, u128);
-        verify_fn!(vcleq_s16, _0F, _F0, _00, u128);
-        verify_fn!(vcleq_s16, _F0, _0F, _FF, u128);
-        verify_fn!(vcleq_s16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcleq_s16, _FF, _00_FF, _FF, u128);
+        testq_cmp_s16(
+            |i, j| vcleq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a <= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_s32() {
-        verify_fn!(vcle_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcle_s32, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_s32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcle_s32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcle_s32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcle_s32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_s32(
+            |i, j| vcle_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_s32() {
-        verify_fn!(vcleq_s32, _00, _00, _FF, u128);
-        verify_fn!(vcleq_s32, _00, _FF, _00, u128);
-        verify_fn!(vcleq_s32, _FF, _00, _FF, u128);
-        verify_fn!(vcleq_s32, _0F, _F0, _00, u128);
-        verify_fn!(vcleq_s32, _F0, _0F, _FF, u128);
-        verify_fn!(vcleq_s32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcleq_s32, _FF, _00_FF, _FF, u128);
+        testq_cmp_s32(
+            |i, j| vcleq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_s64() {
+        test_cmp_s64(
+            |i, j| vcle_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a <= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_s64() {
+        testq_cmp_s64(
+            |i, j| vcleq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a <= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u8() {
-        verify_fn!(vcle_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_u8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcle_u8, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcle_u8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcle_u8, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcle_u8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
-        verify_fn!(vcle_u8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_cmp_u8(
+            |i, j| vcle_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a <= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u8() {
-        verify_fn!(vcleq_u8, _00, _00, _FF, u128);
-        verify_fn!(vcleq_u8, _00, _FF, _FF, u128);
-        verify_fn!(vcleq_u8, _FF, _00, _00, u128);
-        verify_fn!(vcleq_u8, _0F, _F0, _FF, u128);
-        verify_fn!(vcleq_u8, _F0, _0F, _00, u128);
-        verify_fn!(vcleq_u8, _00_FF, _FF_00, _FF_00, u128);
-        verify_fn!(vcleq_u8, _FF, _00_FF, _00_FF, u128);
+        testq_cmp_u8(
+            |i, j| vcleq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a <= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u16() {
-        verify_fn!(vcle_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_u16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcle_u16, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcle_u16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcle_u16, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcle_u16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcle_u16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_u16(
+            |i, j| vcle_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a <= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u16() {
-        verify_fn!(vcleq_u16, _00, _00, _FF, u128);
-        verify_fn!(vcleq_u16, _00, _FF, _FF, u128);
-        verify_fn!(vcleq_u16, _FF, _00, _00, u128);
-        verify_fn!(vcleq_u16, _0F, _F0, _FF, u128);
-        verify_fn!(vcleq_u16, _F0, _0F, _00, u128);
-        verify_fn!(vcleq_u16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcleq_u16, _FF, _00_FF, _00, u128);
+        testq_cmp_u16(
+            |i, j| vcleq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a <= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_u32() {
-        verify_fn!(vcle_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcle_u32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcle_u32, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcle_u32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcle_u32, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcle_u32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcle_u32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_u32(
+            |i, j| vcle_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_u32() {
-        verify_fn!(vcleq_u32, _00, _00, _FF, u128);
-        verify_fn!(vcleq_u32, _00, _FF, _FF, u128);
-        verify_fn!(vcleq_u32, _FF, _00, _00, u128);
-        verify_fn!(vcleq_u32, _0F, _F0, _FF, u128);
-        verify_fn!(vcleq_u32, _F0, _0F, _00, u128);
-        verify_fn!(vcleq_u32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcleq_u32, _FF, _00_FF, _00, u128);
+        testq_cmp_u32(
+            |i, j| vcleq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcle_u64() {
+        test_cmp_u64(
+            |i, j| vcle_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a <= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcleq_u64() {
+        testq_cmp_u64(
+            |i, j| vcleq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a <= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcle_f32() {
-        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vcle_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vcle_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_00, _FF), u64);
-        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_FF, _00), u64);
-        verify_fn!(vcle_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vcle_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _00), u64);
+        test_cmp_f32(
+            |i, j| vcle_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcleq_f32() {
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _00), u128);
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_FF, _00, _00, _00), u128);
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _FF, _00, _FF), u128);
-        verify_fn!(vcleq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _00), u128);
+        testq_cmp_f32(
+            |i, j| vcleq_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a <= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s8() {
-        verify_fn!(vcge_s8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_s8, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcge_s8, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcge_s8, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcge_s8, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcge_s8, lo64(_00_FF), lo64(_FF_00), lo64(_FF_00), u64);
-        verify_fn!(vcge_s8, lo64(_FF), lo64(_00_FF), lo64(_00_FF), u64);
+        test_cmp_s8(
+            |i, j| vcge_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a >= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s8() {
-        verify_fn!(vcgeq_s8, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_s8, _00, _FF, _FF, u128);
-        verify_fn!(vcgeq_s8, _FF, _00, _00, u128);
-        verify_fn!(vcgeq_s8, _0F, _F0, _FF, u128);
-        verify_fn!(vcgeq_s8, _F0, _0F, _00, u128);
-        verify_fn!(vcgeq_s8, _00_FF, _FF_00, _FF_00, u128);
-        verify_fn!(vcgeq_s8, _FF, _00_FF, _00_FF, u128);
+        testq_cmp_s8(
+            |i, j| vcgeq_s8(i, j),
+            |a: i8, b: i8| -> u8 {
+                if a >= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s16() {
-        verify_fn!(vcge_s16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_s16, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcge_s16, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcge_s16, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcge_s16, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcge_s16, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcge_s16, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s16(
+            |i, j| vcge_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a >= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s16() {
-        verify_fn!(vcgeq_s16, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_s16, _00, _FF, _FF, u128);
-        verify_fn!(vcgeq_s16, _FF, _00, _00, u128);
-        verify_fn!(vcgeq_s16, _0F, _F0, _FF, u128);
-        verify_fn!(vcgeq_s16, _F0, _0F, _00, u128);
-        verify_fn!(vcgeq_s16, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcgeq_s16, _FF, _00_FF, _00, u128);
+        testq_cmp_s16(
+            |i, j| vcgeq_s16(i, j),
+            |a: i16, b: i16| -> u16 {
+                if a >= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_s32() {
-        verify_fn!(vcge_s32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_s32, lo64(_00), lo64(_FF), lo64(_FF), u64);
-        verify_fn!(vcge_s32, lo64(_FF), lo64(_00), lo64(_00), u64);
-        verify_fn!(vcge_s32, lo64(_0F), lo64(_F0), lo64(_FF), u64);
-        verify_fn!(vcge_s32, lo64(_F0), lo64(_0F), lo64(_00), u64);
-        verify_fn!(vcge_s32, lo64(_00_FF), lo64(_FF_00), lo64(_FF), u64);
-        verify_fn!(vcge_s32, lo64(_FF), lo64(_00_FF), lo64(_00), u64);
+        test_cmp_s32(
+            |i, j| vcge_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_s32() {
-        verify_fn!(vcgeq_s32, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_s32, _00, _FF, _FF, u128);
-        verify_fn!(vcgeq_s32, _FF, _00, _00, u128);
-        verify_fn!(vcgeq_s32, _0F, _F0, _FF, u128);
-        verify_fn!(vcgeq_s32, _F0, _0F, _00, u128);
-        verify_fn!(vcgeq_s32, _00_FF, _FF_00, _FF, u128);
-        verify_fn!(vcgeq_s32, _FF, _00_FF, _00, u128);
+        testq_cmp_s32(
+            |i, j| vcgeq_s32(i, j),
+            |a: i32, b: i32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_s64() {
+        test_cmp_s64(
+            |i, j| vcge_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a >= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_s64() {
+        testq_cmp_s64(
+            |i, j| vcgeq_s64(i, j),
+            |a: i64, b: i64| -> u64 {
+                if a >= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u8() {
-        verify_fn!(vcge_u8, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u8, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcge_u8, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u8, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcge_u8, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcge_u8, lo64(_00_FF), lo64(_FF_00), lo64(_00_FF), u64);
-        verify_fn!(vcge_u8, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_u8(
+            |i, j| vcge_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a >= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u8() {
-        verify_fn!(vcgeq_u8, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_u8, _00, _FF, _00, u128);
-        verify_fn!(vcgeq_u8, _FF, _00, _FF, u128);
-        verify_fn!(vcgeq_u8, _0F, _F0, _00, u128);
-        verify_fn!(vcgeq_u8, _F0, _0F, _FF, u128);
-        verify_fn!(vcgeq_u8, _00_FF, _FF_00, _00_FF, u128);
-        verify_fn!(vcgeq_u8, _FF, _00_FF, _FF, u128);
+        testq_cmp_u8(
+            |i, j| vcgeq_u8(i, j),
+            |a: u8, b: u8| -> u8 {
+                if a >= b {
+                    0xFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u16() {
-        verify_fn!(vcge_u16, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u16, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcge_u16, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u16, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcge_u16, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcge_u16, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcge_u16, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_u16(
+            |i, j| vcge_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a >= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u16() {
-        verify_fn!(vcgeq_u16, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_u16, _00, _FF, _00, u128);
-        verify_fn!(vcgeq_u16, _FF, _00, _FF, u128);
-        verify_fn!(vcgeq_u16, _0F, _F0, _00, u128);
-        verify_fn!(vcgeq_u16, _F0, _0F, _FF, u128);
-        verify_fn!(vcgeq_u16, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcgeq_u16, _FF, _00_FF, _FF, u128);
+        testq_cmp_u16(
+            |i, j| vcgeq_u16(i, j),
+            |a: u16, b: u16| -> u16 {
+                if a >= b {
+                    0xFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_u32() {
-        verify_fn!(vcge_u32, lo64(_00), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u32, lo64(_00), lo64(_FF), lo64(_00), u64);
-        verify_fn!(vcge_u32, lo64(_FF), lo64(_00), lo64(_FF), u64);
-        verify_fn!(vcge_u32, lo64(_0F), lo64(_F0), lo64(_00), u64);
-        verify_fn!(vcge_u32, lo64(_F0), lo64(_0F), lo64(_FF), u64);
-        verify_fn!(vcge_u32, lo64(_00_FF), lo64(_FF_00), lo64(_00), u64);
-        verify_fn!(vcge_u32, lo64(_FF), lo64(_00_FF), lo64(_FF), u64);
+        test_cmp_u32(
+            |i, j| vcge_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_u32() {
-        verify_fn!(vcgeq_u32, _00, _00, _FF, u128);
-        verify_fn!(vcgeq_u32, _00, _FF, _00, u128);
-        verify_fn!(vcgeq_u32, _FF, _00, _FF, u128);
-        verify_fn!(vcgeq_u32, _0F, _F0, _00, u128);
-        verify_fn!(vcgeq_u32, _F0, _0F, _FF, u128);
-        verify_fn!(vcgeq_u32, _00_FF, _FF_00, _00, u128);
-        verify_fn!(vcgeq_u32, _FF, _00_FF, _FF, u128);
+        testq_cmp_u32(
+            |i, j| vcgeq_u32(i, j),
+            |a: u32, b: u32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcge_u64() {
+        test_cmp_u64(
+            |i, j| vcge_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a >= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vcgeq_u64() {
+        testq_cmp_u64(
+            |i, j| vcgeq_u64(i, j),
+            |a: u64, b: u64| -> u64 {
+                if a >= b {
+                    0xFFFFFFFFFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vcge_f32() {
-        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vcge_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_FF), u64);
-        verify_fn!(vcge_f32, mkf32x2!(FLT_ONE, FLT_ZERO), mkf32x2!(FLT_ZERO, FLT_ONE), mku32x2(_FF, _00), u64);
-        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), mku32x2(_00, _FF), u64);
-        verify_fn!(vcge_f32, mkf32x2!(FLT_ZERO, FLT_N_ONE), mkf32x2!(FLT_ONE, FLT_ZERO), lo64(_00), u64);
-        verify_fn!(vcge_f32, mkf32x2!(FLT_NAN, FLT_ONE), mkf32x2!(FLT_NAN, FLT_N_ONE), mku32x2(_00, _FF), u64);
+        test_cmp_f32(
+            |i, j| vcge_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vcgeq_f32() {
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ZERO, FLT_ZERO, FLT_ZERO), _FF, u128);
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), _FF, u128);
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ONE, FLT_ZERO, FLT_ONE, FLT_ZERO), mkf32x4!(FLT_ZERO, FLT_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_FF, _00, _00, _FF), u128);
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_ONE, FLT_ZERO, FLT_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE),  mku32x4(_00, _FF, _00, _FF), u128);
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_ZERO, FLT_N_ONE, FLT_ZERO, FLT_N_ONE), mkf32x4!(FLT_ONE, FLT_ZERO, FLT_NAN, FLT_N_ONE), mku32x4(_00, _00, _00, _FF), u128);
-        verify_fn!(vcgeq_f32, mkf32x4!(FLT_NAN, FLT_ONE, FLT_NAN, FLT_ONE), mkf32x4!(FLT_NAN, FLT_N_ONE, FLT_NAN, FLT_N_ONE), mku32x4(_00, _FF, _00, _FF), u128);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsub_u8() {
-        let a: u8x8 = u8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(41, 40, 39, 38, 37, 36, 35, 34);
-        let r: u8x8 = transmute(vqsub_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsubq_u8() {
-        let a: u8x16 = u8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+        testq_cmp_f32(
+            |i, j| vcgeq_f32(i, j),
+            |a: f32, b: f32| -> u32 {
+                if a >= b {
+                    0xFFFFFFFF
+                } else {
+                    0
+                }
+            },
         );
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26,
-        );
-        let r: u8x16 = transmute(vqsubq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsub_u16() {
-        let a: u16x4 = u16x4::new(42, 42, 42, 42);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(41, 40, 39, 38);
-        let r: u16x4 = transmute(vqsub_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsubq_u16() {
-        let a: u16x8 = u16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(41, 40, 39, 38, 37, 36, 35, 34);
-        let r: u16x8 = transmute(vqsubq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsub_u32() {
-        let a: u32x2 = u32x2::new(42, 42);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(41, 40);
-        let r: u32x2 = transmute(vqsub_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vqsubq_u32() {
-        let a: u32x4 = u32x4::new(42, 42, 42, 42);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(41, 40, 39, 38);
-        let r: u32x4 = transmute(vqsubq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsub_s8() {
-        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(41, 40, 39, 38, 37, 36, 35, 34);
-        let r: i8x8 = transmute(vqsub_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(
+            |i, j| vqsub_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsubq_s8() {
-        let a: i8x16 = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+        testq_ari_s8(
+            |i, j| vqsubq_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.saturating_sub(b) },
         );
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(
-            41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26,
-        );
-        let r: i8x16 = transmute(vqsubq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsub_s16() {
-        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(41, 40, 39, 38);
-        let r: i16x4 = transmute(vqsub_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(
+            |i, j| vqsub_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsubq_s16() {
-        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(41, 40, 39, 38, 37, 36, 35, 34);
-        let r: i16x8 = transmute(vqsubq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(
+            |i, j| vqsubq_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsub_s32() {
-        let a: i32x2 = i32x2::new(42, 42);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(41, 40);
-        let r: i32x2 = transmute(vqsub_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(
+            |i, j| vqsub_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqsubq_s32() {
-        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(41, 40, 39, 38);
-        let r: i32x4 = transmute(vqsubq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhadd_u8() {
-        let a: u8x8 = u8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(21, 22, 22, 23, 23, 24, 24, 25);
-        let r: u8x8 = transmute(vhadd_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhaddq_u8() {
-        let a: u8x16 = u8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+        testq_ari_s32(
+            |i, j| vqsubq_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.saturating_sub(b) },
         );
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29,
+    }
+
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqsub_u8() {
+        test_ari_u8(
+            |i, j| vqsub_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.saturating_sub(b) },
         );
-        let r: u8x16 = transmute(vhaddq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vhadd_u16() {
-        let a: u16x4 = u16x4::new(42, 42, 42, 42);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(21, 22, 22, 23);
-        let r: u16x4 = transmute(vhadd_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vqsubq_u8() {
+        testq_ari_u8(
+            |i, j| vqsubq_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vhaddq_u16() {
-        let a: u16x8 = u16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(21, 22, 22, 23, 23, 24, 24, 25);
-        let r: u16x8 = transmute(vhaddq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vqsub_u16() {
+        test_ari_u16(
+            |i, j| vqsub_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vhadd_u32() {
-        let a: u32x2 = u32x2::new(42, 42);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(21, 22);
-        let r: u32x2 = transmute(vhadd_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vqsubq_u16() {
+        testq_ari_u16(
+            |i, j| vqsubq_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.saturating_sub(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vhaddq_u32() {
-        let a: u32x4 = u32x4::new(42, 42, 42, 42);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(21, 22, 22, 23);
-        let r: u32x4 = transmute(vhaddq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vqsub_u32() {
+        test_ari_u32(
+            |i, j| vqsub_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.saturating_sub(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqsubq_u32() {
+        testq_ari_u32(
+            |i, j| vqsubq_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.saturating_sub(b) },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vhadd_s8() {
-        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(21, 22, 22, 23, 23, 24, 24, 25);
-        let r: i8x8 = transmute(vhadd_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(|i, j| vhadd_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhaddq_s8() {
-        let a: i8x16 = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(
-            21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29,
-        );
-        let r: i8x16 = transmute(vhaddq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(|i, j| vhaddq_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhadd_s16() {
-        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(21, 22, 22, 23);
-        let r: i16x4 = transmute(vhadd_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(|i, j| vhadd_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhaddq_s16() {
-        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(21, 22, 22, 23, 23, 24, 24, 25);
-        let r: i16x8 = transmute(vhaddq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(|i, j| vhaddq_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhadd_s32() {
-        let a: i32x2 = i32x2::new(42, 42);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(21, 22);
-        let r: i32x2 = transmute(vhadd_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(|i, j| vhadd_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhaddq_s32() {
-        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(21, 22, 22, 23);
-        let r: i32x4 = transmute(vhaddq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s32(|i, j| vhaddq_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhadd_u8() {
-        let a: u8x8 = u8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(22, 22, 23, 23, 24, 24, 25, 25);
-        let r: u8x8 = transmute(vrhadd_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhadd_u8() {
+        test_ari_u8(|i, j| vhadd_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhaddq_u8() {
-        let a: u8x16 = u8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29,
-        );
-        let r: u8x16 = transmute(vrhaddq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhaddq_u8() {
+        testq_ari_u8(|i, j| vhaddq_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhadd_u16() {
-        let a: u16x4 = u16x4::new(42, 42, 42, 42);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(22, 22, 23, 23);
-        let r: u16x4 = transmute(vrhadd_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhadd_u16() {
+        test_ari_u16(|i, j| vhadd_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhaddq_u16() {
-        let a: u16x8 = u16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(22, 22, 23, 23, 24, 24, 25, 25);
-        let r: u16x8 = transmute(vrhaddq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhaddq_u16() {
+        testq_ari_u16(|i, j| vhaddq_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhadd_u32() {
-        let a: u32x2 = u32x2::new(42, 42);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(22, 22);
-        let r: u32x2 = transmute(vrhadd_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhadd_u32() {
+        test_ari_u32(|i, j| vhadd_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vrhaddq_u32() {
-        let a: u32x4 = u32x4::new(42, 42, 42, 42);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(22, 22, 23, 23);
-        let r: u32x4 = transmute(vrhaddq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhaddq_u32() {
+        testq_ari_u32(|i, j| vhaddq_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhadd_s8() {
-        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(22, 22, 23, 23, 24, 24, 25, 25);
-        let r: i8x8 = transmute(vrhadd_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(|i, j| vrhadd_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhaddq_s8() {
-        let a: i8x16 = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(
-            22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29,
-        );
-        let r: i8x16 = transmute(vrhaddq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(|i, j| vrhaddq_s8(i, j), |a: i8, b: i8| -> i8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhadd_s16() {
-        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(22, 22, 23, 23);
-        let r: i16x4 = transmute(vrhadd_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(|i, j| vrhadd_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhaddq_s16() {
-        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(22, 22, 23, 23, 24, 24, 25, 25);
-        let r: i16x8 = transmute(vrhaddq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(|i, j| vrhaddq_s16(i, j), |a: i16, b: i16| -> i16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhadd_s32() {
-        let a: i32x2 = i32x2::new(42, 42);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(22, 22);
-        let r: i32x2 = transmute(vrhadd_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(|i, j| vrhadd_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vrhaddq_s32() {
-        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(22, 22, 23, 23);
-        let r: i32x4 = transmute(vrhaddq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s32(|i, j| vrhaddq_s32(i, j), |a: i32, b: i32| -> i32 { a & b });
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqadd_u8() {
-        let a: u8x8 = u8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: u8x8 = transmute(vqadd_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhadd_u8() {
+        test_ari_u8(|i, j| vrhadd_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqaddq_u8() {
-        let a: u8x16 = u8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-        );
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(
-            43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-        );
-        let r: u8x16 = transmute(vqaddq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhaddq_u8() {
+        testq_ari_u8(|i, j| vrhaddq_u8(i, j), |a: u8, b: u8| -> u8 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqadd_u16() {
-        let a: u16x4 = u16x4::new(42, 42, 42, 42);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(43, 44, 45, 46);
-        let r: u16x4 = transmute(vqadd_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhadd_u16() {
+        test_ari_u16(|i, j| vrhadd_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqaddq_u16() {
-        let a: u16x8 = u16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: u16x8 = transmute(vqaddq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhaddq_u16() {
+        testq_ari_u16(|i, j| vrhaddq_u16(i, j), |a: u16, b: u16| -> u16 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqadd_u32() {
-        let a: u32x2 = u32x2::new(42, 42);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(43, 44);
-        let r: u32x2 = transmute(vqadd_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhadd_u32() {
+        test_ari_u32(|i, j| vrhadd_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
-
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqaddq_u32() {
-        let a: u32x4 = u32x4::new(42, 42, 42, 42);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(43, 44, 45, 46);
-        let r: u32x4 = transmute(vqaddq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vrhaddq_u32() {
+        testq_ari_u32(|i, j| vrhaddq_u32(i, j), |a: u32, b: u32| -> u32 { a & b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vqadd_s8() {
-        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: i8x8 = transmute(vqadd_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(
+            |i, j| vqadd_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.saturating_add(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqaddq_s8() {
-        let a: i8x16 = i8x16::new(
-            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+        testq_ari_s8(
+            |i, j| vqaddq_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.saturating_add(b) },
         );
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(
-            43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-        );
-        let r: i8x16 = transmute(vqaddq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqadd_s16() {
-        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(43, 44, 45, 46);
-        let r: i16x4 = transmute(vqadd_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(
+            |i, j| vqadd_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.saturating_add(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqaddq_s16() {
-        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-        let r: i16x8 = transmute(vqaddq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(
+            |i, j| vqaddq_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.saturating_add(b) },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vqadd_s32() {
-        let a: i32x2 = i32x2::new(42, 42);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(43, 44);
-        let r: i32x2 = transmute(vqadd_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(
+            |i, j| vqadd_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.saturating_add(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqaddq_s32() {
+        testq_ari_s32(
+            |i, j| vqaddq_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.saturating_add(b) },
+        );
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vqaddq_s32() {
-        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(43, 44, 45, 46);
-        let r: i32x4 = transmute(vqaddq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vqadd_u8() {
+        test_ari_u8(
+            |i, j| vqadd_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.saturating_add(b) },
+        );
     }
-
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqadd_s8() {
-//        let a: i8x8 = i8x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-//        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-//        let e: i8x8 = i8x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-//        let r: i8x8 = transmute(vuqadd_s8(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
-//
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqaddq_s8() {
-//        let a: i8x16 = i8x16::new(
-//            42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
-//        );
-//        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-//        let e: i8x16 = i8x16::new(
-//            43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-//        );
-//        let r: i8x16 = transmute(vuqaddq_s8(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
-//
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqadd_s16() {
-//        let a: i16x4 = i16x4::new(42, 42, 42, 42);
-//        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-//        let e: i16x4 = i16x4::new(43, 44, 45, 46);
-//        let r: i16x4 = transmute(vuqadd_s16(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
-//
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqaddq_s16() {
-//        let a: i16x8 = i16x8::new(42, 42, 42, 42, 42, 42, 42, 42);
-//        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-//        let e: i16x8 = i16x8::new(43, 44, 45, 46, 47, 48, 49, 50);
-//        let r: i16x8 = transmute(vuqaddq_s16(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
-//
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqadd_s32() {
-//        let a: i32x2 = i32x2::new(42, 42);
-//        let b: i32x2 = i32x2::new(1, 2);
-//        let e: i32x2 = i32x2::new(43, 44);
-//        let r: i32x2 = transmute(vuqadd_s32(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
-//
-//    #[simd_test(enable = "neon")]
-//    unsafe fn test_vuqaddq_s32() {
-//        let a: i32x4 = i32x4::new(42, 42, 42, 42);
-//        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-//        let e: i32x4 = i32x4::new(43, 44, 45, 46);
-//        let r: i32x4 = transmute(vuqaddq_s32(transmute(a), transmute(b)));
-//        assert_eq!(r, e);
-//    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqaddq_u8() {
+        testq_ari_u8(
+            |i, j| vqaddq_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.saturating_add(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqadd_u16() {
+        test_ari_u16(
+            |i, j| vqadd_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.saturating_add(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqaddq_u16() {
+        testq_ari_u16(
+            |i, j| vqaddq_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.saturating_add(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqadd_u32() {
+        test_ari_u32(
+            |i, j| vqadd_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.saturating_add(b) },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vqaddq_u32() {
+        testq_ari_u32(
+            |i, j| vqaddq_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.saturating_add(b) },
+        );
+    }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_s8() {
-        let a: i8x8 = i8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let b: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i8x8 = i8x8::new(1, 4, 3, 8, 5, 12, 7, 16);
-        let r: i8x8 = transmute(vmul_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(
+            |i, j| vmul_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_s8() {
-        let a: i8x16 = i8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let b: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: i8x16 = i8x16::new(1, 4, 3, 8, 5, 12, 7, 16, 9, 20, 11, 24, 13, 28, 15, 32);
-        let r: i8x16 = transmute(vmulq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(
+            |i, j| vmulq_s8(i, j),
+            |a: i8, b: i8| -> i8 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_s16() {
-        let a: i16x4 = i16x4::new(1, 2, 1, 2);
-        let b: i16x4 = i16x4::new(1, 2, 3, 4);
-        let e: i16x4 = i16x4::new(1, 4, 3, 8);
-        let r: i16x4 = transmute(vmul_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(
+            |i, j| vmul_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_s16() {
-        let a: i16x8 = i16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let b: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: i16x8 = i16x8::new(1, 4, 3, 8, 5, 12, 7, 16);
-        let r: i16x8 = transmute(vmulq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(
+            |i, j| vmulq_s16(i, j),
+            |a: i16, b: i16| -> i16 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_s32() {
-        let a: i32x2 = i32x2::new(1, 2);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(1, 4);
-        let r: i32x2 = transmute(vmul_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(
+            |i, j| vmul_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_s32() {
-        let a: i32x4 = i32x4::new(1, 2, 1, 2);
-        let b: i32x4 = i32x4::new(1, 2, 3, 4);
-        let e: i32x4 = i32x4::new(1, 4, 3, 8);
-        let r: i32x4 = transmute(vmulq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s32(
+            |i, j| vmulq_s32(i, j),
+            |a: i32, b: i32| -> i32 { a.overflowing_mul(b).0 },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_u8() {
-        let a: u8x8 = u8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let b: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u8x8 = u8x8::new(1, 4, 3, 8, 5, 12, 7, 16);
-        let r: u8x8 = transmute(vmul_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u8(
+            |i, j| vmul_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_u8() {
-        let a: u8x16 = u8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let b: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let e: u8x16 = u8x16::new(1, 4, 3, 8, 5, 12, 7, 16, 9, 20, 11, 24, 13, 28, 15, 32);
-        let r: u8x16 = transmute(vmulq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u8(
+            |i, j| vmulq_u8(i, j),
+            |a: u8, b: u8| -> u8 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_u16() {
-        let a: u16x4 = u16x4::new(1, 2, 1, 2);
-        let b: u16x4 = u16x4::new(1, 2, 3, 4);
-        let e: u16x4 = u16x4::new(1, 4, 3, 8);
-        let r: u16x4 = transmute(vmul_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u16(
+            |i, j| vmul_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_u16() {
-        let a: u16x8 = u16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let b: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let e: u16x8 = u16x8::new(1, 4, 3, 8, 5, 12, 7, 16);
-        let r: u16x8 = transmute(vmulq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u16(
+            |i, j| vmulq_u16(i, j),
+            |a: u16, b: u16| -> u16 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_u32() {
-        let a: u32x2 = u32x2::new(1, 2);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(1, 4);
-        let r: u32x2 = transmute(vmul_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u32(
+            |i, j| vmul_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.overflowing_mul(b).0 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_u32() {
-        let a: u32x4 = u32x4::new(1, 2, 1, 2);
-        let b: u32x4 = u32x4::new(1, 2, 3, 4);
-        let e: u32x4 = u32x4::new(1, 4, 3, 8);
-        let r: u32x4 = transmute(vmulq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u32(
+            |i, j| vmulq_u32(i, j),
+            |a: u32, b: u32| -> u32 { a.overflowing_mul(b).0 },
+        );
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vmul_f32() {
-        let a: f32x2 = f32x2::new(1.0, 2.0);
-        let b: f32x2 = f32x2::new(2.0, 3.0);
-        let e: f32x2 = f32x2::new(2.0, 6.0);
-        let r: f32x2 = transmute(vmul_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_f32(|i, j| vmul_f32(i, j), |a: f32, b: f32| -> f32 { a * b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vmulq_f32() {
-        let a: f32x4 = f32x4::new(1.0, 2.0, 1.0, 2.0);
-        let b: f32x4 = f32x4::new(2.0, 3.0, 4.0, 5.0);
-        let e: f32x4 = f32x4::new(2.0, 6.0, 4.0, 10.0);
-        let r: f32x4 = transmute(vmulq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_f32(|i, j| vmulq_f32(i, j), |a: f32, b: f32| -> f32 { a * b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_s8() {
-        let a: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i8x8 = i8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i8x8 = i8x8::new(0, 0, 2, 2, 4, 4, 6, 6);
-        let r: i8x8 = transmute(vsub_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(|i, j| vsub_s8(i, j), |a: i8, b: i8| -> i8 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_s8() {
-        let a: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: i8x16 = i8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i8x16 = i8x16::new(0, 0, 2, 2, 4, 4, 6, 6, 8, 8, 10, 10, 12, 12, 14, 14);
-        let r: i8x16 = transmute(vsubq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(|i, j| vsubq_s8(i, j), |a: i8, b: i8| -> i8 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_s16() {
-        let a: i16x4 = i16x4::new(1, 2, 3, 4);
-        let b: i16x4 = i16x4::new(1, 2, 1, 2);
-        let e: i16x4 = i16x4::new(0, 0, 2, 2);
-        let r: i16x4 = transmute(vsub_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(|i, j| vsub_s16(i, j), |a: i16, b: i16| -> i16 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_s16() {
-        let a: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i16x8 = i16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i16x8 = i16x8::new(0, 0, 2, 2, 4, 4, 6, 6);
-        let r: i16x8 = transmute(vsubq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(|i, j| vsubq_s16(i, j), |a: i16, b: i16| -> i16 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_s32() {
-        let a: i32x2 = i32x2::new(1, 2);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(0, 0);
-        let r: i32x2 = transmute(vsub_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(|i, j| vsub_s32(i, j), |a: i32, b: i32| -> i32 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_s32() {
-        let a: i32x4 = i32x4::new(1, 2, 3, 4);
-        let b: i32x4 = i32x4::new(1, 2, 1, 2);
-        let e: i32x4 = i32x4::new(0, 0, 2, 2);
-        let r: i32x4 = transmute(vsubq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s32(|i, j| vsubq_s32(i, j), |a: i32, b: i32| -> i32 { a - b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_u8() {
-        let a: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u8x8 = u8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u8x8 = u8x8::new(0, 0, 2, 2, 4, 4, 6, 6);
-        let r: u8x8 = transmute(vsub_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u8(|i, j| vsub_u8(i, j), |a: u8, b: u8| -> u8 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_u8() {
-        let a: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: u8x16 = u8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u8x16 = u8x16::new(0, 0, 2, 2, 4, 4, 6, 6, 8, 8, 10, 10, 12, 12, 14, 14);
-        let r: u8x16 = transmute(vsubq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u8(|i, j| vsubq_u8(i, j), |a: u8, b: u8| -> u8 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_u16() {
-        let a: u16x4 = u16x4::new(1, 2, 3, 4);
-        let b: u16x4 = u16x4::new(1, 2, 1, 2);
-        let e: u16x4 = u16x4::new(0, 0, 2, 2);
-        let r: u16x4 = transmute(vsub_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u16(|i, j| vsub_u16(i, j), |a: u16, b: u16| -> u16 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_u16() {
-        let a: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u16x8 = u16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u16x8 = u16x8::new(0, 0, 2, 2, 4, 4, 6, 6);
-        let r: u16x8 = transmute(vsubq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u16(|i, j| vsubq_u16(i, j), |a: u16, b: u16| -> u16 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_u32() {
-        let a: u32x2 = u32x2::new(1, 2);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0, 0);
-        let r: u32x2 = transmute(vsub_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_u32(|i, j| vsub_u32(i, j), |a: u32, b: u32| -> u32 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_u32() {
-        let a: u32x4 = u32x4::new(1, 2, 3, 4);
-        let b: u32x4 = u32x4::new(1, 2, 1, 2);
-        let e: u32x4 = u32x4::new(0, 0, 2, 2);
-        let r: u32x4 = transmute(vsubq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vsub_s64() {
-        let a: i64x1 = i64x1::new(1);
-        let b: i64x1 = i64x1::new(1);
-        let e: i64x1 = i64x1::new(0);
-        let r: i64x1 = transmute(vsub_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vsubq_s64() {
-        let a: i64x2 = i64x2::new(1, 2);
-        let b: i64x2 = i64x2::new(1, 2);
-        let e: i64x2 = i64x2::new(0, 0);
-        let r: i64x2 = transmute(vsubq_s64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vsub_u64() {
-        let a: u64x1 = u64x1::new(1);
-        let b: u64x1 = u64x1::new(1);
-        let e: u64x1 = u64x1::new(0);
-        let r: u64x1 = transmute(vsub_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vsubq_u64() {
-        let a: u64x2 = u64x2::new(1, 2);
-        let b: u64x2 = u64x2::new(1, 2);
-        let e: u64x2 = u64x2::new(0, 0);
-        let r: u64x2 = transmute(vsubq_u64(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_u32(|i, j| vsubq_u32(i, j), |a: u32, b: u32| -> u32 { a - b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vsub_f32() {
-        let a: f32x2 = f32x2::new(1.0, 4.0);
-        let b: f32x2 = f32x2::new(1.0, 2.0);
-        let e: f32x2 = f32x2::new(0.0, 2.0);
-        let r: f32x2 = transmute(vsub_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_f32(|i, j| vsub_f32(i, j), |a: f32, b: f32| -> f32 { a - b });
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vsubq_f32() {
-        let a: f32x4 = f32x4::new(1.0, 4.0, 3.0, 8.0);
-        let b: f32x4 = f32x4::new(1.0, 2.0, 3.0, 4.0);
-        let e: f32x4 = f32x4::new(0.0, 2.0, 0.0, 4.0);
-        let r: f32x4 = transmute(vsubq_f32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsub_u8() {
-        let a: u8x8 = u8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u8x8 = u8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u8x8 = u8x8::new(0, 0, 1, 1, 2, 2, 3, 3);
-        let r: u8x8 = transmute(vhsub_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsubq_u8() {
-        let a: u8x16 = u8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: u8x16 = u8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u8x16 = u8x16::new(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
-        let r: u8x16 = transmute(vhsubq_u8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsub_u16() {
-        let a: u16x4 = u16x4::new(1, 2, 3, 4);
-        let b: u16x4 = u16x4::new(1, 2, 1, 2);
-        let e: u16x4 = u16x4::new(0, 0, 1, 1);
-        let r: u16x4 = transmute(vhsub_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsubq_u16() {
-        let a: u16x8 = u16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: u16x8 = u16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: u16x8 = u16x8::new(0, 0, 1, 1, 2, 2, 3, 3);
-        let r: u16x8 = transmute(vhsubq_u16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsub_u32() {
-        let a: u32x2 = u32x2::new(1, 2);
-        let b: u32x2 = u32x2::new(1, 2);
-        let e: u32x2 = u32x2::new(0, 0);
-        let r: u32x2 = transmute(vhsub_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
-    }
-
-    #[simd_test(enable = "neon")]
-    unsafe fn test_vhsubq_u32() {
-        let a: u32x4 = u32x4::new(1, 2, 3, 4);
-        let b: u32x4 = u32x4::new(1, 2, 1, 2);
-        let e: u32x4 = u32x4::new(0, 0, 1, 1);
-        let r: u32x4 = transmute(vhsubq_u32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_f32(|i, j| vsubq_f32(i, j), |a: f32, b: f32| -> f32 { a - b });
     }
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vhsub_s8() {
-        let a: i8x8 = i8x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i8x8 = i8x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i8x8 = i8x8::new(0, 0, 1, 1, 2, 2, 3, 3);
-        let r: i8x8 = transmute(vhsub_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s8(
+            |i, j| vhsub_s8(i, j),
+            |a: i8, b: i8| -> i8 { (((a as i16) - (b as i16)) / 2) as i8 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhsubq_s8() {
-        let a: i8x16 = i8x16::new(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-        let b: i8x16 = i8x16::new(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i8x16 = i8x16::new(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
-        let r: i8x16 = transmute(vhsubq_s8(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s8(
+            |i, j| vhsubq_s8(i, j),
+            |a: i8, b: i8| -> i8 { (((a as i16) - (b as i16)) / 2) as i8 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhsub_s16() {
-        let a: i16x4 = i16x4::new(1, 2, 3, 4);
-        let b: i16x4 = i16x4::new(1, 2, 1, 2);
-        let e: i16x4 = i16x4::new(0, 0, 1, 1);
-        let r: i16x4 = transmute(vhsub_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s16(
+            |i, j| vhsub_s16(i, j),
+            |a: i16, b: i16| -> i16 { (((a as i32) - (b as i32)) / 2) as i16 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhsubq_s16() {
-        let a: i16x8 = i16x8::new(1, 2, 3, 4, 5, 6, 7, 8);
-        let b: i16x8 = i16x8::new(1, 2, 1, 2, 1, 2, 1, 2);
-        let e: i16x8 = i16x8::new(0, 0, 1, 1, 2, 2, 3, 3);
-        let r: i16x8 = transmute(vhsubq_s16(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        testq_ari_s16(
+            |i, j| vhsubq_s16(i, j),
+            |a: i16, b: i16| -> i16 { (((a as i32) - (b as i32)) / 2) as i16 },
+        );
     }
-
     #[simd_test(enable = "neon")]
     unsafe fn test_vhsub_s32() {
-        let a: i32x2 = i32x2::new(1, 2);
-        let b: i32x2 = i32x2::new(1, 2);
-        let e: i32x2 = i32x2::new(0, 0);
-        let r: i32x2 = transmute(vhsub_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+        test_ari_s32(
+            |i, j| vhsub_s32(i, j),
+            |a: i32, b: i32| -> i32 { (((a as i64) - (b as i64)) / 2) as i32 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsubq_s32() {
+        testq_ari_s32(
+            |i, j| vhsubq_s32(i, j),
+            |a: i32, b: i32| -> i32 { (((a as i64) - (b as i64)) / 2) as i32 },
+        );
     }
 
     #[simd_test(enable = "neon")]
-    unsafe fn test_vhsubq_s32() {
-        let a: i32x4 = i32x4::new(1, 2, 3, 4);
-        let b: i32x4 = i32x4::new(1, 2, 1, 2);
-        let e: i32x4 = i32x4::new(0, 0, 1, 1);
-        let r: i32x4 = transmute(vhsubq_s32(transmute(a), transmute(b)));
-        assert_eq!(r, e);
+    unsafe fn test_vhsub_u8() {
+        test_ari_u8(
+            |i, j| vhsub_u8(i, j),
+            |a: u8, b: u8| -> u8 { (((a as u16) - (b as u16)) / 2) as u8 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsubq_u8() {
+        testq_ari_u8(
+            |i, j| vhsubq_u8(i, j),
+            |a: u8, b: u8| -> u8 { (((a as u16) - (b as u16)) / 2) as u8 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsub_u16() {
+        test_ari_u16(
+            |i, j| vhsub_u16(i, j),
+            |a: u16, b: u16| -> u16 { (((a as u16) - (b as u16)) / 2) as u16 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsubq_u16() {
+        testq_ari_u16(
+            |i, j| vhsubq_u16(i, j),
+            |a: u16, b: u16| -> u16 { (((a as u16) - (b as u16)) / 2) as u16 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsub_u32() {
+        test_ari_u32(
+            |i, j| vhsub_u32(i, j),
+            |a: u32, b: u32| -> u32 { (((a as u64) - (b as u64)) / 2) as u32 },
+        );
+    }
+    #[simd_test(enable = "neon")]
+    unsafe fn test_vhsubq_u32() {
+        testq_ari_u32(
+            |i, j| vhsubq_u32(i, j),
+            |a: u32, b: u32| -> u32 { (((a as u64) - (b as u64)) / 2) as u32 },
+        );
     }
 }
 

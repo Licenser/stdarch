@@ -548,6 +548,26 @@ pub unsafe fn vceqq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
 #[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
+pub unsafe fn vceq_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
+    simd_eq(a, b)
+}
+
+/// Compare bitwise Equal (vector)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
+pub unsafe fn vceqq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
+    simd_eq(a, b)
+}
+
+/// Compare bitwise Equal (vector)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
 pub unsafe fn vceq_s8(a: int8x8_t, b: int8x8_t) -> uint8x8_t {
     simd_eq(a, b)
 }
@@ -599,6 +619,26 @@ pub unsafe fn vceq_s32(a: int32x2_t, b: int32x2_t) -> uint32x2_t {
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
 pub unsafe fn vceqq_s32(a: int32x4_t, b: int32x4_t) -> uint32x4_t {
+    simd_eq(a, b)
+}
+
+/// Compare bitwise Equal (vector)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
+pub unsafe fn vceq_s64(a: int64x1_t, b: int64x1_t) -> uint64x1_t {
+    simd_eq(a, b)
+}
+
+/// Compare bitwise Equal (vector)
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmeq))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmeq))]
+pub unsafe fn vceqq_s64(a: int64x2_t, b: int64x2_t) -> uint64x2_t {
     simd_eq(a, b)
 }
 
@@ -682,6 +722,26 @@ pub unsafe fn vcgtq_s32(a: int32x4_t, b: int32x4_t) -> uint32x4_t {
     simd_gt(a, b)
 }
 
+/// Compare signed greater than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmgt))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmgt))]
+pub unsafe fn vcgt_s64(a: int64x1_t, b: int64x1_t) -> uint64x1_t {
+    simd_gt(a, b)
+}
+
+/// Compare signed greater than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmgt))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmgt))]
+pub unsafe fn vcgtq_s64(a: int64x2_t, b: int64x2_t) -> uint64x2_t {
+    simd_gt(a, b)
+}
+
 /// Compare unsigned highe
 #[inline]
 #[target_feature(enable = "neon")]
@@ -739,6 +799,26 @@ pub unsafe fn vcgt_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
 pub unsafe fn vcgtq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
+    simd_gt(a, b)
+}
+
+/// Compare unsigned highe
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
+pub unsafe fn vcgt_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
+    simd_gt(a, b)
+}
+
+/// Compare unsigned highe
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
+pub unsafe fn vcgtq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
     simd_gt(a, b)
 }
 
@@ -822,6 +902,26 @@ pub unsafe fn vcltq_s32(a: int32x4_t, b: int32x4_t) -> uint32x4_t {
     simd_lt(a, b)
 }
 
+/// Compare signed less than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmgt))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmgt))]
+pub unsafe fn vclt_s64(a: int64x1_t, b: int64x1_t) -> uint64x1_t {
+    simd_lt(a, b)
+}
+
+/// Compare signed less than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmgt))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmgt))]
+pub unsafe fn vcltq_s64(a: int64x2_t, b: int64x2_t) -> uint64x2_t {
+    simd_lt(a, b)
+}
+
 /// Compare unsigned less than
 #[inline]
 #[target_feature(enable = "neon")]
@@ -859,6 +959,26 @@ pub unsafe fn vclt_u16(a: uint16x4_t, b: uint16x4_t) -> uint16x4_t {
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
 pub unsafe fn vcltq_u16(a: uint16x8_t, b: uint16x8_t) -> uint16x8_t {
+    simd_lt(a, b)
+}
+
+/// Compare unsigned less than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
+pub unsafe fn vclt_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
+    simd_lt(a, b)
+}
+
+/// Compare unsigned less than
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhi))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhi))]
+pub unsafe fn vcltq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
     simd_lt(a, b)
 }
 
@@ -962,6 +1082,26 @@ pub unsafe fn vcleq_s32(a: int32x4_t, b: int32x4_t) -> uint32x4_t {
     simd_le(a, b)
 }
 
+/// Compare signed less than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmge))]
+pub unsafe fn vcle_s64(a: int64x1_t, b: int64x1_t) -> uint64x1_t {
+    simd_le(a, b)
+}
+
+/// Compare signed less than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmge))]
+pub unsafe fn vcleq_s64(a: int64x2_t, b: int64x2_t) -> uint64x2_t {
+    simd_le(a, b)
+}
+
 /// Compare unsigned less than or equal
 #[inline]
 #[target_feature(enable = "neon")]
@@ -1019,6 +1159,26 @@ pub unsafe fn vcle_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
 pub unsafe fn vcleq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
+    simd_le(a, b)
+}
+
+/// Compare unsigned less than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
+pub unsafe fn vcle_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
+    simd_le(a, b)
+}
+
+/// Compare unsigned less than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
+pub unsafe fn vcleq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
     simd_le(a, b)
 }
 
@@ -1102,6 +1262,26 @@ pub unsafe fn vcgeq_s32(a: int32x4_t, b: int32x4_t) -> uint32x4_t {
     simd_ge(a, b)
 }
 
+/// Compare signed greater than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmge))]
+pub unsafe fn vcge_s64(a: int64x1_t, b: int64x1_t) -> uint64x1_t {
+    simd_ge(a, b)
+}
+
+/// Compare signed greater than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmge))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmge))]
+pub unsafe fn vcgeq_s64(a: int64x2_t, b: int64x2_t) -> uint64x2_t {
+    simd_ge(a, b)
+}
+
 /// Compare unsigned greater than or equal
 #[inline]
 #[target_feature(enable = "neon")]
@@ -1159,6 +1339,26 @@ pub unsafe fn vcge_u32(a: uint32x2_t, b: uint32x2_t) -> uint32x2_t {
 #[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
 #[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
 pub unsafe fn vcgeq_u32(a: uint32x4_t, b: uint32x4_t) -> uint32x4_t {
+    simd_ge(a, b)
+}
+
+/// Compare unsigned greater than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
+pub unsafe fn vcge_u64(a: uint64x1_t, b: uint64x1_t) -> uint64x1_t {
+    simd_ge(a, b)
+}
+
+/// Compare unsigned greater than or equal
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(cmhs))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(cmhs))]
+pub unsafe fn vcgeq_u64(a: uint64x2_t, b: uint64x2_t) -> uint64x2_t {
     simd_ge(a, b)
 }
 
