@@ -8,8 +8,6 @@ pub use self::generated::*;
 use crate::{core_arch::simd_llvm::*, hint::unreachable_unchecked, mem::transmute, ptr};
 #[cfg(test)]
 use stdarch_test::assert_instr;
-#[cfg(test)]
-mod test_support;
 
 types! {
     /// ARM-specific 64-bit wide vector of eight packed `i8`.
@@ -1623,8 +1621,8 @@ pub unsafe fn vld1q_u8(addr: *const u8) -> uint8x16_t {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::core_arch::arm::test_support::*;
     use crate::core_arch::{arm::*, simd::*};
-    use crate::core_arch::arm::neon::test_support::*;
     use std::{i16, i32, i8, mem::transmute, u16, u32, u8, vec::Vec};
     use stdarch_test::simd_test;
 

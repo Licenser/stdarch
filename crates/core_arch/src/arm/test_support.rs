@@ -1,4 +1,3 @@
-//use super::*;
 use crate::core_arch::{arm::*, simd::*};
 use std::{i16, i32, i8, mem::transmute, u16, u32, u8, vec::Vec};
 
